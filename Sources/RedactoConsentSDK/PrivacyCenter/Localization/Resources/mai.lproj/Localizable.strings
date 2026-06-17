@@ -1,0 +1,152 @@
+// Privacy Center — Maithili (मैथिली)
+
+"yourPrivacyCenter" = "अहाँक प्राइवेसी सेन्टर";
+"manageConsent" = "सहमति प्रबंधन";
+"manageConsentSubtitle" = "अपन सब सहमति एकटा ठाम पर देखू आ प्रबंधित करू";
+"dataRequests" = "डाटा अनुरोध";
+"dataRequestsSubtitle" = "अपन डाटा अधिकार के प्रयोग करू";
+"grievanceRequests" = "डाटा अनुरोध करू";
+"grievanceSubtitle" = "अपन अधिकार के प्रयोग करू";
+"activities" = "गतिविधि";
+"activitiesSubtitle" = "अपन डाटा अनुरोध आ सहमति गतिविधि के ट्रैक करू";
+"caseHistory" = "केस इतिहास";
+"consents" = "सहमति";
+"requests" = "अनुरोध";
+"caseDetails" = "केस विवरण";
+"requestDetails" = "अनुरोध विवरण";
+"messages" = "सन्देश";
+"back" = "पाछाँ";
+"signOut" = "साइन आउट";
+"cancel" = "रद्द करू";
+"submit" = "जमा करू";
+"save" = "सहेजू";
+"close" = "बन्न करू";
+"confirm" = "पुष्टि करू";
+"continue" = "जारी राखू";
+"loading" = "लोड भ रहल अछि…";
+"error" = "त्रुटि";
+"retry" = "फेर प्रयास करू";
+"search" = "खोजू";
+"filter" = "फिल्टर";
+"status" = "स्थिति";
+"product" = "उत्पाद";
+"all" = "सब";
+"processing" = "प्रक्रिया";
+"completed" = "पूर्ण";
+"rejected" = "अस्वीकृत";
+"today" = "आइ";
+"yesterday" = "काल्हि";
+
+"statusActive" = "सक्रिय";
+"statusWithdrawn" = "वापस";
+"statusExpired" = "समाप्त";
+"statusDeclined" = "अस्वीकृत";
+
+"requestType" = "अनुरोध प्रकार";
+"selectRequestType" = "कृपया जे अनुरोध प्रकार करय चाहै छी ओकरा चुनू";
+"access" = "एक्सेस";
+"correction" = "सुधार";
+"erasure" = "मेटाव";
+"grievance" = "शिकायत";
+"nomination" = "नामांकन";
+"supportingDocuments" = "सहायक दस्तावेज";
+"uploadFile" = "फाइल अपलोड करय लेल इतय क्लिक करू";
+"additionalNote" = "अतिरिक्त टिप्पणी";
+"additionalNotePlaceholder" = "कोनो अतिरिक्त संदर्भ वा जानकारी जोड़ू…";
+"iConfirm" = "हम पुष्टि करय छी जे देल गेल जानकारी सही अछि";
+"caseSubmitted" = "अहाँक अनुरोध जमा क देल गेल अछि";
+"caseId" = "केस आईडी";
+"saveCaseIdNotice" = "कृपया अपन रिकॉर्ड लेल ई केस आईडी सहेजू।";
+
+"direct" = "प्रत्यक्ष";
+"nominated" = "नामांकित";
+"modifyConsent" = "सहमति बदलू";
+"revoke" = "रद्द करू";
+"regrant" = "पुनः दिअ'";
+"renew" = "नवीनीकरण करू";
+"revokeConfirmTitle" = "ई सहमति रद्द करू?";
+"revokeConfirmBody" = "रद्द करला पर एहि उद्देश्य लेल अहाँक सहमति वापस ल लेल जायत। अहाँ बाद मे पुनः द सकय छी।";
+"consentRevokedSuccess" = "सहमति सफलतापूर्वक रद्द क देल गेल।";
+"consentRegrantedSuccess" = "सहमति सफलतापूर्वक पुनः देल गेल।";
+"consentRenewedSuccess" = "सहमति सफलतापूर्वक नवीनीकरण क देल गेल।";
+"validTill" = "वैध तक";
+"givenOn" = "देल गेल";
+"dataElementsLabel" = "डाटा तत्व";
+"noConsents" = "कोनो सहमति नहि भेटल";
+
+"noActivities" = "अखन तक कोनो गतिविधि नहि";
+"loadMore" = "आर लोड करू";
+
+"noCases" = "अहाँ अखन तक कोनो अनुरोध नहि कएने छी";
+"newRequest" = "नव अनुरोध";
+"caseCreatedAt" = "बनाओल गेल";
+"caseDueDate" = "अंतिम तिथि";
+"sendMessage" = "पठाउ";
+"typeMessage" = "सन्देश टाइप करू…";
+"attachFile" = "फाइल जोड़ू";
+"documentRequest" = "दस्तावेज अनुरोध";
+"uploadDocument" = "दस्तावेज अपलोड करू";
+"rejectionReason" = "अस्वीकृति कारण";
+"secureChannelNotice" = "सन्देश सुरक्षित चैनल के माध्यम स पठाओल जाइत अछि।";
+
+"grievanceConsentViolation" = "सहमति उल्लंघन";
+"grievanceUnlawfulProcessing" = "अवैध प्रसंस्करण";
+"grievanceDataBreach" = "डाटा उल्लंघन";
+
+"nomineeEmail" = "नामिती ईमेल";
+"nomineeMobile" = "नामिती मोबाइल";
+
+"poweredBy" = "Redacto द्वारा संचालित";
+"somethingWentWrong" = "किछु गलत भ गेल। कृपया फेर प्रयास करू।";
+
+"dataRequestsSubtitleLong" = "अपन डाटा तक पहुँच, सुधार, मेटाव वा शिकायत दर्ज करय लेल अनुरोध जमा करू।";
+"contact" = "संपर्क";
+"description" = "विवरण";
+"attachment" = "संलग्न";
+"saveDraft" = "ड्राफ्ट सहेजू";
+"uploadAnotherFile" = "आर एकटा फाइल अपलोड करू";
+"purposeQuestionAccess" = "अहाँ कोन डाटा तक पहुँच चाहै छी?";
+"purposeQuestionErasure" = "अहाँ कोन डाटा मेटाव चाहै छी?";
+"noPurposes" = "कोनो उद्देश्य उपलब्ध नहि";
+"dataCollected" = "एकत्रित डाटा";
+"noFieldsAvailable" = "कोनो फील्ड उपलब्ध नहि";
+"selectFieldsToUpdate" = "जे फील्ड अपडेट करय चाहै छी ओकरा चुनू";
+"currentValue" = "वर्तमान मान";
+"newValue" = "नव मान";
+"noGrievanceTypes" = "कोनो शिकायत प्रकार उपलब्ध नहि";
+"selectGrievanceType" = "अपन शिकायत प्रकार चुनू";
+"enterNomineeDetails" = "नामिती विवरण दर्ज करू";
+"requestSubmittedTitle" = "अनुरोध सफलतापूर्वक जमा क देल गेल";
+"requestSubmittedSubtitle" = "अपन अनुरोध जमा करय लेल धन्यवाद";
+"requestSubmittedNotice" = "हम कानून के अनुसार 30 दिन के भीतर अहाँक अनुरोध के प्रसंस्करण करब";
+
+// My Receipt
+"myReceipt" = "हमर रसीद";
+"myReceiptSubtitle" = "अपन सहमति रसीद देखू";
+"event" = "घटना";
+"date" = "तिथि";
+"time" = "समय";
+"download" = "डाउनलोड करू";
+"consentGranted" = "सहमति देल गेल";
+"consentRevoked" = "सहमति वापस लेल गेल";
+"consentDeclined" = "सहमति अस्वीकृत";
+"consentExpired" = "सहमति समाप्त";
+"failedToFetchReceipts" = "रसीद प्राप्त करबामे विफल";
+"failedToDownloadReceipt" = "रसीद डाउनलोड करबामे विफल";
+"consented" = "सहमति देल गेल";
+"declined" = "अस्वीकृत";
+"withdrawn" = "वापस लेल गेल";
+"dateRange" = "तिथि सीमा";
+"allTime" = "सभ समय";
+"customRange" = "कस्टम सीमा";
+"from" = "सँ";
+"to" = "धरि";
+"clearFilters" = "फिल्टर साफ करू";
+"last7Days" = "पछिला 7 दिन";
+"last30Days" = "पछिला 30 दिन";
+"last3Months" = "पछिला 3 महीना";
+"noData" = "कोनो डेटा नै";
+
+// No data empty state
+"noDataTitle" = "अखन तक देखाबय लेल किछु नहि";
+"noDataDescription" = "अहाँक खाता सँ जुड़ल कोनो सहमति, अनुरोध, वा गतिविधि अखन तक नहि भेटल। उपलब्ध होइते अहाँक गोपनीयता रिकॉर्ड एतय देखाएत।";

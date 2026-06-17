@@ -11,7 +11,8 @@ public struct DpoInfo: Codable {
     public let dpBoardUrl: String
     public let dpoText: String
     public let dpoAnchorText: String
-    public let dpoUrl: String
+    public let dpoUrl: String?
+    public let dpoEmail: String?
 
     enum CodingKeys: String, CodingKey {
         case grievanceText = "grievance_text"
@@ -25,6 +26,14 @@ public struct DpoInfo: Codable {
         case dpoText = "dpo_text"
         case dpoAnchorText = "dpo_anchor_text"
         case dpoUrl = "dpo_url"
+        case dpoEmail = "dpo_email"
+    }
+
+    /// Resolves the DPO contact link, preferring `dpo_url` and falling back to `mailto:` for `dpo_email`.
+    public var dpoContactUrl: String? {
+        if let url = dpoUrl, !url.isEmpty { return url }
+        if let email = dpoEmail, !email.isEmpty { return "mailto:\(email)" }
+        return nil
     }
 }
 

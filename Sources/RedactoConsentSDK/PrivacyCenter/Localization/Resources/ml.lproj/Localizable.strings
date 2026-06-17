@@ -1,0 +1,152 @@
+// Privacy Center — Malayalam (മലയാളം)
+
+"yourPrivacyCenter" = "നിങ്ങളുടെ പ്രൈവസി സെന്റർ";
+"manageConsent" = "സമ്മതം നിയന്ത്രിക്കുക";
+"manageConsentSubtitle" = "നിങ്ങളുടെ എല്ലാ സമ്മതങ്ങളും ഒരിടത്ത് കണ്ടെത്തുകയും കൈകാര്യം ചെയ്യുകയും ചെയ്യുക";
+"dataRequests" = "ഡാറ്റാ അഭ്യർത്ഥനകൾ";
+"dataRequestsSubtitle" = "നിങ്ങളുടെ ഡാറ്റാ അവകാശങ്ങൾ വിനിയോഗിക്കുക";
+"grievanceRequests" = "ഡാറ്റാ അഭ്യർത്ഥന ഉന്നയിക്കുക";
+"grievanceSubtitle" = "നിങ്ങളുടെ അവകാശങ്ങൾ വിനിയോഗിക്കുക";
+"activities" = "പ്രവർത്തനങ്ങൾ";
+"activitiesSubtitle" = "നിങ്ങളുടെ ഡാറ്റാ അഭ്യർത്ഥനയും സമ്മത പ്രവർത്തനവും ട്രാക്ക് ചെയ്യുക";
+"caseHistory" = "കേസ് ചരിത്രം";
+"consents" = "സമ്മതങ്ങൾ";
+"requests" = "അഭ്യർത്ഥനകൾ";
+"caseDetails" = "കേസ് വിശദാംശങ്ങൾ";
+"requestDetails" = "അഭ്യർത്ഥന വിശദാംശങ്ങൾ";
+"messages" = "സന്ദേശങ്ങൾ";
+"back" = "മടങ്ങുക";
+"signOut" = "സൈൻ ഔട്ട്";
+"cancel" = "റദ്ദാക്കുക";
+"submit" = "സമർപ്പിക്കുക";
+"save" = "സംരക്ഷിക്കുക";
+"close" = "അടയ്ക്കുക";
+"confirm" = "സ്ഥിരീകരിക്കുക";
+"continue" = "തുടരുക";
+"loading" = "ലോഡ് ചെയ്യുന്നു…";
+"error" = "പിശക്";
+"retry" = "വീണ്ടും ശ്രമിക്കുക";
+"search" = "തിരയുക";
+"filter" = "ഫിൽട്ടർ";
+"status" = "സ്ഥിതി";
+"product" = "ഉൽപ്പന്നം";
+"all" = "എല്ലാം";
+"processing" = "പ്രോസസ്സ് ചെയ്യുന്നു";
+"completed" = "പൂർത്തിയായി";
+"rejected" = "നിരസിച്ചു";
+"today" = "ഇന്ന്";
+"yesterday" = "ഇന്നലെ";
+
+"statusActive" = "സജീവം";
+"statusWithdrawn" = "പിൻവലിച്ചു";
+"statusExpired" = "കാലഹരണപ്പെട്ടു";
+"statusDeclined" = "നിരസിച്ചു";
+
+"requestType" = "അഭ്യർത്ഥന തരം";
+"selectRequestType" = "ദയവായി നിങ്ങൾ ചെയ്യാൻ ആഗ്രഹിക്കുന്ന അഭ്യർത്ഥന തരം തിരഞ്ഞെടുക്കുക";
+"access" = "ആക്സസ്";
+"correction" = "തിരുത്തൽ";
+"erasure" = "മായ്ക്കൽ";
+"grievance" = "പരാതി";
+"nomination" = "നാമനിർദ്ദേശം";
+"supportingDocuments" = "സപ്പോർട്ടിംഗ് ഡോക്യുമെന്റുകൾ";
+"uploadFile" = "ഫയൽ അപ്ലോഡ് ചെയ്യാൻ ഇവിടെ ക്ലിക്ക് ചെയ്യുക";
+"additionalNote" = "അധിക കുറിപ്പ്";
+"additionalNotePlaceholder" = "എന്തെങ്കിലും അധിക സന്ദർഭം അല്ലെങ്കിൽ വിവരങ്ങൾ ചേർക്കുക…";
+"iConfirm" = "നൽകിയ വിവരങ്ങൾ കൃത്യമാണെന്ന് ഞാൻ സ്ഥിരീകരിക്കുന്നു";
+"caseSubmitted" = "നിങ്ങളുടെ അഭ്യർത്ഥന സമർപ്പിച്ചു";
+"caseId" = "കേസ് ID";
+"saveCaseIdNotice" = "ദയവായി നിങ്ങളുടെ രേഖകൾക്കായി ഈ കേസ് ID സംരക്ഷിക്കുക.";
+
+"direct" = "നേരിട്ട്";
+"nominated" = "നാമനിർദ്ദേശം ചെയ്തത്";
+"modifyConsent" = "സമ്മതം പരിഷ്കരിക്കുക";
+"revoke" = "റദ്ദാക്കുക";
+"regrant" = "വീണ്ടും നൽകുക";
+"renew" = "പുതുക്കുക";
+"revokeConfirmTitle" = "ഈ സമ്മതം റദ്ദാക്കണോ?";
+"revokeConfirmBody" = "റദ്ദാക്കിയാൽ ഈ ലക്ഷ്യത്തിനായുള്ള നിങ്ങളുടെ സമ്മതം പിൻവലിക്കും. നിങ്ങൾക്ക് പിന്നീട് വീണ്ടും നൽകാം.";
+"consentRevokedSuccess" = "സമ്മതം വിജയകരമായി റദ്ദാക്കി.";
+"consentRegrantedSuccess" = "സമ്മതം വിജയകരമായി വീണ്ടും നൽകി.";
+"consentRenewedSuccess" = "സമ്മതം വിജയകരമായി പുതുക്കി.";
+"validTill" = "സാധുവായ തീയതി വരെ";
+"givenOn" = "നൽകിയത്";
+"dataElementsLabel" = "ഡാറ്റാ ഘടകങ്ങൾ";
+"noConsents" = "സമ്മതങ്ങളൊന്നും കണ്ടെത്തിയില്ല";
+
+"noActivities" = "ഇതുവരെ പ്രവർത്തനങ്ങളൊന്നുമില്ല";
+"loadMore" = "കൂടുതൽ ലോഡ് ചെയ്യുക";
+
+"noCases" = "നിങ്ങൾ ഇതുവരെ അഭ്യർത്ഥനകളൊന്നും ഉന്നയിച്ചിട്ടില്ല";
+"newRequest" = "പുതിയ അഭ്യർത്ഥന";
+"caseCreatedAt" = "സൃഷ്ടിച്ചത്";
+"caseDueDate" = "അവസാന തീയതി";
+"sendMessage" = "അയയ്ക്കുക";
+"typeMessage" = "ഒരു സന്ദേശം ടൈപ്പ് ചെയ്യുക…";
+"attachFile" = "ഫയൽ അറ്റാച്ച് ചെയ്യുക";
+"documentRequest" = "ഡോക്യുമെന്റ് അഭ്യർത്ഥന";
+"uploadDocument" = "ഡോക്യുമെന്റ് അപ്ലോഡ് ചെയ്യുക";
+"rejectionReason" = "നിരസന കാരണം";
+"secureChannelNotice" = "സന്ദേശങ്ങൾ സുരക്ഷിതമായ ചാനൽ വഴിയാണ് അയയ്ക്കുന്നത്.";
+
+"grievanceConsentViolation" = "സമ്മത ലംഘനം";
+"grievanceUnlawfulProcessing" = "നിയമവിരുദ്ധ പ്രോസസ്സിംഗ്";
+"grievanceDataBreach" = "ഡാറ്റാ ലംഘനം";
+
+"nomineeEmail" = "നോമിനി ഇമെയിൽ";
+"nomineeMobile" = "നോമിനി മൊബൈൽ";
+
+"poweredBy" = "Redacto നൽകുന്നത്";
+"somethingWentWrong" = "എന്തോ പിശക് സംഭവിച്ചു. വീണ്ടും ശ്രമിക്കുക.";
+
+"dataRequestsSubtitleLong" = "നിങ്ങളുടെ ഡാറ്റ ആക്സസ് ചെയ്യാനോ തിരുത്താനോ മായ്ക്കാനോ പരാതി ഉന്നയിക്കാനോ ഒരു അഭ്യർത്ഥന സമർപ്പിക്കുക.";
+"contact" = "ബന്ധപ്പെടുക";
+"description" = "വിവരണം";
+"attachment" = "അറ്റാച്ച്മെന്റ്";
+"saveDraft" = "ഡ്രാഫ്റ്റ് സംരക്ഷിക്കുക";
+"uploadAnotherFile" = "മറ്റൊരു ഫയൽ അപ്ലോഡ് ചെയ്യുക";
+"purposeQuestionAccess" = "നിങ്ങൾ ഏത് ഡാറ്റ ആക്സസ് ചെയ്യാൻ ആഗ്രഹിക്കുന്നു?";
+"purposeQuestionErasure" = "നിങ്ങൾ ഏത് ഡാറ്റ ഇല്ലാതാക്കാൻ ആഗ്രഹിക്കുന്നു?";
+"noPurposes" = "ഉദ്ദേശ്യങ്ങളൊന്നും ലഭ്യമല്ല";
+"dataCollected" = "ശേഖരിച്ച ഡാറ്റ";
+"noFieldsAvailable" = "ഫീൽഡുകളൊന്നും ലഭ്യമല്ല";
+"selectFieldsToUpdate" = "നിങ്ങൾ അപ്ഡേറ്റ് ചെയ്യാൻ ആഗ്രഹിക്കുന്ന ഫീൽഡുകൾ തിരഞ്ഞെടുക്കുക";
+"currentValue" = "നിലവിലെ മൂല്യം";
+"newValue" = "പുതിയ മൂല്യം";
+"noGrievanceTypes" = "പരാതി തരങ്ങളൊന്നും ലഭ്യമല്ല";
+"selectGrievanceType" = "നിങ്ങളുടെ പരാതി തരം തിരഞ്ഞെടുക്കുക";
+"enterNomineeDetails" = "നോമിനി വിശദാംശങ്ങൾ നൽകുക";
+"requestSubmittedTitle" = "അഭ്യർത്ഥന വിജയകരമായി സമർപ്പിച്ചു";
+"requestSubmittedSubtitle" = "നിങ്ങളുടെ അഭ്യർത്ഥന സമർപ്പിച്ചതിന് നന്ദി";
+"requestSubmittedNotice" = "നിയമപ്രകാരം 30 ദിവസത്തിനുള്ളിൽ ഞങ്ങൾ നിങ്ങളുടെ അഭ്യർത്ഥന പ്രോസസ്സ് ചെയ്യും";
+
+// My Receipt
+"myReceipt" = "എന്റെ രസീത്";
+"myReceiptSubtitle" = "നിങ്ങളുടെ സമ്മത രസീതുകൾ കാണുക";
+"event" = "ഇവന്റ്";
+"date" = "തീയതി";
+"time" = "സമയം";
+"download" = "ഡൗൺലോഡ് ചെയ്യുക";
+"consentGranted" = "സമ്മതം നൽകി";
+"consentRevoked" = "സമ്മതം പിൻവലിച്ചു";
+"consentDeclined" = "സമ്മതം നിരസിച്ചു";
+"consentExpired" = "സമ്മതം കാലഹരണപ്പെട്ടു";
+"failedToFetchReceipts" = "രസീതുകൾ ലഭ്യമാക്കാൻ കഴിഞ്ഞില്ല";
+"failedToDownloadReceipt" = "രസീത് ഡൗൺലോഡ് ചെയ്യാൻ കഴിഞ്ഞില്ല";
+"consented" = "സമ്മതിച്ചു";
+"declined" = "നിരസിച്ചു";
+"withdrawn" = "പിൻവലിച്ചു";
+"dateRange" = "തീയതി പരിധി";
+"allTime" = "എല്ലാ സമയവും";
+"customRange" = "ഇഷ്ടാനുസൃത പരിധി";
+"from" = "മുതൽ";
+"to" = "വരെ";
+"clearFilters" = "ഫിൽട്ടറുകൾ മായ്ക്കുക";
+"last7Days" = "കഴിഞ്ഞ 7 ദിവസം";
+"last30Days" = "കഴിഞ്ഞ 30 ദിവസം";
+"last3Months" = "കഴിഞ്ഞ 3 മാസം";
+"noData" = "ഡാറ്റയില്ല";
+
+// No data empty state
+"noDataTitle" = "ഇതുവരെ കാണിക്കാൻ ഒന്നുമില്ല";
+"noDataDescription" = "നിങ്ങളുടെ അക്കൗണ്ടുമായി ബന്ധിപ്പിച്ച സമ്മതങ്ങളോ അഭ്യർത്ഥനകളോ പ്രവൃത്തിയോ ഇതുവരെ ഞങ്ങൾക്ക് കണ്ടെത്താനായില്ല. നിങ്ങളുടെ സ്വകാര്യതാ രേഖകൾ ലഭ്യമാകുമ്പോൾ അവ ഇവിടെ ദൃശ്യമാകും.";

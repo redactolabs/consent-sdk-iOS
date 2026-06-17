@@ -1,0 +1,152 @@
+// Privacy Center — Kannada (ಕನ್ನಡ)
+
+"yourPrivacyCenter" = "ನಿಮ್ಮ ಗೌಪ್ಯತಾ ಕೇಂದ್ರ";
+"manageConsent" = "ಸಮ್ಮತಿ ನಿರ್ವಹಣೆ";
+"manageConsentSubtitle" = "ನಿಮ್ಮ ಎಲ್ಲಾ ಸಮ್ಮತಿಗಳನ್ನು ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ ಅನ್ವೇಷಿಸಿ ಮತ್ತು ನಿರ್ವಹಿಸಿ";
+"dataRequests" = "ಡೇಟಾ ವಿನಂತಿಗಳು";
+"dataRequestsSubtitle" = "ನಿಮ್ಮ ಡೇಟಾ ಹಕ್ಕುಗಳನ್ನು ಬಳಸಿ";
+"grievanceRequests" = "ಡೇಟಾ ವಿನಂತಿ ಮಾಡಿ";
+"grievanceSubtitle" = "ನಿಮ್ಮ ಹಕ್ಕುಗಳನ್ನು ಬಳಸಿ";
+"activities" = "ಚಟುವಟಿಕೆಗಳು";
+"activitiesSubtitle" = "ನಿಮ್ಮ ಡೇಟಾ ವಿನಂತಿ ಮತ್ತು ಸಮ್ಮತಿ ಚಟುವಟಿಕೆಯನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ";
+"caseHistory" = "ಪ್ರಕರಣ ಇತಿಹಾಸ";
+"consents" = "ಸಮ್ಮತಿಗಳು";
+"requests" = "ವಿನಂತಿಗಳು";
+"caseDetails" = "ಪ್ರಕರಣ ವಿವರಗಳು";
+"requestDetails" = "ವಿನಂತಿ ವಿವರಗಳು";
+"messages" = "ಸಂದೇಶಗಳು";
+"back" = "ಹಿಂದೆ";
+"signOut" = "ಸೈನ್ ಔಟ್";
+"cancel" = "ರದ್ದುಮಾಡಿ";
+"submit" = "ಸಲ್ಲಿಸಿ";
+"save" = "ಉಳಿಸಿ";
+"close" = "ಮುಚ್ಚಿ";
+"confirm" = "ದೃಢೀಕರಿಸಿ";
+"continue" = "ಮುಂದುವರಿಸಿ";
+"loading" = "ಲೋಡ್ ಆಗುತ್ತಿದೆ…";
+"error" = "ದೋಷ";
+"retry" = "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ";
+"search" = "ಹುಡುಕಿ";
+"filter" = "ಫಿಲ್ಟರ್";
+"status" = "ಸ್ಥಿತಿ";
+"product" = "ಉತ್ಪನ್ನ";
+"all" = "ಎಲ್ಲಾ";
+"processing" = "ಪ್ರಕ್ರಿಯೆಯಲ್ಲಿದೆ";
+"completed" = "ಪೂರ್ಣಗೊಂಡಿದೆ";
+"rejected" = "ತಿರಸ್ಕರಿಸಲಾಗಿದೆ";
+"today" = "ಇಂದು";
+"yesterday" = "ನಿನ್ನೆ";
+
+"statusActive" = "ಸಕ್ರಿಯ";
+"statusWithdrawn" = "ಹಿಂಪಡೆಯಲಾಗಿದೆ";
+"statusExpired" = "ಅವಧಿ ಮೀರಿದೆ";
+"statusDeclined" = "ತಿರಸ್ಕರಿಸಲಾಗಿದೆ";
+
+"requestType" = "ವಿನಂತಿ ಪ್ರಕಾರ";
+"selectRequestType" = "ದಯವಿಟ್ಟು ನೀವು ಮಾಡಲು ಬಯಸುವ ವಿನಂತಿಯ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ";
+"access" = "ಪ್ರವೇಶ";
+"correction" = "ತಿದ್ದುಪಡಿ";
+"erasure" = "ಅಳಿಸುವಿಕೆ";
+"grievance" = "ದೂರು";
+"nomination" = "ನಾಮನಿರ್ದೇಶನ";
+"supportingDocuments" = "ಪೋಷಕ ದಾಖಲೆಗಳು";
+"uploadFile" = "ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಇಲ್ಲಿ ಕ್ಲಿಕ್ ಮಾಡಿ";
+"additionalNote" = "ಹೆಚ್ಚುವರಿ ಟಿಪ್ಪಣಿ";
+"additionalNotePlaceholder" = "ಯಾವುದೇ ಹೆಚ್ಚುವರಿ ಸಂದರ್ಭ ಅಥವಾ ಮಾಹಿತಿ ಸೇರಿಸಿ…";
+"iConfirm" = "ಒದಗಿಸಿದ ಮಾಹಿತಿಯು ನಿಖರವಾಗಿದೆ ಎಂದು ನಾನು ದೃಢೀಕರಿಸುತ್ತೇನೆ";
+"caseSubmitted" = "ನಿಮ್ಮ ವಿನಂತಿಯನ್ನು ಸಲ್ಲಿಸಲಾಗಿದೆ";
+"caseId" = "ಪ್ರಕರಣ ID";
+"saveCaseIdNotice" = "ದಯವಿಟ್ಟು ನಿಮ್ಮ ದಾಖಲೆಗಳಿಗಾಗಿ ಈ ಪ್ರಕರಣ ID ಅನ್ನು ಉಳಿಸಿ.";
+
+"direct" = "ನೇರ";
+"nominated" = "ನಾಮನಿರ್ದೇಶಿತ";
+"modifyConsent" = "ಸಮ್ಮತಿ ಮಾರ್ಪಡಿಸಿ";
+"revoke" = "ರದ್ದುಗೊಳಿಸಿ";
+"regrant" = "ಮತ್ತೆ ನೀಡಿ";
+"renew" = "ನವೀಕರಿಸಿ";
+"revokeConfirmTitle" = "ಈ ಸಮ್ಮತಿಯನ್ನು ರದ್ದುಗೊಳಿಸಬೇಕೇ?";
+"revokeConfirmBody" = "ರದ್ದುಗೊಳಿಸುವುದು ಈ ಉದ್ದೇಶಕ್ಕಾಗಿ ನಿಮ್ಮ ಸಮ್ಮತಿಯನ್ನು ಹಿಂಪಡೆಯುತ್ತದೆ. ನೀವು ನಂತರ ಮತ್ತೆ ನೀಡಬಹುದು.";
+"consentRevokedSuccess" = "ಸಮ್ಮತಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ರದ್ದುಗೊಳಿಸಲಾಗಿದೆ.";
+"consentRegrantedSuccess" = "ಸಮ್ಮತಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಮತ್ತೆ ನೀಡಲಾಗಿದೆ.";
+"consentRenewedSuccess" = "ಸಮ್ಮತಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ.";
+"validTill" = "ಮಾನ್ಯ ಅವಧಿ";
+"givenOn" = "ನೀಡಲಾಗಿದೆ";
+"dataElementsLabel" = "ಡೇಟಾ ಅಂಶಗಳು";
+"noConsents" = "ಯಾವುದೇ ಸಮ್ಮತಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ";
+
+"noActivities" = "ಇನ್ನೂ ಯಾವುದೇ ಚಟುವಟಿಕೆಗಳಿಲ್ಲ";
+"loadMore" = "ಇನ್ನಷ್ಟು ಲೋಡ್ ಮಾಡಿ";
+
+"noCases" = "ನೀವು ಇನ್ನೂ ಯಾವುದೇ ವಿನಂತಿಗಳನ್ನು ಎತ್ತಿಲ್ಲ";
+"newRequest" = "ಹೊಸ ವಿನಂತಿ";
+"caseCreatedAt" = "ರಚಿಸಲಾಗಿದೆ";
+"caseDueDate" = "ಬಾಕಿ";
+"sendMessage" = "ಕಳುಹಿಸು";
+"typeMessage" = "ಸಂದೇಶವನ್ನು ಟೈಪ್ ಮಾಡಿ…";
+"attachFile" = "ಫೈಲ್ ಲಗತ್ತಿಸಿ";
+"documentRequest" = "ದಾಖಲೆ ವಿನಂತಿ";
+"uploadDocument" = "ದಾಖಲೆ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ";
+"rejectionReason" = "ತಿರಸ್ಕಾರದ ಕಾರಣ";
+"secureChannelNotice" = "ಸಂದೇಶಗಳನ್ನು ಸುರಕ್ಷಿತ ಚಾನಲ್ ಮೂಲಕ ಕಳುಹಿಸಲಾಗುತ್ತದೆ.";
+
+"grievanceConsentViolation" = "ಸಮ್ಮತಿ ಉಲ್ಲಂಘನೆ";
+"grievanceUnlawfulProcessing" = "ಕಾನೂನುಬಾಹಿರ ಸಂಸ್ಕರಣೆ";
+"grievanceDataBreach" = "ಡೇಟಾ ಉಲ್ಲಂಘನೆ";
+
+"nomineeEmail" = "ನಾಮನಿರ್ದೇಶಿತ ಇಮೇಲ್";
+"nomineeMobile" = "ನಾಮನಿರ್ದೇಶಿತ ಮೊಬೈಲ್";
+
+"poweredBy" = "Redacto ನಿಂದ ಚಾಲಿತ";
+"somethingWentWrong" = "ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.";
+
+"dataRequestsSubtitleLong" = "ನಿಮ್ಮ ಡೇಟಾವನ್ನು ಪ್ರವೇಶಿಸಲು, ಸರಿಪಡಿಸಲು, ಅಳಿಸಲು ಅಥವಾ ದೂರು ಸಲ್ಲಿಸಲು ವಿನಂತಿಯನ್ನು ಸಲ್ಲಿಸಿ.";
+"contact" = "ಸಂಪರ್ಕ";
+"description" = "ವಿವರಣೆ";
+"attachment" = "ಲಗತ್ತು";
+"saveDraft" = "ಡ್ರಾಫ್ಟ್ ಉಳಿಸಿ";
+"uploadAnotherFile" = "ಮತ್ತೊಂದು ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ";
+"purposeQuestionAccess" = "ನೀವು ಯಾವ ಡೇಟಾವನ್ನು ಪ್ರವೇಶಿಸಲು ಬಯಸುತ್ತೀರಿ?";
+"purposeQuestionErasure" = "ನೀವು ಯಾವ ಡೇಟಾವನ್ನು ಅಳಿಸಲು ಬಯಸುತ್ತೀರಿ?";
+"noPurposes" = "ಯಾವುದೇ ಉದ್ದೇಶಗಳು ಲಭ್ಯವಿಲ್ಲ";
+"dataCollected" = "ಸಂಗ್ರಹಿಸಿದ ಡೇಟಾ";
+"noFieldsAvailable" = "ಯಾವುದೇ ಕ್ಷೇತ್ರಗಳು ಲಭ್ಯವಿಲ್ಲ";
+"selectFieldsToUpdate" = "ನೀವು ನವೀಕರಿಸಲು ಬಯಸುವ ಕ್ಷೇತ್ರಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ";
+"currentValue" = "ಪ್ರಸ್ತುತ ಮೌಲ್ಯ";
+"newValue" = "ಹೊಸ ಮೌಲ್ಯ";
+"noGrievanceTypes" = "ಯಾವುದೇ ದೂರು ಪ್ರಕಾರಗಳು ಲಭ್ಯವಿಲ್ಲ";
+"selectGrievanceType" = "ನಿಮ್ಮ ದೂರು ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ";
+"enterNomineeDetails" = "ನಾಮನಿರ್ದೇಶಿತ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ";
+"requestSubmittedTitle" = "ವಿನಂತಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ";
+"requestSubmittedSubtitle" = "ನಿಮ್ಮ ವಿನಂತಿಯನ್ನು ಸಲ್ಲಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು";
+"requestSubmittedNotice" = "ಕಾನೂನುಗಳ ಪ್ರಕಾರ 30 ದಿನಗಳ ಒಳಗೆ ನಾವು ನಿಮ್ಮ ವಿನಂತಿಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸುತ್ತೇವೆ";
+
+// My Receipt
+"myReceipt" = "ನನ್ನ ರಶೀದಿ";
+"myReceiptSubtitle" = "ನಿಮ್ಮ ಸಮ್ಮತಿ ರಶೀದಿಗಳನ್ನು ವೀಕ್ಷಿಸಿ";
+"event" = "ಘಟನೆ";
+"date" = "ದಿನಾಂಕ";
+"time" = "ಸಮಯ";
+"download" = "ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ";
+"consentGranted" = "ಸಮ್ಮತಿ ನೀಡಲಾಗಿದೆ";
+"consentRevoked" = "ಸಮ್ಮತಿ ಹಿಂಪಡೆಯಲಾಗಿದೆ";
+"consentDeclined" = "ಸಮ್ಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ";
+"consentExpired" = "ಸಮ್ಮತಿ ಅವಧಿ ಮುಗಿದಿದೆ";
+"failedToFetchReceipts" = "ರಶೀದಿಗಳನ್ನು ಪಡೆಯಲು ವಿಫಲವಾಗಿದೆ";
+"failedToDownloadReceipt" = "ರಶೀದಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ";
+"consented" = "ಸಮ್ಮತಿಸಲಾಗಿದೆ";
+"declined" = "ನಿರಾಕರಿಸಲಾಗಿದೆ";
+"withdrawn" = "ಹಿಂಪಡೆಯಲಾಗಿದೆ";
+"dateRange" = "ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ";
+"allTime" = "ಎಲ್ಲಾ ಸಮಯ";
+"customRange" = "ಕಸ್ಟಮ್ ವ್ಯಾಪ್ತಿ";
+"from" = "ಇಂದ";
+"to" = "ವರೆಗೆ";
+"clearFilters" = "ಫಿಲ್ಟರ್‌ಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ";
+"last7Days" = "ಕಳೆದ 7 ದಿನಗಳು";
+"last30Days" = "ಕಳೆದ 30 ದಿನಗಳು";
+"last3Months" = "ಕಳೆದ 3 ತಿಂಗಳು";
+"noData" = "ಡೇಟಾ ಇಲ್ಲ";
+
+// No data empty state
+"noDataTitle" = "ಇನ್ನೂ ತೋರಿಸಲು ಏನೂ ಇಲ್ಲ";
+"noDataDescription" = "ನಿಮ್ಮ ಖಾತೆಗೆ ಸಂಬಂಧಿಸಿದ ಯಾವುದೇ ಸಮ್ಮತಿಗಳು, ವಿನಂತಿಗಳು ಅಥವಾ ಚಟುವಟಿಕೆ ನಮಗೆ ಇನ್ನೂ ಕಂಡುಬಂದಿಲ್ಲ. ನಿಮ್ಮ ಗೌಪ್ಯತಾ ದಾಖಲೆಗಳು ಲಭ್ಯವಾದ ತಕ್ಷಣ ಅವು ಇಲ್ಲಿ ಗೋಚರಿಸುತ್ತವೆ.";

@@ -1,0 +1,152 @@
+// Privacy Center — Sindhi (سنڌي)
+
+"yourPrivacyCenter" = "توهانجو پرائيويسي سينٽر";
+"manageConsent" = "رضامندي جو انتظام";
+"manageConsentSubtitle" = "پنهنجون سڀئي رضامنديون هڪ ئي جاءِ تي ڏسو ۽ منظم ڪريو";
+"dataRequests" = "ڊيٽا درخواستون";
+"dataRequestsSubtitle" = "پنهنجي ڊيٽا حقن جو استعمال ڪريو";
+"grievanceRequests" = "ڊيٽا درخواست داخل ڪريو";
+"grievanceSubtitle" = "پنهنجن حقن جو استعمال ڪريو";
+"activities" = "سرگرميون";
+"activitiesSubtitle" = "پنهنجي ڊيٽا درخواست ۽ رضامندي جي سرگرمي جو پيڇو ڪريو";
+"caseHistory" = "ڪيس تاريخ";
+"consents" = "رضامنديون";
+"requests" = "درخواستون";
+"caseDetails" = "ڪيس تفصيل";
+"requestDetails" = "درخواست تفصيل";
+"messages" = "پيغام";
+"back" = "واپس";
+"signOut" = "سائن آئوٽ";
+"cancel" = "منسوخ ڪريو";
+"submit" = "جمع ڪرايو";
+"save" = "محفوظ ڪريو";
+"close" = "بند ڪريو";
+"confirm" = "تصديق ڪريو";
+"continue" = "جاري رکو";
+"loading" = "لوڊ ٿي رهيو آهي…";
+"error" = "خرابي";
+"retry" = "ٻيهر ڪوشش ڪريو";
+"search" = "ڳوليو";
+"filter" = "فلٽر";
+"status" = "حالت";
+"product" = "پراڊڪٽ";
+"all" = "سڀ";
+"processing" = "هلچل ۾";
+"completed" = "مڪمل";
+"rejected" = "رد ٿيل";
+"today" = "اڄ";
+"yesterday" = "ڪالهه";
+
+"statusActive" = "فعال";
+"statusWithdrawn" = "واپس ورتل";
+"statusExpired" = "مدت پوري";
+"statusDeclined" = "رد ٿيل";
+
+"requestType" = "درخواست جو قسم";
+"selectRequestType" = "مهرباني ڪري اهو درخواست قسم چونڊيو جيڪو توهان ڪرڻ چاهيو ٿا";
+"access" = "رسائي";
+"correction" = "اصلاح";
+"erasure" = "حذف";
+"grievance" = "شڪايت";
+"nomination" = "نامزدگي";
+"supportingDocuments" = "معاون دستاويز";
+"uploadFile" = "فائل اپ لوڊ ڪرڻ لاءِ هتي ڪلڪ ڪريو";
+"additionalNote" = "اضافي نوٽ";
+"additionalNotePlaceholder" = "ڪا به اضافي معلومات يا مفهوم شامل ڪريو…";
+"iConfirm" = "آئون تصديق ڪريان ٿو ته فراهم ڪيل معلومات صحيح آهي";
+"caseSubmitted" = "توهانجي درخواست جمع ڪئي وئي آهي";
+"caseId" = "ڪيس آءِ ڊي";
+"saveCaseIdNotice" = "مهرباني ڪري پنهنجي رڪارڊ لاءِ هي ڪيس آءِ ڊي محفوظ ڪريو۔";
+
+"direct" = "سڌو";
+"nominated" = "نامزد";
+"modifyConsent" = "رضامندي ۾ تبديلي";
+"revoke" = "منسوخ ڪريو";
+"regrant" = "ٻيهر ڏيو";
+"renew" = "تجديد ڪريو";
+"revokeConfirmTitle" = "هي رضامندي منسوخ ڪجي؟";
+"revokeConfirmBody" = "منسوخ ڪرڻ سان هن مقصد لاءِ توهانجي رضامندي واپس ورتي ويندي۔ توهان بعد ۾ ٻيهر ڏئي سگهو ٿا۔";
+"consentRevokedSuccess" = "رضامندي ڪاميابي سان منسوخ ڪئي وئي۔";
+"consentRegrantedSuccess" = "رضامندي ڪاميابي سان ٻيهر ڏني وئي۔";
+"consentRenewedSuccess" = "رضامندي ڪاميابي سان تجديد ڪئي وئي۔";
+"validTill" = "تاريخ تائين معتبر";
+"givenOn" = "ڏني وئي";
+"dataElementsLabel" = "ڊيٽا عنصر";
+"noConsents" = "ڪابه رضامندي نه ملي";
+
+"noActivities" = "اڃا تائين ڪابه سرگرمي ناهي";
+"loadMore" = "وڌيڪ لوڊ ڪريو";
+
+"noCases" = "توهان اڃا تائين ڪابه درخواست داخل نه ڪئي آهي";
+"newRequest" = "نئين درخواست";
+"caseCreatedAt" = "ٺاهي وئي";
+"caseDueDate" = "آخري تاريخ";
+"sendMessage" = "موڪليو";
+"typeMessage" = "پيغام لکو…";
+"attachFile" = "فائل ڳنڍيو";
+"documentRequest" = "دستاويز درخواست";
+"uploadDocument" = "دستاويز اپلوڊ ڪريو";
+"rejectionReason" = "رد ڪرڻ جو سبب";
+"secureChannelNotice" = "پيغام محفوظ چينل ذريعي موڪليا ويندا آهن۔";
+
+"grievanceConsentViolation" = "رضامندي جي ڀڃڪڙي";
+"grievanceUnlawfulProcessing" = "غير قانوني پروسيسنگ";
+"grievanceDataBreach" = "ڊيٽا جي ڀڃڪڙي";
+
+"nomineeEmail" = "نامزد اي ميل";
+"nomineeMobile" = "نامزد موبائل";
+
+"poweredBy" = "Redacto پاران هلايل";
+"somethingWentWrong" = "ڪجهه غلط ٿيو۔ مهرباني ڪري ٻيهر ڪوشش ڪريو۔";
+
+"dataRequestsSubtitleLong" = "پنهنجي ڊيٽا تائين رسائي، اصلاح، حذف يا شڪايت داخل ڪرڻ لاءِ درخواست جمع ڪرايو۔";
+"contact" = "رابطو";
+"description" = "تفصيل";
+"attachment" = "منسلڪ";
+"saveDraft" = "مسودو محفوظ ڪريو";
+"uploadAnotherFile" = "ٻي فائل اپلوڊ ڪريو";
+"purposeQuestionAccess" = "توهان ڪهڙي ڊيٽا تائين رسائي چاهيو ٿا؟";
+"purposeQuestionErasure" = "توهان ڪهڙي ڊيٽا حذف ڪرڻ چاهيو ٿا؟";
+"noPurposes" = "ڪابه مقصد دستياب ناهي";
+"dataCollected" = "گڏ ڪيل ڊيٽا";
+"noFieldsAvailable" = "ڪابه فيلڊ دستياب ناهي";
+"selectFieldsToUpdate" = "اهي فيلڊون چونڊيو جن کي توهان اپڊيٽ ڪرڻ چاهيو ٿا";
+"currentValue" = "موجوده قدر";
+"newValue" = "نئون قدر";
+"noGrievanceTypes" = "ڪوبه شڪايت قسم دستياب ناهي";
+"selectGrievanceType" = "پنهنجو شڪايت قسم چونڊيو";
+"enterNomineeDetails" = "نامزد فرد جا تفصيل داخل ڪريو";
+"requestSubmittedTitle" = "درخواست ڪاميابي سان جمع ڪئي وئي";
+"requestSubmittedSubtitle" = "پنهنجي درخواست جمع ڪرڻ لاءِ مهرباني";
+"requestSubmittedNotice" = "اسان قانون موجب 30 ڏينهن اندر توهانجي درخواست تي عمل ڪنداسين";
+
+// My Receipt
+"myReceipt" = "منهنجي رسيد";
+"myReceiptSubtitle" = "پنهنجون رضامندي جون رسيدون ڏسو";
+"event" = "واقعو";
+"date" = "تاريخ";
+"time" = "وقت";
+"download" = "ڊائون لوڊ ڪريو";
+"consentGranted" = "رضامندي ڏني وئي";
+"consentRevoked" = "رضامندي واپس ورتي وئي";
+"consentDeclined" = "رضامندي رد ڪئي وئي";
+"consentExpired" = "رضامندي ختم ٿي وئي";
+"failedToFetchReceipts" = "رسيدون حاصل ڪرڻ ۾ ناڪام";
+"failedToDownloadReceipt" = "رسيد ڊائون لوڊ ڪرڻ ۾ ناڪام";
+"consented" = "رضامندي ڏني";
+"declined" = "رد ڪيل";
+"withdrawn" = "واپس ورتل";
+"dateRange" = "تاريخ جي حد";
+"allTime" = "سمورو وقت";
+"customRange" = "ڪسٽم حد";
+"from" = "کان";
+"to" = "تائين";
+"clearFilters" = "فلٽر صاف ڪريو";
+"last7Days" = "گذريل 7 ڏينهن";
+"last30Days" = "گذريل 30 ڏينهن";
+"last3Months" = "گذريل 3 مهينا";
+"noData" = "ڊيٽا ڪانهي";
+
+// No data empty state
+"noDataTitle" = "اڃا ڏيکارڻ لاءِ ڪجهه ناهي";
+"noDataDescription" = "اسان کي اڃا تائين توهان جي اڪائونٽ سان لاڳاپيل ڪابه رضامندي، درخواست يا سرگرمي نه ملي. توهان جا رازداري رڪارڊ موجود ٿيندي ئي هتي ظاهر ٿيندا.";

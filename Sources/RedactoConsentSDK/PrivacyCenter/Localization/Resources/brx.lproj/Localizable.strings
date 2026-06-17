@@ -1,0 +1,152 @@
+// Privacy Center — Bodo (बड़ो)
+
+"yourPrivacyCenter" = "नोंथांगनि प्राइवेसी सेन्टार";
+"manageConsent" = "अनुमति परिचालना";
+"manageConsentSubtitle" = "नोंथांगनि गासै अनुमतिखौ मोनसे जायगायाव नायगिरना आरो परिचालना खालाम";
+"dataRequests" = "डाटा खौरांथिनि";
+"dataRequestsSubtitle" = "नोंथांगनि डाटा हकखौ बाहाय";
+"grievanceRequests" = "डाटा खौरांथि होनो";
+"grievanceSubtitle" = "नोंथांगनि हकखौ बाहाय";
+"activities" = "हाबाफारिफोर";
+"activitiesSubtitle" = "नोंथांगनि डाटा खौरांथि आरो अनुमति हाबाफारिखौ ट्रैक खालाम";
+"caseHistory" = "केस फारि";
+"consents" = "अनुमतिफोर";
+"requests" = "खौरांथिफोर";
+"caseDetails" = "केस गुबुनथि";
+"requestDetails" = "खौरांथि गुबुनथि";
+"messages" = "खौरांफोर";
+"back" = "बिन्दि";
+"signOut" = "साइन आउट";
+"cancel" = "बातिल खालाम";
+"submit" = "जमा खालाम";
+"save" = "सानगिरना दोन";
+"close" = "बन्द खालाम";
+"confirm" = "गुबै खालाम";
+"continue" = "सालाय दोन";
+"loading" = "लोड जादों…";
+"error" = "गोरोबथाव";
+"retry" = "फैसे थां सायख";
+"search" = "नायगिर";
+"filter" = "फिल्टार";
+"status" = "अवस्था";
+"product" = "उत्पाद";
+"all" = "गासै";
+"processing" = "प्रक्रिया जादों";
+"completed" = "जोबनाय";
+"rejected" = "नागारनाय";
+"today" = "दिनै";
+"yesterday" = "मियायाव";
+
+"statusActive" = "महरै";
+"statusWithdrawn" = "फिनबोनाय";
+"statusExpired" = "समाव सोबनाय";
+"statusDeclined" = "नागारनाय";
+
+"requestType" = "खौरांथि रोखोम";
+"selectRequestType" = "अननानै नोंथांगा खालामनो लुबैयोब्ला बेफोर खौरांथि रोखोमखौ बासिख";
+"access" = "हाबनाय";
+"correction" = "गोनांथि";
+"erasure" = "खोमोरगिरना";
+"grievance" = "गोरोबथाव";
+"nomination" = "नामनिर्देश";
+"supportingDocuments" = "हेफाजाब दस्तावेजफोर";
+"uploadFile" = "फाइलखौ अपलोड खालामनो बेयाव क्लिक खालाम";
+"additionalNote" = "बाजोब टिप्पणी";
+"additionalNotePlaceholder" = "जायगाव बाजोब प्रसंग एबा खौरां सानहो…";
+"iConfirm" = "आं गुबै खालामो होनाय खौरांया गुबै";
+"caseSubmitted" = "नोंथांगनि खौरांथिखौ जमा खालामबाय";
+"caseId" = "केस ID";
+"saveCaseIdNotice" = "अननानै नोंथांगनि रिकर्डनि थाखाय बे केस ID सानगिरना दोन।";
+
+"direct" = "जोखोम";
+"nominated" = "नामनिर्देशित";
+"modifyConsent" = "अनुमति सोलाय";
+"revoke" = "फिनबो";
+"regrant" = "फैसे थां हो";
+"renew" = "गोदान खालाम";
+"revokeConfirmTitle" = "बे अनुमतिखौ फिनबोनाय?";
+"revokeConfirmBody" = "फिनबोब्ला बे लामायाव नोंथांगनि अनुमतिखौ फिनबोनाय जागोन। नोंथांगा उन्दै फैसे थां होनो हागोन।";
+"consentRevokedSuccess" = "अनुमतिया जाफुंसारै फिनबोनाय जाबाय।";
+"consentRegrantedSuccess" = "अनुमतिया जाफुंसारै फैसे थां होनाय जाबाय।";
+"consentRenewedSuccess" = "अनुमतिया जाफुंसारै गोदान खालामनाय जाबाय।";
+"validTill" = "थाखाय गुबै";
+"givenOn" = "होनाय";
+"dataElementsLabel" = "डाटा एलिमेन्ट";
+"noConsents" = "जायगा अनुमति मोनैय";
+
+"noActivities" = "दानो जायगा हाबाफारि गैया";
+"loadMore" = "गोबां लोड खालाम";
+
+"noCases" = "नोंथांगा दानो जायगा खौरांथि होया";
+"newRequest" = "गोदान खौरांथि";
+"caseCreatedAt" = "दिहुनै";
+"caseDueDate" = "जोबथा";
+"sendMessage" = "दैथाय";
+"typeMessage" = "खौरां लिर…";
+"attachFile" = "फाइल बानाय";
+"documentRequest" = "दस्तावेज खौरांथि";
+"uploadDocument" = "दस्तावेज अपलोड";
+"rejectionReason" = "नागारनाय जाहोन";
+"secureChannelNotice" = "खौरांफोरखौ रैखाथि चेनेलजों दैथायजायो।";
+
+"grievanceConsentViolation" = "अनुमति उल्लंघन";
+"grievanceUnlawfulProcessing" = "बेकानुनि प्रक्रिया";
+"grievanceDataBreach" = "डाटा उल्लंघन";
+
+"nomineeEmail" = "नामनिर्देशित ईमेल";
+"nomineeMobile" = "नामनिर्देशित मोबाइल";
+
+"poweredBy" = "Redacto-जों चालायनाय";
+"somethingWentWrong" = "मा बा गोरोबथाव जादों। अननानै फैसे थां सायख।";
+
+"dataRequestsSubtitleLong" = "नोंथांगनि डाटायाव हाबनाय, गोनांथि, खोमोरगिरना एबा गोरोबथाव होनोनो खौरांथि जमा खालाम।";
+"contact" = "जोनोम";
+"description" = "गुबुनथि";
+"attachment" = "बानाय";
+"saveDraft" = "ड्राफ्ट सानगिरना दोन";
+"uploadAnotherFile" = "गुबुन फाइल अपलोड";
+"purposeQuestionAccess" = "नोंथांगा बेसेबा डाटायाव हाबनो लुबैयो?";
+"purposeQuestionErasure" = "नोंथांगा बेसेबा डाटाखौ खोमोरनो लुबैयो?";
+"noPurposes" = "जायगा फिथाय गैया";
+"dataCollected" = "जौथायनाय डाटा";
+"noFieldsAvailable" = "जायगा फिल्ड गैया";
+"selectFieldsToUpdate" = "नोंथांगा गोदान खालामनो लुबैयोब्ला फिल्डखौ बासिख";
+"currentValue" = "दानै बेसेन";
+"newValue" = "गोदान बेसेन";
+"noGrievanceTypes" = "जायगा गोरोबथाव रोखोम गैया";
+"selectGrievanceType" = "नोंथांगनि गोरोबथाव रोखोम बासिख";
+"enterNomineeDetails" = "नामनिर्देशितनि गुबुनथि लिर";
+"requestSubmittedTitle" = "खौरांथि जाफुंसारै जमा जाबाय";
+"requestSubmittedSubtitle" = "नोंथांगनि खौरांथि जमा खालामनायनि थाखाय जोनाय";
+"requestSubmittedNotice" = "जों कानुन समायना 30 साननि भितरै नोंथांगनि खौरांथिखौ प्रक्रिया खालामगोन";
+
+// My Receipt
+"myReceipt" = "आंनि रसिद";
+"myReceiptSubtitle" = "नोंथांनि सहमतिनि रसिदफोरखौ नाय";
+"event" = "जाथाय";
+"date" = "तारिख";
+"time" = "समाय";
+"download" = "डाउनलोड खालाम";
+"consentGranted" = "सहमति होबाय";
+"consentRevoked" = "सहमति वापस लाबाय";
+"consentDeclined" = "सहमति नेवबाय";
+"consentExpired" = "सहमतिनि समाय जोबाय";
+"failedToFetchReceipts" = "रसिदफोरखौ मोननो हायाखै";
+"failedToDownloadReceipt" = "रसिदखौ डाउनलोड खालामनो हायाखै";
+"consented" = "सहमति होबाय";
+"declined" = "नेवबाय";
+"withdrawn" = "वापस लाबाय";
+"dateRange" = "तारिख सिमा";
+"allTime" = "गासै सम";
+"customRange" = "कस्टम सिमा";
+"from" = "निफ्राय";
+"to" = "सिम";
+"clearFilters" = "फिल्टार सावदिन खालाम";
+"last7Days" = "गोदानि 7 सान";
+"last30Days" = "गोदानि 30 सान";
+"last3Months" = "गोदानि 3 दाव";
+"noData" = "डेटा नंगौ";
+
+// No data empty state
+"noDataTitle" = "दानो दिनथिनो थाखाय जेबो गैया";
+"noDataDescription" = "दानो सम नोंथांनि एकाउन्टजों सोमोन्दो थानाय जेबो सहमति, हाबाय एबा खामानि जों मोननो हायाखै। नोंथांनि गोपनीयथा रिकर्डफोर मोननो हानाय बादि बेयावनो दिनथिजागोन।";

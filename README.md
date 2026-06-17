@@ -17,14 +17,14 @@ In Xcode:
 1. Open **File > Add Package Dependencies...**
 2. Enter the repository URL:
    - `https://github.com/redactolabs/consent-sdk-ios.git`
-3. Select a release version (for example `0.0.4`).
+3. Select a release version (for example `1.1.0`).
 4. Add the `RedactoConsentSDK` product to your app target.
 
 Or via `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/redactolabs/consent-sdk-ios.git", from: "0.0.4")
+    .package(url: "https://github.com/redactolabs/consent-sdk-ios.git", from: "1.1.0")
 ]
 ```
 
@@ -37,7 +37,7 @@ platform :ios, '16.0'
 
 target 'YourApp' do
   use_frameworks!
-  pod 'RedactoConsentSDK', '~> 0.0'
+  pod 'RedactoConsentSDK', '~> 1.1'
 end
 ```
 

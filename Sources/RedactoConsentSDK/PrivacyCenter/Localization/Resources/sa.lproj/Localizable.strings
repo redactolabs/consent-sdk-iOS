@@ -1,0 +1,152 @@
+// Privacy Center — Sanskrit (संस्कृतम्)
+
+"yourPrivacyCenter" = "भवतः गोपनीयताकेन्द्रम्";
+"manageConsent" = "अनुमतिप्रबन्धनम्";
+"manageConsentSubtitle" = "एकत्र भवतः सर्वाणि अनुमतीनि अन्वेषयतु प्रबन्धयतु च";
+"dataRequests" = "दत्तांशनिवेदनानि";
+"dataRequestsSubtitle" = "भवतः दत्तांशाधिकारान् उपयुङ्क्ताम्";
+"grievanceRequests" = "दत्तांशनिवेदनं प्रस्तौतु";
+"grievanceSubtitle" = "भवतः अधिकारान् उपयुङ्क्ताम्";
+"activities" = "क्रियाकलापाः";
+"activitiesSubtitle" = "भवतः दत्तांशनिवेदनं अनुमतिक्रियाकलापं च अनुसरतु";
+"caseHistory" = "वादेतिहासः";
+"consents" = "अनुमतयः";
+"requests" = "निवेदनानि";
+"caseDetails" = "वादविवरणम्";
+"requestDetails" = "निवेदनविवरणम्";
+"messages" = "सन्देशाः";
+"back" = "प्रत्यागमनम्";
+"signOut" = "बहिर्गमनम्";
+"cancel" = "निरस्यताम्";
+"submit" = "प्रस्तौतु";
+"save" = "रक्षतु";
+"close" = "पिधीयताम्";
+"confirm" = "दृढीकरोतु";
+"continue" = "सततं स्थापयतु";
+"loading" = "उन्मीयते…";
+"error" = "त्रुटिः";
+"retry" = "पुनः प्रयासयतु";
+"search" = "अन्वेषयतु";
+"filter" = "वर्गीकरणम्";
+"status" = "स्थितिः";
+"product" = "उत्पादम्";
+"all" = "सर्वम्";
+"processing" = "प्रक्रियायाम्";
+"completed" = "समाप्तम्";
+"rejected" = "अस्वीकृतम्";
+"today" = "अद्य";
+"yesterday" = "ह्यः";
+
+"statusActive" = "सक्रियम्";
+"statusWithdrawn" = "प्रत्यावर्तितम्";
+"statusExpired" = "कालातीतम्";
+"statusDeclined" = "अस्वीकृतम्";
+
+"requestType" = "निवेदनप्रकारः";
+"selectRequestType" = "कृपया यं निवेदनप्रकारं भवान् कर्तुम् इच्छति तं चिनोतु";
+"access" = "प्रवेशः";
+"correction" = "संशोधनम्";
+"erasure" = "विलोपनम्";
+"grievance" = "अभियोगः";
+"nomination" = "नामनिर्देशः";
+"supportingDocuments" = "सहायकपत्राणि";
+"uploadFile" = "सञ्चिकाम् अपलोडयितुम् अत्र क्लिक्यताम्";
+"additionalNote" = "अतिरिक्तटिप्पणी";
+"additionalNotePlaceholder" = "किमपि अतिरिक्तं प्रसङ्गं वा सूचनां वा योजयतु…";
+"iConfirm" = "अहं दृढीकरोमि यत् दत्तसूचना सत्या अस्ति";
+"caseSubmitted" = "भवतः निवेदनं प्रस्तुतम् अस्ति";
+"caseId" = "वाद-आईडी";
+"saveCaseIdNotice" = "कृपया स्वाभिलेखाय एनं वाद-आईडी रक्षतु।";
+
+"direct" = "साक्षात्";
+"nominated" = "नामनिर्दिष्टः";
+"modifyConsent" = "अनुमतिं परिवर्तयतु";
+"revoke" = "प्रत्यावर्तयतु";
+"regrant" = "पुनर्दत्तु";
+"renew" = "नवीकरोतु";
+"revokeConfirmTitle" = "एषा अनुमतिः प्रत्यावर्त्यताम्?";
+"revokeConfirmBody" = "प्रत्यावर्तने अस्मै प्रयोजनाय भवतः अनुमतिः प्रत्याहर्ता भविष्यति। भवान् पश्चात् पुनर्दातुं शक्नोति।";
+"consentRevokedSuccess" = "अनुमतिः सफलतया प्रत्यावर्तिता।";
+"consentRegrantedSuccess" = "अनुमतिः सफलतया पुनर्दत्ता।";
+"consentRenewedSuccess" = "अनुमतिः सफलतया नवीकृता।";
+"validTill" = "यावत् वैधम्";
+"givenOn" = "दत्ता";
+"dataElementsLabel" = "दत्तांशतत्त्वाः";
+"noConsents" = "अनुमतयः न प्राप्ताः";
+
+"noActivities" = "अद्यापि कोऽपि क्रियाकलापः नास्ति";
+"loadMore" = "अधिकं लोड्यताम्";
+
+"noCases" = "भवान् अद्यापि किमपि निवेदनं न प्रस्तुतवान्";
+"newRequest" = "नवीनं निवेदनम्";
+"caseCreatedAt" = "सृष्टम्";
+"caseDueDate" = "अन्तिमतिथिः";
+"sendMessage" = "प्रेषयतु";
+"typeMessage" = "सन्देशं लिखतु…";
+"attachFile" = "सञ्चिकां योजयतु";
+"documentRequest" = "पत्रनिवेदनम्";
+"uploadDocument" = "पत्रम् अपलोडयतु";
+"rejectionReason" = "अस्वीकरणकारणम्";
+"secureChannelNotice" = "सन्देशाः सुरक्षितमार्गेण प्रेष्यन्ते।";
+
+"grievanceConsentViolation" = "अनुमतिभङ्गः";
+"grievanceUnlawfulProcessing" = "अवैधप्रक्रिया";
+"grievanceDataBreach" = "दत्तांशभङ्गः";
+
+"nomineeEmail" = "नामनिर्दिष्टस्य ईमेल";
+"nomineeMobile" = "नामनिर्दिष्टस्य भ्रमणभाषः";
+
+"poweredBy" = "Redacto द्वारा संचालितम्";
+"somethingWentWrong" = "किमपि अशुद्धम् अभवत्। कृपया पुनः प्रयासयतु।";
+
+"dataRequestsSubtitleLong" = "स्वदत्तांशस्य प्रवेशाय, संशोधनाय, विलोपनाय, अभियोगाय वा निवेदनं प्रस्तौतु।";
+"contact" = "सम्पर्कः";
+"description" = "विवरणम्";
+"attachment" = "संलग्नकम्";
+"saveDraft" = "मसूदां रक्षतु";
+"uploadAnotherFile" = "अन्यां सञ्चिकाम् अपलोडयतु";
+"purposeQuestionAccess" = "भवान् कं दत्तांशं प्रवेष्टुम् इच्छति?";
+"purposeQuestionErasure" = "भवान् कं दत्तांशं विलोप्तुम् इच्छति?";
+"noPurposes" = "कोऽपि प्रयोजनं न उपलब्धम्";
+"dataCollected" = "सङ्गृहीतो दत्तांशः";
+"noFieldsAvailable" = "किमपि क्षेत्रं नोपलब्धम्";
+"selectFieldsToUpdate" = "यानि क्षेत्राणि भवान् नवीकर्तुम् इच्छति तानि चिनोतु";
+"currentValue" = "वर्तमानं मूल्यम्";
+"newValue" = "नवीनं मूल्यम्";
+"noGrievanceTypes" = "अभियोगप्रकाराः न उपलब्धाः";
+"selectGrievanceType" = "स्वस्य अभियोगप्रकारं चिनोतु";
+"enterNomineeDetails" = "नामनिर्दिष्टस्य विवरणं प्रविशतु";
+"requestSubmittedTitle" = "निवेदनं सफलतया प्रस्तुतम्";
+"requestSubmittedSubtitle" = "भवतः निवेदनस्य प्रस्तुत्यर्थं धन्यवादाः";
+"requestSubmittedNotice" = "वयं नियमानुसारं ३० दिनेषु भवतः निवेदनं प्रक्रियायिष्यामः";
+
+// My Receipt
+"myReceipt" = "मम पावती";
+"myReceiptSubtitle" = "भवतः अनुमतिपावत्यः पश्यन्तु";
+"event" = "घटना";
+"date" = "तिथिः";
+"time" = "समयः";
+"download" = "डाउन्लोड् कुरु";
+"consentGranted" = "अनुमतिः प्रदत्ता";
+"consentRevoked" = "अनुमतिः प्रत्याहृता";
+"consentDeclined" = "अनुमतिः अस्वीकृता";
+"consentExpired" = "अनुमतेः अवधिः समाप्ता";
+"failedToFetchReceipts" = "पावत्यः प्राप्तुं असफलम्";
+"failedToDownloadReceipt" = "पावती डाउन्लोड् कर्तुं असफलम्";
+"consented" = "अनुमतम्";
+"declined" = "अस्वीकृतम्";
+"withdrawn" = "प्रत्याहृतम्";
+"dateRange" = "तिथिपरिधिः";
+"allTime" = "सर्वकालः";
+"customRange" = "स्वेच्छापरिधिः";
+"from" = "आरभ्य";
+"to" = "यावत्";
+"clearFilters" = "छाननानि निष्कासयतु";
+"last7Days" = "गत 7 दिनानि";
+"last30Days" = "गत 30 दिनानि";
+"last3Months" = "गत 3 मासानि";
+"noData" = "डेटा नास्ति";
+
+// No data empty state
+"noDataTitle" = "अद्यापि किमपि दर्शयितुं नास्ति";
+"noDataDescription" = "भवतः खातया सह सम्बद्धाः काश्चन सम्मतयः, अनुरोधाः, कार्यकलापाः वा अद्यापि अस्माभिः न प्राप्ताः। उपलब्धाः सति भवतः गोपनीयता-अभिलेखाः अत्र दर्शयिष्यन्ते।";

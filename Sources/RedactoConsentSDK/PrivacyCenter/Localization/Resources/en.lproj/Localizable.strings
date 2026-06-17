@@ -1,0 +1,163 @@
+// Privacy Center — English
+
+// Common
+"yourPrivacyCenter" = "Your Privacy Center";
+"manageConsent" = "Manage Consent";
+"manageConsentSubtitle" = "Explore and manage all your consents in one place";
+"dataRequests" = "Data Requests";
+"dataRequestsSubtitle" = "Exercise your data subject rights";
+"grievanceRequests" = "Raise a Data Request";
+"grievanceSubtitle" = "Exercise your rights";
+"activities" = "Activities";
+"activitiesSubtitle" = "Track your data request and consent activity";
+"caseHistory" = "Case History";
+"consents" = "Consents";
+"requests" = "Requests";
+"caseDetails" = "Case Details";
+"requestDetails" = "Request Details";
+"messages" = "Messages";
+"back" = "Back";
+"signOut" = "Sign Out";
+"cancel" = "Cancel";
+"submit" = "Submit";
+"save" = "Save";
+"close" = "Close";
+"confirm" = "Confirm";
+"continue" = "Continue";
+"loading" = "Loading…";
+"error" = "Error";
+"retry" = "Retry";
+"search" = "Search";
+"filter" = "Filter";
+"status" = "Status";
+"product" = "Product";
+"all" = "All";
+"processing" = "Processing";
+"completed" = "Completed";
+"rejected" = "Rejected";
+"today" = "Today";
+"yesterday" = "Yesterday";
+
+// Statuses
+"statusActive" = "Active";
+"statusWithdrawn" = "Withdrawn";
+"statusExpired" = "Expired";
+"statusDeclined" = "Declined";
+
+// DSR Form
+"requestType" = "Request Type";
+"selectRequestType" = "Please select the type of request you want to make";
+"access" = "Access";
+"correction" = "Correction";
+"erasure" = "Erasure";
+"grievance" = "Grievance";
+"nomination" = "Nomination";
+"supportingDocuments" = "Supporting Documents";
+"uploadFile" = "Click to upload file here";
+"additionalNote" = "Additional Note";
+"additionalNotePlaceholder" = "Add any additional context or information…";
+"iConfirm" = "I confirm the information provided is accurate";
+"caseSubmitted" = "Your request has been submitted";
+"caseId" = "Case ID";
+"saveCaseIdNotice" = "Please save this case ID for your records.";
+
+// Consent Manager
+"direct" = "Direct";
+"nominated" = "Nominated";
+"modifyConsent" = "Modify Consent";
+"revoke" = "Revoke";
+"regrant" = "Regrant";
+"renew" = "Renew";
+"revokeConfirmTitle" = "Revoke this consent?";
+"revokeConfirmBody" = "Revoking will withdraw your consent for this purpose. You can regrant later.";
+"consentRevokedSuccess" = "Consent successfully revoked.";
+"consentRegrantedSuccess" = "Consent successfully regranted.";
+"consentRenewedSuccess" = "Consent successfully renewed.";
+"validTill" = "Valid till";
+"givenOn" = "Given on";
+"dataElementsLabel" = "Data elements";
+"noConsents" = "No consents found";
+
+// Activity
+"noActivities" = "No activities yet";
+"loadMore" = "Load more";
+
+// Case
+"noCases" = "You haven't raised any requests yet";
+"newRequest" = "New Request";
+"caseCreatedAt" = "Created";
+"caseDueDate" = "Due";
+"sendMessage" = "Send";
+"typeMessage" = "Type a message…";
+"attachFile" = "Attach file";
+"documentRequest" = "Document Request";
+"uploadDocument" = "Upload Document";
+"rejectionReason" = "Rejection reason";
+"secureChannelNotice" = "Messages are sent through a secure channel.";
+
+// Grievance subtypes
+"grievanceConsentViolation" = "Consent Violation";
+"grievanceUnlawfulProcessing" = "Unlawful Processing";
+"grievanceDataBreach" = "Data Breach";
+
+// Nomination
+"nomineeEmail" = "Nominee Email";
+"nomineeMobile" = "Nominee Mobile";
+
+// Misc
+"poweredBy" = "Powered by Redacto";
+"somethingWentWrong" = "Something went wrong. Please try again.";
+
+// Hardcoded → migrated
+"dataRequestsSubtitleLong" = "Submit a request to access, correct, erase, or raise a grievance about your data.";
+"contact" = "Contact";
+"description" = "Description";
+"attachment" = "Attachment";
+"saveDraft" = "Save Draft";
+"uploadAnotherFile" = "Upload another file";
+"purposeQuestionAccess" = "What data do you want to access?";
+"purposeQuestionErasure" = "What data do you want to delete?";
+"noPurposes" = "No purposes available";
+"dataCollected" = "Data collected";
+"revocationNotDeletionNote" = "Revoking consent does not delete data the organization already holds. You can still request access to or erasure of this data, including for purposes whose consent you have withdrawn.";
+"noFieldsAvailable" = "No fields available";
+"selectFieldsToUpdate" = "Select the fields you want to update";
+"currentValue" = "Current value";
+"newValue" = "New value";
+"noGrievanceTypes" = "No grievance types available";
+"selectGrievanceType" = "Select your grievance type";
+"enterNomineeDetails" = "Enter nominee details";
+"requestSubmittedTitle" = "Request Submitted Successfully";
+"requestSubmittedSubtitle" = "Thank you for submitting your request";
+"requestSubmittedNotice" = "We will process your request as per laws within 30 days";
+
+// My Receipt
+"myReceipt" = "My Receipt";
+"myReceiptSubtitle" = "View your consent receipts";
+"event" = "Event";
+"date" = "Date";
+"time" = "Time";
+"download" = "Download";
+"consentGranted" = "Consent granted";
+"consentRevoked" = "Consent revoked";
+"consentDeclined" = "Consent declined";
+"consentExpired" = "Consent expired";
+"failedToFetchReceipts" = "Failed to fetch receipts";
+"failedToDownloadReceipt" = "Failed to download receipt";
+"consented" = "Consented";
+"declined" = "Declined";
+"withdrawn" = "Withdrawn";
+"dateRange" = "Date range";
+"allTime" = "All time";
+"customRange" = "Custom range";
+"from" = "From";
+"to" = "To";
+"clearFilters" = "Clear filters";
+"last7Days" = "Last 7 days";
+"last30Days" = "Last 30 days";
+"last3Months" = "Last 3 Months";
+"noData" = "No Data";
+
+// No data empty state
+"noDataTitle" = "Nothing to show yet";
+"noDataDescription" = "We couldn't find any consents, requests, or activity linked to your account yet. Your privacy records will appear here once they're available.";

@@ -56,7 +56,7 @@ struct DpoInfoView: View {
         Text(linkedSentenceText(
             text: getTranslatedDpoText("dpo_text", dpoInfo.dpoText),
             anchor: getTranslatedDpoText("dpo_anchor_text", dpoInfo.dpoAnchorText),
-            urlString: dpoInfo.dpoUrl
+            urlString: dpoInfo.dpoContactUrl ?? ""
         ))
         .foregroundColor(textColor)
         .tint(linkColor)

@@ -1,0 +1,153 @@
+// Privacy Center — Manipuri / Meitei (ꯃꯩꯇꯩꯂꯣꯟ)
+// Note: Some entries use Meitei Mayek; transliterations supplied where script glyphs may not render.
+
+"yourPrivacyCenter" = "নহাক্কী প্রাইভেসী সেন্তর";
+"manageConsent" = "অয়াবা মেনেজমেন্ত";
+"manageConsentSubtitle" = "নহাক্কী পুম্নমক অয়াবা মফম অমদা থিদুনা মেনেজ তৌরো";
+"dataRequests" = "দাতা রিকুএস্ত";
+"dataRequestsSubtitle" = "নহাক্কী দাতা হক শিজিন্নবিয়ু";
+"grievanceRequests" = "দাতা রিকুএস্ত পীয়ু";
+"grievanceSubtitle" = "নহাক্কী হক শিজিন্নবিয়ু";
+"activities" = "থবক";
+"activitiesSubtitle" = "নহাক্কী দাতা রিকুএস্ত অমসুং অয়াবা থবক ত্রেক তৌরো";
+"caseHistory" = "কেস হিস্ত্রী";
+"consents" = "অয়াবশিং";
+"requests" = "রিকুএস্তশিং";
+"caseDetails" = "কেস দিতেইল";
+"requestDetails" = "রিকুএস্ত দিতেইল";
+"messages" = "পাউজেলশিং";
+"back" = "অমুক হনবা";
+"signOut" = "সাইন আউত";
+"cancel" = "কেন্সেল";
+"submit" = "সবমিত";
+"save" = "থম্বা";
+"close" = "লোনথোক";
+"confirm" = "চাল্লকপা";
+"continue" = "মখা চত্থরো";
+"loading" = "লোদ তৌরি…";
+"error" = "অশোয়বা";
+"retry" = "অমুক হোৎনবা";
+"search" = "থিবা";
+"filter" = "ফিল্তর";
+"status" = "ফিভম";
+"product" = "প্রদক্ত";
+"all" = "পুম্নমক";
+"processing" = "লৌশিল্লি";
+"completed" = "লোইরে";
+"rejected" = "যাহন্দে";
+"today" = "ঙসি";
+"yesterday" = "ঙরাং";
+
+"statusActive" = "চৎথরিবা";
+"statusWithdrawn" = "অমুক লৌথোকপা";
+"statusExpired" = "মতম লোইরে";
+"statusDeclined" = "যাহন্দে";
+
+"requestType" = "রিকুএস্ত মখল";
+"selectRequestType" = "চানবিদুনা নহাক্না তৌনিংবা রিকুএস্ত মখল খল্লো";
+"access" = "এক্সেস";
+"correction" = "শেমদোকপা";
+"erasure" = "মুত্থৎপা";
+"grievance" = "ৱাকৎ";
+"nomination" = "মমিং পীবা";
+"supportingDocuments" = "তেংবাংবা দ্বকুমেন্তশিং";
+"uploadFile" = "ফাইল অপলোদ তৌনবা মফমদা ক্লিক তৌরো";
+"additionalNote" = "অহেনবা নোত";
+"additionalNotePlaceholder" = "অতৈ অহেনবা পাউ নৎত্রগা ৱারোল হাপচিল্লো…";
+"iConfirm" = "পীরিবা পাউশিং অশী চানবিনি হায়না ঐনা চাল্লকপা পীজরি";
+"caseSubmitted" = "নহাক্কী রিকুএস্ত সবমিত তৌরে";
+"caseId" = "কেস আইদী";
+"saveCaseIdNotice" = "নহাক্কী রিকর্দকীদমক কেস আইদী অসি থম্বিয়ু।";
+
+"direct" = "মঙোন্দা";
+"nominated" = "মমিং পীবা";
+"modifyConsent" = "অয়াবা শেমদোকপা";
+"revoke" = "অমুক লৌথোকপা";
+"regrant" = "অমুক পীবা";
+"renew" = "অনৌবা ওইহন্বা";
+"revokeConfirmTitle" = "অয়াবা অসি লৌথোক্ক্রা?";
+"revokeConfirmBody" = "লৌথোকপগী অহেনবা পান্দম অসিগীদমক নহাক্কী অয়াবা লৌথোকখিগনি। মতুংদা অমুক পীবা যাই।";
+"consentRevokedSuccess" = "অয়াবা মাইপাকপগা লোইননা লৌথোকখ্রে।";
+"consentRegrantedSuccess" = "অয়াবা মাইপাকপগা লোইননা অমুক পীখ্রে।";
+"consentRenewedSuccess" = "অয়াবা মাইপাকপগা লোইননা অনৌবা ওইহন্নখ্রে।";
+"validTill" = "ফাওবা চৎনৈ";
+"givenOn" = "পীখিবা";
+"dataElementsLabel" = "দাতা এলিমেন্তশিং";
+"noConsents" = "অয়াবা অমত্তা ফংদে";
+
+"noActivities" = "হৌজিক ফাওবা থবক অমত্তা লেইতে";
+"loadMore" = "হেন্না লোদ তৌরো";
+
+"noCases" = "নহাক্না হৌজিক ফাওবা রিকুএস্ত অমত্তা পীদ্রি";
+"newRequest" = "অনৌবা রিকুএস্ত";
+"caseCreatedAt" = "শেম্বা";
+"caseDueDate" = "অরোইবা মতম";
+"sendMessage" = "থানবা";
+"typeMessage" = "পাউজেল তাইপ তৌরো…";
+"attachFile" = "ফাইল অতেচ তৌরো";
+"documentRequest" = "দ্বকুমেন্ত রিকুএস্ত";
+"uploadDocument" = "দ্বকুমেন্ত অপলোদ";
+"rejectionReason" = "যাহন্দবগী মরম";
+"secureChannelNotice" = "পাউজেলশিং নিংথিবা চেনেলগী খুৎথাংদা থাজরি।";
+
+"grievanceConsentViolation" = "অয়াবা ৱাহং থুগায়বা";
+"grievanceUnlawfulProcessing" = "চৎনদবা প্রসেসিং";
+"grievanceDataBreach" = "দাতা থুগায়বা";
+
+"nomineeEmail" = "মমিং পীবগী ইমেইল";
+"nomineeMobile" = "মমিং পীবগী মোবাইল";
+
+"poweredBy" = "Redacto-না চলায়রি";
+"somethingWentWrong" = "করিগুম্বা অশোয়বা ওইরে। চানবিদুনা অমুক হোৎনবিয়ু।";
+
+"dataRequestsSubtitleLong" = "নহাক্কী দাতাদা এক্সেস, শেমদোকপা, মুত্থৎপা নৎত্রগা ৱাকৎ পীনবা রিকুএস্ত অমা সবমিত তৌরো।";
+"contact" = "পাও ফাওনবা";
+"description" = "বর্ণনা";
+"attachment" = "অতেচমেন্ত";
+"saveDraft" = "দ্রাফ্ত থম্বা";
+"uploadAnotherFile" = "অতোপ্পা ফাইল অপলোদ";
+"purposeQuestionAccess" = "নহাক্না করি দাতাদা এক্সেস তৌনিংবগে?";
+"purposeQuestionErasure" = "নহাক্না করি দাতা মুত্থৎনিংবগে?";
+"noPurposes" = "পান্দম অমত্তা ফংদে";
+"dataCollected" = "খোম্জিনবা দাতা";
+"noFieldsAvailable" = "ফিল্দ অমত্তা ফংদে";
+"selectFieldsToUpdate" = "নহাক্না অপদেত তৌনিংবা ফিল্দশিং খল্লো";
+"currentValue" = "হৌজিক্কী মমল";
+"newValue" = "অনৌবা মমল";
+"noGrievanceTypes" = "ৱাকৎ মখল অমত্তা ফংদে";
+"selectGrievanceType" = "নহাক্কী ৱাকৎ মখল খল্লো";
+"enterNomineeDetails" = "মমিং পীবগী দিতেইল হাপচিল্লো";
+"requestSubmittedTitle" = "রিকুএস্ত মাইপাকপগা লোইননা সবমিত তৌরে";
+"requestSubmittedSubtitle" = "নহাক্কী রিকুএস্ত সবমিত তৌবিবদা থাগৎচরি";
+"requestSubmittedNotice" = "ঐখোয়না ৱাযেলগী মতুং ইন্না নুমিৎ ৩০গী মনুংদা নহাক্কী রিকুএস্ত প্রসেস তৌগনি";
+
+// My Receipt
+"myReceipt" = "ꯑꯩꯒꯤ ꯔꯁꯤꯗ";
+"myReceiptSubtitle" = "ꯅꯍꯥꯛꯀꯤ ꯑꯌꯥꯕꯒꯤ ꯔꯁꯤꯗꯁꯤং ꯌꯦꯡꯕꯤꯌꯨ";
+"event" = "ꯊꯧꯗꯣꯛ";
+"date" = "ꯇꯥꯡ";
+"time" = "ꯃꯇꯝ";
+"download" = "ꯗꯥꯎꯟꯂꯣꯗ ꯇꯧꯕꯤꯌꯨ";
+"consentGranted" = "ꯑꯌꯥꯕ ꯄꯤꯈ꯭ꯔꯦ";
+"consentRevoked" = "ꯑꯌꯥꯕ ꯍꯟꯗꯣꯛꯈ꯭ꯔꯦ";
+"consentDeclined" = "ꯑꯌꯥꯕ ꯌꯥꯗꯦ";
+"consentExpired" = "ꯑꯌꯥꯕꯒꯤ ꯃꯇꯝ ꯂꯣꯏꯈ꯭ꯔꯦ";
+"failedToFetchReceipts" = "ꯔꯁꯤꯗꯁꯤং ꯂꯧꯕ ꯉꯝꯗ꯭ꯔꯦ";
+"failedToDownloadReceipt" = "ꯔꯁꯤꯗ ꯗꯥꯎꯟꯂꯣꯗ ꯇꯧꯕ ꯉꯝꯗ꯭ꯔꯦ";
+"consented" = "ꯑꯌꯥꯕ ꯄꯤꯈ꯭ꯔꯦ";
+"declined" = "ꯌꯥꯗꯦ";
+"withdrawn" = "ꯍꯟꯗꯣꯛꯈ꯭ꯔꯦ";
+"dateRange" = "ꯇꯥꯡꯒꯤ ꯔꯦꯟꯖ";
+"allTime" = "ꯃꯇꯝ ꯄꯨꯝꯅꯃꯛ";
+"customRange" = "ꯀꯁꯇꯝ ꯔꯦꯟꯖ";
+"from" = "ꯗꯒꯤ";
+"to" = "ꯐꯥꯎꯕ";
+"clearFilters" = "ꯐꯤꯜꯇꯔꯁꯤং ꯁꯦꯡꯗꯣꯛꯎ";
+"last7Days" = "ꯃꯥꯡꯗꯤꯜ 7 ꯇꯝ";
+"last30Days" = "ꯃꯥꯡꯗꯤꯜ 30 ꯇꯝ";
+"last3Months" = "ꯃꯥꯡꯗꯤꯜ 3 ꯃꯥꯡ";
+"noData" = "ꯗꯦꯇꯥ ꯂꯩꯇꯦ";
+
+// No data empty state
+"noDataTitle" = "ꯍꯧꯖꯤꯛ ꯐꯥꯎꯕ ꯎꯠꯅꯕ ꯀꯔꯤꯁꯨ ꯂꯩꯇꯦ";
+"noDataDescription" = "ꯍꯧꯖꯤꯛ ꯐꯥꯎꯕ ꯑꯗꯣꯝꯒꯤ ꯑꯀꯥꯎꯟꯇꯀ ꯁꯝꯅꯗꯨꯅ ꯀꯅꯁꯦꯟꯇ, ꯍꯧꯔꯛꯐꯝ, ꯅꯠꯇ꯭ꯔꯒ ꯈꯨꯗꯝꯕꯤꯠ ꯑꯃꯠꯇ ꯐꯪꯗꯔꯦ꯫ ꯑꯗꯣꯝꯒꯤ ꯄ꯭ꯔꯥꯏꯚꯦꯁꯤ ꯔꯤꯀꯣꯔꯗꯁꯤꯡ ꯐꯪꯂꯛꯄ ꯃꯇꯃꯗ ꯃꯐꯝ ꯑꯁꯤꯗ ꯎꯔꯛꯀꯅꯤ꯫";

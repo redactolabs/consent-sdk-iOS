@@ -1,0 +1,152 @@
+// Privacy Center — Santali (ᱥᱟᱱᱛᱟᱲᱤ)
+
+"yourPrivacyCenter" = "ᱟᱢᱟᱜ ᱯᱨᱟᱭᱣᱮᱥᱤ ᱥᱮᱱᱴᱚᱨ";
+"manageConsent" = "ᱨᱟᱦᱟᱭ ᱯᱨᱟᱵᱚᱱᱫᱷᱚᱱ";
+"manageConsentSubtitle" = "ᱟᱢᱟᱜ ᱡᱚᱛᱚ ᱨᱟᱦᱟᱭ ᱢᱤᱫ ᱴᱷᱟᱶ ᱨᱮ ᱧᱮᱢᱮ ᱟᱨ ᱯᱨᱟᱵᱚᱱᱫᱷᱚᱱ ᱢᱮ";
+"dataRequests" = "ᱰᱟᱴᱟ ᱢᱮᱴᱟᱣ";
+"dataRequestsSubtitle" = "ᱟᱢᱟᱜ ᱰᱟᱴᱟ ᱦᱚᱠ ᱵᱮᱵᱷᱟᱨ ᱢᱮ";
+"grievanceRequests" = "ᱰᱟᱴᱟ ᱢᱮᱴᱟᱣ ᱯᱟᱨᱥᱟᱞ ᱢᱮ";
+"grievanceSubtitle" = "ᱟᱢᱟᱜ ᱦᱚᱠ ᱵᱮᱵᱷᱟᱨ ᱢᱮ";
+"activities" = "ᱠᱟᱹᱢᱤ";
+"activitiesSubtitle" = "ᱟᱢᱟᱜ ᱰᱟᱴᱟ ᱢᱮᱴᱟᱣ ᱟᱨ ᱨᱟᱦᱟᱭ ᱠᱟᱹᱢᱤ ᱴᱨᱮᱠ ᱢᱮ";
+"caseHistory" = "ᱠᱮᱥ ᱱᱟᱜᱟᱢ";
+"consents" = "ᱨᱟᱦᱟᱭ";
+"requests" = "ᱢᱮᱴᱟᱣ";
+"caseDetails" = "ᱠᱮᱥ ᱵᱤᱵᱨᱚᱱ";
+"requestDetails" = "ᱢᱮᱴᱟᱣ ᱵᱤᱵᱨᱚᱱ";
+"messages" = "ᱠᱷᱟᱵᱚᱨ";
+"back" = "ᱨᱩᱣᱟᱹᱲ";
+"signOut" = "ᱥᱟᱭᱤᱱ ᱟᱣᱴ";
+"cancel" = "ᱵᱟᱹᱰ ᱢᱮ";
+"submit" = "ᱡᱚᱢᱟ ᱢᱮ";
+"save" = "ᱫᱚᱦᱚ ᱢᱮ";
+"close" = "ᱦᱟᱹᱯᱤ ᱢᱮ";
+"confirm" = "ᱯᱟᱠᱟ ᱢᱮ";
+"continue" = "ᱞᱟᱦᱟ ᱫᱚᱦᱚ ᱢᱮ";
+"loading" = "ᱞᱚᱰ ᱦᱩᱭᱩᱜ ᱠᱟᱱᱟ…";
+"error" = "ᱵᱷᱩᱞ";
+"retry" = "ᱫᱚᱦᱲᱟ ᱠᱩᱨᱩᱢᱩᱴᱩ ᱢᱮ";
+"search" = "ᱯᱟᱱᱛᱮ ᱢᱮ";
+"filter" = "ᱯᱷᱤᱞᱴᱚᱨ";
+"status" = "ᱦᱚᱱᱚᱛ";
+"product" = "ᱩᱭᱦᱟᱹᱨ";
+"all" = "ᱡᱚᱛᱚ";
+"processing" = "ᱯᱨᱚᱥᱮᱥ";
+"completed" = "ᱪᱟᱵᱟᱭᱮᱱᱟ";
+"rejected" = "ᱵᱟᱹᱰᱟᱣ ᱦᱩᱭᱮᱱᱟ";
+"today" = "ᱛᱮᱦᱮᱧ";
+"yesterday" = "ᱦᱚᱞᱟ";
+
+"statusActive" = "ᱪᱟᱹᱞᱩ";
+"statusWithdrawn" = "ᱨᱩᱣᱟᱹᱲ ᱦᱩᱭᱮᱱᱟ";
+"statusExpired" = "ᱢᱚᱫᱚᱫ ᱪᱟᱵᱟᱭᱮᱱᱟ";
+"statusDeclined" = "ᱵᱟᱹᱰᱟᱣ";
+
+"requestType" = "ᱢᱮᱴᱟᱣ ᱨᱚᱠᱚᱢ";
+"selectRequestType" = "ᱫᱟᱭᱟ ᱠᱟᱛᱮ ᱪᱮᱫ ᱢᱮᱴᱟᱣ ᱢᱮ ᱪᱷᱟᱦᱟ ᱯᱮ ᱚᱱᱟ ᱨᱚᱠᱚᱢ ᱪᱷᱟᱴ ᱢᱮ";
+"access" = "ᱦᱟᱴᱟᱣ";
+"correction" = "ᱥᱩᱫᱷᱟᱹᱨ";
+"erasure" = "ᱢᱮᱴᱟᱣ";
+"grievance" = "ᱨᱮᱠᱷᱟ";
+"nomination" = "ᱱᱟᱢᱟᱸᱠᱚᱱ";
+"supportingDocuments" = "ᱪᱷᱟᱦᱟ ᱫᱟᱞᱤᱞ";
+"uploadFile" = "ᱯᱷᱟᱭᱤᱞ ᱟᱯᱞᱚᱰ ᱞᱟᱹᱜᱤᱫ ᱱᱚᱭᱰᱮ ᱠᱞᱤᱠ ᱢᱮ";
+"additionalNote" = "ᱟᱨᱦᱚᱸ ᱴᱤᱯᱯᱚᱱ";
+"additionalNotePlaceholder" = "ᱪᱮᱫ ᱪᱷᱚᱸ ᱟᱨᱦᱚᱸ ᱯᱨᱚᱥᱚᱸᱜᱚ ᱵᱟ ᱡᱟᱱᱟᱢ ᱥᱮᱞᱮᱫ ᱢᱮ…";
+"iConfirm" = "ᱤᱧ ᱯᱟᱠᱟ ᱢᱮ ᱢᱟ ᱫᱚᱭ ᱦᱩᱭ ᱫᱟᱞᱤᱞ ᱥᱚᱦᱤ ᱠᱟᱱᱟ";
+"caseSubmitted" = "ᱟᱢᱟᱜ ᱢᱮᱴᱟᱣ ᱡᱚᱢᱟ ᱦᱩᱭᱮᱱᱟ";
+"caseId" = "ᱠᱮᱥ ᱟᱭᱤᱰᱤ";
+"saveCaseIdNotice" = "ᱫᱟᱭᱟ ᱠᱟᱛᱮ ᱟᱢᱟᱜ ᱨᱤᱠᱚᱨᱰ ᱞᱟᱹᱜᱤᱫ ᱱᱚᱣᱟ ᱠᱮᱥ ᱟᱭᱤᱰᱤ ᱫᱚᱦᱚ ᱢᱮ.";
+
+"direct" = "ᱥᱤᱫᱷᱟ";
+"nominated" = "ᱱᱟᱢᱟᱸᱠᱤᱛ";
+"modifyConsent" = "ᱨᱟᱦᱟᱭ ᱵᱚᱫᱚᱞ";
+"revoke" = "ᱨᱩᱣᱟᱹᱲ";
+"regrant" = "ᱫᱚᱦᱲᱟ ᱮᱢ";
+"renew" = "ᱱᱟᱶᱟ";
+"revokeConfirmTitle" = "ᱱᱚᱣᱟ ᱨᱟᱦᱟᱭ ᱨᱩᱣᱟᱹᱲ ᱢᱮ?";
+"revokeConfirmBody" = "ᱨᱩᱣᱟᱹᱲ ᱨᱮ ᱱᱚᱣᱟ ᱠᱟᱹᱢᱤ ᱞᱟᱹᱜᱤᱫ ᱟᱢᱟᱜ ᱨᱟᱦᱟᱭ ᱨᱩᱣᱟᱹᱲ ᱢᱮᱱᱟ. ᱟᱢ ᱛᱟᱭᱚᱢ ᱫᱚᱦᱲᱟ ᱮᱢ ᱫᱟᱲᱮᱭᱟᱢ.";
+"consentRevokedSuccess" = "ᱨᱟᱦᱟᱭ ᱥᱚᱦᱤ ᱨᱩᱣᱟᱹᱲ ᱦᱩᱭᱮᱱᱟ.";
+"consentRegrantedSuccess" = "ᱨᱟᱦᱟᱭ ᱥᱚᱦᱤ ᱫᱚᱦᱲᱟ ᱮᱢ ᱦᱩᱭᱮᱱᱟ.";
+"consentRenewedSuccess" = "ᱨᱟᱦᱟᱭ ᱥᱚᱦᱤ ᱱᱟᱶᱟ ᱦᱩᱭᱮᱱᱟ.";
+"validTill" = "ᱢᱚᱫᱚᱫ ᱫᱷᱟᱹᱵᱤᱡ";
+"givenOn" = "ᱮᱢ ᱦᱩᱭᱮᱱᱟ";
+"dataElementsLabel" = "ᱰᱟᱴᱟ ᱴᱷᱚᱲ";
+"noConsents" = "ᱪᱮᱫ ᱨᱟᱦᱟᱭ ᱵᱟᱝ ᱧᱟᱢ ᱦᱩᱭᱮᱱᱟ";
+
+"noActivities" = "ᱱᱤᱛᱚᱜ ᱪᱮᱫ ᱠᱟᱹᱢᱤ ᱵᱟᱝ";
+"loadMore" = "ᱟᱨᱦᱚᱸ ᱞᱚᱰ ᱢᱮ";
+
+"noCases" = "ᱟᱢ ᱱᱤᱛᱚᱜ ᱫᱷᱟᱹᱵᱤᱡ ᱪᱮᱫ ᱢᱮᱴᱟᱣ ᱵᱟᱝ ᱯᱟᱨᱥᱟᱞ";
+"newRequest" = "ᱱᱟᱶᱟ ᱢᱮᱴᱟᱣ";
+"caseCreatedAt" = "ᱵᱟᱱᱟᱭ";
+"caseDueDate" = "ᱢᱩᱪᱟᱹᱫ ᱢᱟᱦᱟᱸ";
+"sendMessage" = "ᱠᱩᱞ ᱢᱮ";
+"typeMessage" = "ᱠᱷᱟᱵᱚᱨ ᱚᱞ ᱢᱮ…";
+"attachFile" = "ᱯᱷᱟᱭᱤᱞ ᱥᱮᱞᱮᱫ";
+"documentRequest" = "ᱫᱟᱞᱤᱞ ᱢᱮᱴᱟᱣ";
+"uploadDocument" = "ᱫᱟᱞᱤᱞ ᱟᱯᱞᱚᱰ";
+"rejectionReason" = "ᱵᱟᱹᱰᱟᱣ ᱦᱚᱸᱭ ᱠᱟᱹᱨᱚᱱ";
+"secureChannelNotice" = "ᱠᱷᱟᱵᱚᱨ ᱰᱷᱮᱨ ᱪᱮᱱᱮᱞ ᱦᱚᱨᱟ ᱠᱩᱞ ᱦᱩᱭᱩᱜ ᱠᱟᱱᱟ.";
+
+"grievanceConsentViolation" = "ᱨᱟᱦᱟᱭ ᱦᱟᱹᱴᱤᱧ";
+"grievanceUnlawfulProcessing" = "ᱵᱮ-ᱱᱤᱭᱚᱢ ᱯᱨᱚᱥᱮᱥ";
+"grievanceDataBreach" = "ᱰᱟᱴᱟ ᱦᱟᱹᱴᱤᱧ";
+
+"nomineeEmail" = "ᱱᱟᱢᱟᱸᱠᱤᱛ ᱤᱢᱮᱞ";
+"nomineeMobile" = "ᱱᱟᱢᱟᱸᱠᱤᱛ ᱢᱳᱵᱟᱭᱤᱞ";
+
+"poweredBy" = "Redacto ᱫᱟᱨᱟ ᱪᱟᱞᱟᱣ";
+"somethingWentWrong" = "ᱪᱮᱫ ᱪᱷᱚᱸ ᱵᱷᱩᱞ ᱦᱩᱭᱮᱱᱟ. ᱫᱚᱦᱲᱟ ᱠᱩᱨᱩᱢᱩᱴᱩ ᱢᱮ.";
+
+"dataRequestsSubtitleLong" = "ᱟᱢᱟᱜ ᱰᱟᱴᱟ ᱦᱟᱴᱟᱣ, ᱥᱩᱫᱷᱟᱹᱨ, ᱢᱮᱴᱟᱣ ᱵᱟ ᱨᱮᱠᱷᱟ ᱯᱟᱨᱥᱟᱞ ᱞᱟᱹᱜᱤᱫ ᱢᱮᱴᱟᱣ ᱡᱚᱢᱟ ᱢᱮ.";
+"contact" = "ᱥᱚᱢᱯᱚᱨᱠᱚ";
+"description" = "ᱵᱨᱚᱱᱚᱱ";
+"attachment" = "ᱥᱮᱞᱮᱫ";
+"saveDraft" = "ᱰᱨᱟᱯᱷᱴ ᱫᱚᱦᱚ";
+"uploadAnotherFile" = "ᱢᱤᱫ ᱦᱚᱨ ᱯᱷᱟᱭᱤᱞ ᱟᱯᱞᱚᱰ";
+"purposeQuestionAccess" = "ᱟᱢ ᱪᱮᱫ ᱰᱟᱴᱟ ᱦᱟᱴᱟᱣ ᱢᱮ ᱪᱷᱟᱦᱟ ᱯᱮ?";
+"purposeQuestionErasure" = "ᱟᱢ ᱪᱮᱫ ᱰᱟᱴᱟ ᱢᱮᱴᱟᱣ ᱢᱮ ᱪᱷᱟᱦᱟ ᱯᱮ?";
+"noPurposes" = "ᱪᱮᱫ ᱯᱟᱱᱫᱚᱢ ᱵᱟᱝ ᱧᱟᱢ";
+"dataCollected" = "ᱡᱚᱢᱟᱭ ᱦᱩᱭ ᱰᱟᱴᱟ";
+"noFieldsAvailable" = "ᱪᱮᱫ ᱯᱷᱤᱞᱰ ᱵᱟᱝ ᱧᱟᱢ";
+"selectFieldsToUpdate" = "ᱟᱢ ᱪᱮᱫ ᱯᱷᱤᱞᱰ ᱟᱯᱰᱮᱴ ᱢᱮ ᱪᱷᱟᱦᱟ ᱯᱮ ᱚᱱᱟ ᱪᱷᱟᱴ ᱢᱮ";
+"currentValue" = "ᱱᱤᱛᱚᱜ ᱢᱳᱨᱚ";
+"newValue" = "ᱱᱟᱶᱟ ᱢᱳᱨᱚ";
+"noGrievanceTypes" = "ᱪᱮᱫ ᱨᱮᱠᱷᱟ ᱨᱚᱠᱚᱢ ᱵᱟᱝ ᱧᱟᱢ";
+"selectGrievanceType" = "ᱟᱢᱟᱜ ᱨᱮᱠᱷᱟ ᱨᱚᱠᱚᱢ ᱪᱷᱟᱴ ᱢᱮ";
+"enterNomineeDetails" = "ᱱᱟᱢᱟᱸᱠᱤᱛ ᱦᱚᱲᱢᱳ ᱵᱤᱵᱨᱚᱱ ᱦᱟᱹᱰᱤ ᱢᱮ";
+"requestSubmittedTitle" = "ᱢᱮᱴᱟᱣ ᱥᱚᱦᱤ ᱡᱚᱢᱟ ᱦᱩᱭᱮᱱᱟ";
+"requestSubmittedSubtitle" = "ᱟᱢᱟᱜ ᱢᱮᱴᱟᱣ ᱡᱚᱢᱟ ᱨᱮ ᱫᱷᱚᱱᱭᱚᱵᱟᱫᱚ";
+"requestSubmittedNotice" = "ᱟᱞᱮ ᱱᱤᱭᱚᱢ ᱞᱮᱠᱟ 30 ᱢᱟᱦᱟᱸ ᱨᱮ ᱟᱢᱟᱜ ᱢᱮᱴᱟᱣ ᱯᱨᱚᱥᱮᱥ ᱢᱮᱱᱟ";
+
+// My Receipt
+"myReceipt" = "ᱤᱧᱟᱜ ᱨᱟᱥᱤᱫ";
+"myReceiptSubtitle" = "ᱟᱢᱟᱜ ᱥᱟᱹᱛᱤᱭᱟᱹᱨ ᱨᱟᱥᱤᱫ ᱠᱚ ᱧᱮᱞ ᱢᱮ";
+"event" = "ᱜᱷᱚᱴᱚᱱᱟ";
+"date" = "ᱢᱟᱹᱦᱤᱛ";
+"time" = "ᱚᱠᱛᱚ";
+"download" = "ᱰᱟᱣᱩᱱᱞᱳᱰ";
+"consentGranted" = "ᱥᱟᱹᱛᱤᱭᱟᱹᱨ ᱮᱢᱟᱠᱟᱱᱟ";
+"consentRevoked" = "ᱥᱟᱹᱛᱤᱭᱟᱹᱨ ᱨᱩᱣᱟᱹᱲ ᱞᱟᱠᱟᱱᱟ";
+"consentDeclined" = "ᱥᱟᱹᱛᱤᱭᱟᱹᱨ ᱵᱟᱝ ᱢᱟᱱᱟᱠᱟᱱᱟ";
+"consentExpired" = "ᱥᱟᱹᱛᱤᱭᱟᱹᱨ ᱢᱩᱪᱟᱹᱫᱟᱠᱟᱱᱟ";
+"failedToFetchReceipts" = "ᱨᱟᱥᱤᱫ ᱠᱚ ᱧᱟᱢ ᱵᱟᱝ ᱦᱩᱭᱮᱱᱟ";
+"failedToDownloadReceipt" = "ᱨᱟᱥᱤᱫ ᱰᱟᱣᱩᱱᱞᱳᱰ ᱵᱟᱝ ᱦᱩᱭᱮᱱᱟ";
+"consented" = "ᱥᱟᱹᱛᱤᱭᱟᱹᱨ ᱮᱢᱟᱠᱟᱱᱟ";
+"declined" = "ᱵᱟᱝ ᱢᱟᱱᱟᱠᱟᱱᱟ";
+"withdrawn" = "ᱨᱩᱣᱟᱹᱲ ᱞᱟᱠᱟᱱᱟ";
+"dateRange" = "ᱢᱟᱹᱦᱤᱛ ᱥᱤᱢᱟ";
+"allTime" = "ᱡᱷᱚᱛᱚ ᱚᱠᱛᱚ";
+"customRange" = "ᱠᱟᱥᱴᱚᱢ ᱥᱤᱢᱟ";
+"from" = "ᱠᱷᱚᱱ";
+"to" = "ᱦᱟᱹᱵᱤᱡ";
+"clearFilters" = "ᱯᱷᱤᱞᱴᱟᱨ ᱠᱚ ᱯᱟᱨᱥᱟᱞ ᱢᱮ";
+"last7Days" = "ᱢᱩᱪᱟᱹᱫ ᱗ ᱢᱟᱦᱟᱸ";
+"last30Days" = "ᱢᱩᱪᱟᱹᱫ ᱓᱐ ᱢᱟᱦᱟᱸ";
+"last3Months" = "ᱢᱩᱪᱟᱹᱫ ᱓ ᱪᱟᱸᱫᱚ";
+"noData" = "ᱰᱮᱴᱟ ᱵᱟᱹᱱᱩᱜᱼᱟ";
+
+// No data empty state
+"noDataTitle" = "ᱱᱤᱛ ᱛᱟᱠ ᱡᱟᱦᱟᱸ ᱫᱮᱠᱷᱟᱣ ᱞᱟᱹᱜᱤᱫ ᱵᱟᱝ";
+"noDataDescription" = "ᱟᱞᱮ ᱱᱤᱛ ᱛᱟᱠ ᱟᱢᱟᱜ ᱮᱠᱟᱣᱩᱱᱴ ᱥᱟᱞᱟᱜ ᱡᱚᱲᱟᱣ ᱡᱟᱦᱟᱸ ᱥᱚᱦᱚᱢᱚᱛᱤ, ᱦᱟᱵᱟᱭ, ᱟᱨᱵᱟᱝ ᱠᱟᱹᱢᱤ ᱵᱟᱝ ᱧᱟᱢ ᱫᱟᱲᱮᱭᱟᱫᱼᱟ᱾ ᱟᱢᱟᱜ ᱯᱨᱟᱭᱣᱮᱥᱤ ᱨᱤᱠᱚᱨᱰ ᱠᱚ ᱧᱟᱢᱚᱜ ᱠᱷᱟᱱ ᱱᱚᱸᱰᱮ ᱫᱮᱠᱷᱟᱣᱚᱜᱼᱟ᱾";

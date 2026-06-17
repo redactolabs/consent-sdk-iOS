@@ -1,0 +1,152 @@
+// Privacy Center — Tamil (தமிழ்)
+
+"yourPrivacyCenter" = "உங்கள் தனியுரிமை மையம்";
+"manageConsent" = "ஒப்புதலை நிர்வகிக்கவும்";
+"manageConsentSubtitle" = "உங்கள் அனைத்து ஒப்புதல்களையும் ஒரே இடத்தில் ஆராய்ந்து நிர்வகிக்கவும்";
+"dataRequests" = "தரவு கோரிக்கைகள்";
+"dataRequestsSubtitle" = "உங்கள் தரவு உரிமைகளைப் பயன்படுத்துங்கள்";
+"grievanceRequests" = "தரவு கோரிக்கையை எழுப்புங்கள்";
+"grievanceSubtitle" = "உங்கள் உரிமைகளைப் பயன்படுத்துங்கள்";
+"activities" = "செயல்பாடுகள்";
+"activitiesSubtitle" = "உங்கள் தரவு கோரிக்கை மற்றும் ஒப்புதல் செயல்பாட்டைக் கண்காணிக்கவும்";
+"caseHistory" = "வழக்கு வரலாறு";
+"consents" = "ஒப்புதல்கள்";
+"requests" = "கோரிக்கைகள்";
+"caseDetails" = "வழக்கு விவரங்கள்";
+"requestDetails" = "கோரிக்கை விவரங்கள்";
+"messages" = "செய்திகள்";
+"back" = "பின்";
+"signOut" = "வெளியேறு";
+"cancel" = "ரத்து செய்";
+"submit" = "சமர்ப்பிக்க";
+"save" = "சேமி";
+"close" = "மூடு";
+"confirm" = "உறுதிப்படுத்தவும்";
+"continue" = "தொடரவும்";
+"loading" = "ஏற்றப்படுகிறது…";
+"error" = "பிழை";
+"retry" = "மீண்டும் முயற்சிக்கவும்";
+"search" = "தேடவும்";
+"filter" = "வடிகட்டி";
+"status" = "நிலை";
+"product" = "தயாரிப்பு";
+"all" = "அனைத்தும்";
+"processing" = "செயலாக்கம்";
+"completed" = "நிறைவு";
+"rejected" = "நிராகரிக்கப்பட்டது";
+"today" = "இன்று";
+"yesterday" = "நேற்று";
+
+"statusActive" = "செயலில்";
+"statusWithdrawn" = "திரும்பப் பெறப்பட்டது";
+"statusExpired" = "காலாவதியானது";
+"statusDeclined" = "மறுக்கப்பட்டது";
+
+"requestType" = "கோரிக்கை வகை";
+"selectRequestType" = "நீங்கள் செய்ய விரும்பும் கோரிக்கை வகையைத் தேர்ந்தெடுக்கவும்";
+"access" = "அணுகல்";
+"correction" = "திருத்தம்";
+"erasure" = "அழித்தல்";
+"grievance" = "புகார்";
+"nomination" = "பரிந்துரை";
+"supportingDocuments" = "ஆதரவு ஆவணங்கள்";
+"uploadFile" = "கோப்பைப் பதிவேற்ற இங்கே கிளிக் செய்யவும்";
+"additionalNote" = "கூடுதல் குறிப்பு";
+"additionalNotePlaceholder" = "ஏதேனும் கூடுதல் சூழல் அல்லது தகவலைச் சேர்க்கவும்…";
+"iConfirm" = "வழங்கப்பட்ட தகவல் துல்லியமானது என நான் உறுதிப்படுத்துகிறேன்";
+"caseSubmitted" = "உங்கள் கோரிக்கை சமர்ப்பிக்கப்பட்டது";
+"caseId" = "வழக்கு ஐடி";
+"saveCaseIdNotice" = "உங்கள் பதிவுகளுக்காக இந்த வழக்கு ஐடியைச் சேமிக்கவும்.";
+
+"direct" = "நேரடி";
+"nominated" = "பரிந்துரைக்கப்பட்டது";
+"modifyConsent" = "ஒப்புதலை மாற்று";
+"revoke" = "ரத்து செய்";
+"regrant" = "மீண்டும் வழங்கு";
+"renew" = "புதுப்பி";
+"revokeConfirmTitle" = "இந்த ஒப்புதலை ரத்து செய்யவா?";
+"revokeConfirmBody" = "ரத்து செய்தால் இந்த நோக்கத்திற்கான உங்கள் ஒப்புதல் திரும்பப் பெறப்படும். நீங்கள் பின்னர் மீண்டும் வழங்கலாம்.";
+"consentRevokedSuccess" = "ஒப்புதல் வெற்றிகரமாக ரத்து செய்யப்பட்டது.";
+"consentRegrantedSuccess" = "ஒப்புதல் வெற்றிகரமாக மீண்டும் வழங்கப்பட்டது.";
+"consentRenewedSuccess" = "ஒப்புதல் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.";
+"validTill" = "செல்லுபடி வரை";
+"givenOn" = "வழங்கப்பட்டது";
+"dataElementsLabel" = "தரவுக் கூறுகள்";
+"noConsents" = "ஒப்புதல்கள் எதுவும் கிடைக்கவில்லை";
+
+"noActivities" = "இதுவரை செயல்பாடுகள் இல்லை";
+"loadMore" = "மேலும் ஏற்றவும்";
+
+"noCases" = "நீங்கள் இதுவரை எந்த கோரிக்கையும் எழுப்பவில்லை";
+"newRequest" = "புதிய கோரிக்கை";
+"caseCreatedAt" = "உருவாக்கப்பட்டது";
+"caseDueDate" = "காலக்கெடு";
+"sendMessage" = "அனுப்பு";
+"typeMessage" = "ஒரு செய்தியைத் தட்டச்சு செய்யவும்…";
+"attachFile" = "கோப்பை இணைக்கவும்";
+"documentRequest" = "ஆவண கோரிக்கை";
+"uploadDocument" = "ஆவணத்தைப் பதிவேற்றவும்";
+"rejectionReason" = "மறுப்புக் காரணம்";
+"secureChannelNotice" = "செய்திகள் பாதுகாப்பான சேனல் வழியாக அனுப்பப்படுகின்றன.";
+
+"grievanceConsentViolation" = "ஒப்புதல் மீறல்";
+"grievanceUnlawfulProcessing" = "சட்டவிரோத செயலாக்கம்";
+"grievanceDataBreach" = "தரவு மீறல்";
+
+"nomineeEmail" = "பரிந்துரைப்பாளர் மின்னஞ்சல்";
+"nomineeMobile" = "பரிந்துரைப்பாளர் மொபைல்";
+
+"poweredBy" = "Redacto இயக்கப்படுகிறது";
+"somethingWentWrong" = "ஏதோ தவறு நடந்துவிட்டது. மீண்டும் முயற்சிக்கவும்.";
+
+"dataRequestsSubtitleLong" = "உங்கள் தரவை அணுக, திருத்த, அழிக்க அல்லது புகார் எழுப்ப ஒரு கோரிக்கையை சமர்ப்பிக்கவும்.";
+"contact" = "தொடர்பு";
+"description" = "விளக்கம்";
+"attachment" = "இணைப்பு";
+"saveDraft" = "வரைவைச் சேமி";
+"uploadAnotherFile" = "மற்றொரு கோப்பைப் பதிவேற்றவும்";
+"purposeQuestionAccess" = "எந்தத் தரவை அணுக விரும்புகிறீர்கள்?";
+"purposeQuestionErasure" = "எந்தத் தரவை நீக்க விரும்புகிறீர்கள்?";
+"noPurposes" = "எந்த நோக்கங்களும் கிடைக்கவில்லை";
+"dataCollected" = "சேகரிக்கப்பட்ட தரவு";
+"noFieldsAvailable" = "எந்த புலங்களும் கிடைக்கவில்லை";
+"selectFieldsToUpdate" = "நீங்கள் புதுப்பிக்க விரும்பும் புலங்களைத் தேர்ந்தெடுக்கவும்";
+"currentValue" = "தற்போதைய மதிப்பு";
+"newValue" = "புதிய மதிப்பு";
+"noGrievanceTypes" = "எந்த புகார் வகைகளும் கிடைக்கவில்லை";
+"selectGrievanceType" = "உங்கள் புகார் வகையைத் தேர்ந்தெடுக்கவும்";
+"enterNomineeDetails" = "பரிந்துரைப்பாளர் விவரங்களை உள்ளிடவும்";
+"requestSubmittedTitle" = "கோரிக்கை வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது";
+"requestSubmittedSubtitle" = "உங்கள் கோரிக்கையை சமர்ப்பித்தமைக்கு நன்றி";
+"requestSubmittedNotice" = "சட்டத்தின்படி 30 நாட்களுக்குள் உங்கள் கோரிக்கையை நாங்கள் செயலாக்குவோம்";
+
+// My Receipt
+"myReceipt" = "எனது ரசீது";
+"myReceiptSubtitle" = "உங்கள் ஒப்புதல் ரசீதுகளைப் பார்க்கவும்";
+"event" = "நிகழ்வு";
+"date" = "தேதி";
+"time" = "நேரம்";
+"download" = "பதிவிறக்கு";
+"consentGranted" = "ஒப்புதல் வழங்கப்பட்டது";
+"consentRevoked" = "ஒப்புதல் திரும்பப் பெறப்பட்டது";
+"consentDeclined" = "ஒப்புதல் மறுக்கப்பட்டது";
+"consentExpired" = "ஒப்புதல் காலாவதியானது";
+"failedToFetchReceipts" = "ரசீதுகளைப் பெற முடியவில்லை";
+"failedToDownloadReceipt" = "ரசீதைப் பதிவிறக்க முடியவில்லை";
+"consented" = "ஒப்புதல் அளிக்கப்பட்டது";
+"declined" = "மறுக்கப்பட்டது";
+"withdrawn" = "திரும்பப் பெறப்பட்டது";
+"dateRange" = "தேதி வரம்பு";
+"allTime" = "அனைத்து நேரமும்";
+"customRange" = "தனிப்பயன் வரம்பு";
+"from" = "முதல்";
+"to" = "வரை";
+"clearFilters" = "வடிப்பான்களை அழி";
+"last7Days" = "கடந்த 7 நாட்கள்";
+"last30Days" = "கடந்த 30 நாட்கள்";
+"last3Months" = "கடந்த 3 மாதங்கள்";
+"noData" = "தரவு இல்லை";
+
+// No data empty state
+"noDataTitle" = "இன்னும் காட்ட எதுவும் இல்லை";
+"noDataDescription" = "உங்கள் கணக்குடன் இணைக்கப்பட்ட ஒப்புதல்கள், கோரிக்கைகள் அல்லது செயல்பாடு எதையும் இன்னும் எங்களால் கண்டறிய முடியவில்லை. உங்கள் தனியுரிமை பதிவுகள் கிடைக்கும்போது அவை இங்கே தோன்றும்.";

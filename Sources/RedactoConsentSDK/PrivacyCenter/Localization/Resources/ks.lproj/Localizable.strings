@@ -1,0 +1,152 @@
+// Privacy Center — Kashmiri (كٲشُر)
+
+"yourPrivacyCenter" = "تُہنٛد پرائیویسی سینٹر";
+"manageConsent" = "رضامندی منیجمنٹ";
+"manageConsentSubtitle" = "اپنہٕ سٲری رضامندی اَکھ جاے پؠٹھ تلاش تہٕ منیج کریو";
+"dataRequests" = "ڈیٹا گزارشہٕ";
+"dataRequestsSubtitle" = "اپنہٕ ڈیٹا حق استعمال کریو";
+"grievanceRequests" = "ڈیٹا گزارش درج کریو";
+"grievanceSubtitle" = "اپنہٕ حق استعمال کریو";
+"activities" = "سرگرمی";
+"activitiesSubtitle" = "اپنہٕ ڈیٹا گزارش تہٕ رضامندی سرگرمی ٹریک کریو";
+"caseHistory" = "کیس تٲریخ";
+"consents" = "رضامندی";
+"requests" = "گزارشہٕ";
+"caseDetails" = "کیس تفصیل";
+"requestDetails" = "گزارش تفصیل";
+"messages" = "پیغام";
+"back" = "واپس";
+"signOut" = "سائن آؤٹ";
+"cancel" = "منسوخ کریو";
+"submit" = "جمع کریو";
+"save" = "محفوظ کریو";
+"close" = "بند کریو";
+"confirm" = "تصدیق کریو";
+"continue" = "جٲری رکھیو";
+"loading" = "لوڈ گٔژھان…";
+"error" = "غٔلطی";
+"retry" = "دوبارٕ کوشِش کریو";
+"search" = "ژھنڈیو";
+"filter" = "فلٹر";
+"status" = "حٲلت";
+"product" = "پروڈکٹ";
+"all" = "سٲری";
+"processing" = "پراسس گٔژھان";
+"completed" = "مکمل";
+"rejected" = "مسترد";
+"today" = "اَز";
+"yesterday" = "راتھ";
+
+"statusActive" = "فعال";
+"statusWithdrawn" = "واپس کٔرنہٕ آمُت";
+"statusExpired" = "مدت ختم";
+"statusDeclined" = "مسترد";
+
+"requestType" = "گزارش قِسم";
+"selectRequestType" = "مہربٲنی کرِتھ یہٕ گزارش قِسم چُنیو یُس توہؠ کرنہٕ چھِو چھان";
+"access" = "رسائی";
+"correction" = "اِصلاح";
+"erasure" = "خارج کرٕن";
+"grievance" = "شکایت";
+"nomination" = "نامزد";
+"supportingDocuments" = "معاون دستاویز";
+"uploadFile" = "فائل اپلوڈ کرنہٕ خٲطرٕ یوَر کلِک کریو";
+"additionalNote" = "اضافی نوٹ";
+"additionalNotePlaceholder" = "کانہہ اضافی معلومات یا حوالہٕ شٲمل کریو…";
+"iConfirm" = "بہٕ چُھس تصدیق کران زٕ دِنہٕ آمژ معلومات چھِ صحیح";
+"caseSubmitted" = "تُہنٛد گزارش جمع کٔرنہٕ آو";
+"caseId" = "کیس آئی ڈی";
+"saveCaseIdNotice" = "مہربٲنی کرِتھ اپنہٕ ریکارڈ خٲطرٕ یہٕ کیس آئی ڈی محفوظ کریو۔";
+
+"direct" = "براہ راست";
+"nominated" = "نامزد";
+"modifyConsent" = "رضامندی تبدیل کریو";
+"revoke" = "منسوخ کریو";
+"regrant" = "دوبارٕ دِیو";
+"renew" = "تجدید کریو";
+"revokeConfirmTitle" = "یہٕ رضامندی منسوخ کرَو؟";
+"revokeConfirmBody" = "منسوخ کرنہٕ سٕتؠ یہِ مقصدَس خٲطرٕ تُہنٛد رضامندی واپس ٲنہٕ یئی۔ توہؠ ہؠکیو پَتہ دوبارٕ دِتھ۔";
+"consentRevokedSuccess" = "رضامندی کامیٲبی سٕتؠ منسوخ کٔرنہٕ آو۔";
+"consentRegrantedSuccess" = "رضامندی کامیٲبی سٕتؠ دوبارٕ دِنہٕ آو۔";
+"consentRenewedSuccess" = "رضامندی کامیٲبی سٕتؠ تجدید کٔرنہٕ آو۔";
+"validTill" = "تٲریخ تام درست";
+"givenOn" = "دِنہٕ آو";
+"dataElementsLabel" = "ڈیٹا عناصر";
+"noConsents" = "کانہہ رضامندی موکلیہٕ نہٕ";
+
+"noActivities" = "وَنؠ تام کہنہ سرگرمی چھنہٕ";
+"loadMore" = "زیادٕ لوڈ کریو";
+
+"noCases" = "توہؠ چھِو وَنؠ تام کانہہ گزارش نہٕ کرمژ";
+"newRequest" = "نَو گزارش";
+"caseCreatedAt" = "بنایہٕ آو";
+"caseDueDate" = "آخری تٲریخ";
+"sendMessage" = "روان کریو";
+"typeMessage" = "پیغام لیکھیو…";
+"attachFile" = "فائل ملاو";
+"documentRequest" = "دستاویز گزارش";
+"uploadDocument" = "دستاویز اپلوڈ";
+"rejectionReason" = "مسترد کرنُک سبب";
+"secureChannelNotice" = "پیغام محفوظ چینل ذریعہ روان گٔژھن چھِ۔";
+
+"grievanceConsentViolation" = "رضامندی خلاف ورزی";
+"grievanceUnlawfulProcessing" = "غیر قٲنونی پراسسنگ";
+"grievanceDataBreach" = "ڈیٹا خلاف ورزی";
+
+"nomineeEmail" = "نامزد ای میل";
+"nomineeMobile" = "نامزد موبایل";
+
+"poweredBy" = "Redacto زٕریعہ";
+"somethingWentWrong" = "کوسہ گٔو غٔلط۔ مہربٲنی کرِتھ دوبارٕ کوشِش کریو۔";
+
+"dataRequestsSubtitleLong" = "اپنہٕ ڈیٹا تام رسائی، اِصلاح، خارج کرَن یا شکایت درج کرَن خٲطرٕ گزارش جمع کریو۔";
+"contact" = "رابطہٕ";
+"description" = "تفصیل";
+"attachment" = "ملاو";
+"saveDraft" = "مسودٕ محفوظ کریو";
+"uploadAnotherFile" = "بیٛاکھ فائل اپلوڈ کریو";
+"purposeQuestionAccess" = "توہؠ کیہنِس ڈیٹاس رسائی چھِو لگان؟";
+"purposeQuestionErasure" = "توہؠ کیہنہ ڈیٹا خارج کرنہٕ چھِو چھان؟";
+"noPurposes" = "کانہہ مقصد دستیاب چھنہٕ";
+"dataCollected" = "جمع کٔرنہٕ آمُت ڈیٹا";
+"noFieldsAvailable" = "کانہہ فیلڈ دستیاب چھنہٕ";
+"selectFieldsToUpdate" = "تہٕ فیلڈ چُنیو یم توہؠ اپڈیٹ کرنہٕ چھِو چھان";
+"currentValue" = "موجودٕ ویلیو";
+"newValue" = "نَو ویلیو";
+"noGrievanceTypes" = "کانہہ شکایت قِسم دستیاب چھنہٕ";
+"selectGrievanceType" = "اپنہٕ شکایت قِسم چُنیو";
+"enterNomineeDetails" = "نامزد شخصُک تفصیل درج کریو";
+"requestSubmittedTitle" = "گزارش کامیٲبی سٕتؠ جمع کٔرنہٕ آو";
+"requestSubmittedSubtitle" = "اپنہٕ گزارش جمع کرنہٕ خٲطرٕ شکریہ";
+"requestSubmittedNotice" = "اَسؠ کرَو قٲنون مطٲبق ۳۰ دوہن منز تُہنٛد گزارش پراسس";
+
+// My Receipt
+"myReceipt" = "میٔنہ رسید";
+"myReceiptSubtitle" = "پنٕنہ رضامندی ہٕنٛز رسیدہ وُچھِو";
+"event" = "واقعہ";
+"date" = "تاریخ";
+"time" = "وقت";
+"download" = "ڈاؤن لوڈ کرو";
+"consentGranted" = "رضامندی دِنہ آیہ";
+"consentRevoked" = "رضامندی واپس تُلنہ آیہ";
+"consentDeclined" = "رضامندی رد کرنہ آیہ";
+"consentExpired" = "رضامندی ختم گیہ";
+"failedToFetchReceipts" = "رسیدہ حٲصل کرنس منٛز ناکام";
+"failedToDownloadReceipt" = "رسید ڈاؤن لوڈ کرنس منٛز ناکام";
+"consented" = "رضامندی دِنہ آیہ";
+"declined" = "رد کرنہ آیہ";
+"withdrawn" = "واپس تُلنہ آیہ";
+"dateRange" = "تاریخ حَد";
+"allTime" = "سٲری وَکھ";
+"customRange" = "کسٹم حَد";
+"from" = "پیٹھ";
+"to" = "تام";
+"clearFilters" = "فلٹر صاف کریو";
+"last7Days" = "پَتہٕ 7 دِن";
+"last30Days" = "پَتہٕ 30 دِن";
+"last3Months" = "پَتہٕ 3 مہینہ";
+"noData" = "ڈیٹا کانہہ";
+
+// No data empty state
+"noDataTitle" = "ابٕ تام ہاوُن خٲطرٕ کانٛہہ نٕ";
+"noDataDescription" = "اسہِ تُہنٛدِ اکاؤنٹَس سٕتۍ جُڑٕمٕژ کانٛہہِ رضامندی، درخواستٕ یا سرگرمی ابٕ تام نٕ لَب۔ تُہنٛد رازداری ریکارڈ یہِ دستیاب سپدِتھ یِتہِ کنہِ وُچھنہٕ یِیِہٕ۔";

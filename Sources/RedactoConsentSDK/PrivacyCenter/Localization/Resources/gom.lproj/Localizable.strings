@@ -1,0 +1,152 @@
+// Privacy Center — Goan Konkani (कोंकणी)
+
+"yourPrivacyCenter" = "तुमचो गोपनीयता केंद्र";
+"manageConsent" = "संमती व्यवस्थापन";
+"manageConsentSubtitle" = "तुमच्यो सर्व संमत्यो एकाच जाग्यार सोदूंक आनी व्यवस्थापन करूंक";
+"dataRequests" = "डेटा विनंत्यो";
+"dataRequestsSubtitle" = "तुमचे डेटा अधिकार वापरात";
+"grievanceRequests" = "डेटा विनंती करात";
+"grievanceSubtitle" = "तुमचे अधिकार वापरात";
+"activities" = "क्रियाकलाप";
+"activitiesSubtitle" = "तुमचे डेटा विनंती आनी संमती क्रियाकलापाचो माग काडा";
+"caseHistory" = "केस इतिहास";
+"consents" = "संमत्यो";
+"requests" = "विनंत्यो";
+"caseDetails" = "केस तपशील";
+"requestDetails" = "विनंती तपशील";
+"messages" = "संदेश";
+"back" = "फाटीं";
+"signOut" = "साइन आउट";
+"cancel" = "रद्द करात";
+"submit" = "सादर करात";
+"save" = "जतन करात";
+"close" = "बंद करात";
+"confirm" = "खातर करात";
+"continue" = "चालू दवरात";
+"loading" = "लोड जाता…";
+"error" = "चूक";
+"retry" = "परत यत्न करात";
+"search" = "सोदात";
+"filter" = "फिल्टर";
+"status" = "स्थिती";
+"product" = "उत्पादन";
+"all" = "सर्व";
+"processing" = "प्रक्रिया जाता";
+"completed" = "पूर्ण";
+"rejected" = "नाकारलें";
+"today" = "आयज";
+"yesterday" = "काल";
+
+"statusActive" = "सक्रिय";
+"statusWithdrawn" = "फाटीं घेतलें";
+"statusExpired" = "वेळ संपलो";
+"statusDeclined" = "नाकारलें";
+
+"requestType" = "विनंती प्रकार";
+"selectRequestType" = "कृपया तुमी जे विनंती प्रकार करूंक सोदता तो निवडात";
+"access" = "प्रवेश";
+"correction" = "दुरुस्ती";
+"erasure" = "हुसवप";
+"grievance" = "तक्रार";
+"nomination" = "नामांकन";
+"supportingDocuments" = "आदार दस्तावेज";
+"uploadFile" = "फायल अपलोड करूंक हांगा क्लीक करात";
+"additionalNote" = "अतिरिक्त टीप";
+"additionalNotePlaceholder" = "खंयचेय अतिरिक्त संदर्भ वा माहिती जोडात…";
+"iConfirm" = "हांव खातर करता की दिल्ली माहिती बरोबर आसा";
+"caseSubmitted" = "तुमची विनंती सादर केल्या";
+"caseId" = "केस ID";
+"saveCaseIdNotice" = "कृपया तुमच्या नोंदी खातीर हो केस ID जतन करात।";
+
+"direct" = "थेट";
+"nominated" = "नामांकित";
+"modifyConsent" = "संमती सुदारीत करात";
+"revoke" = "फाटीं घेयात";
+"regrant" = "परत दिवात";
+"renew" = "नवीकरण";
+"revokeConfirmTitle" = "ही संमती फाटीं घेतली?";
+"revokeConfirmBody" = "फाटीं घेतल्यार ह्या उद्देशा खातीर तुमची संमती फाटीं घेतली वतली। तुमी ती उपरांत परत दिवंक शकता।";
+"consentRevokedSuccess" = "संमती यशस्वीपणान फाटीं घेतली।";
+"consentRegrantedSuccess" = "संमती यशस्वीपणान परत दिली।";
+"consentRenewedSuccess" = "संमती यशस्वीपणान नवीकरण केली।";
+"validTill" = "मेरेन वैध";
+"givenOn" = "दिल्ली";
+"dataElementsLabel" = "डेटा घटक";
+"noConsents" = "खंयचीच संमती मेळ्ळी ना";
+
+"noActivities" = "अजून खंयचेच क्रियाकलाप ना";
+"loadMore" = "अदीक लोड करात";
+
+"noCases" = "तुमी अजून खंयचीच विनंती केला ना";
+"newRequest" = "नवी विनंती";
+"caseCreatedAt" = "रचलें";
+"caseDueDate" = "देय तारीक";
+"sendMessage" = "धाडात";
+"typeMessage" = "संदेश टायप करात…";
+"attachFile" = "फायल जोडात";
+"documentRequest" = "दस्तावेज विनंती";
+"uploadDocument" = "दस्तावेज अपलोड करात";
+"rejectionReason" = "नाकारपाचें कारण";
+"secureChannelNotice" = "संदेश एका सुरक्षीत चॅनेला वरवीं धाडले वतात।";
+
+"grievanceConsentViolation" = "संमती उल्लंघन";
+"grievanceUnlawfulProcessing" = "बेकायदेशीर प्रक्रिया";
+"grievanceDataBreach" = "डेटा उल्लंघन";
+
+"nomineeEmail" = "नामांकित ईमेल";
+"nomineeMobile" = "नामांकित मोबायल";
+
+"poweredBy" = "Redacto वरवीं चलयिल्लें";
+"somethingWentWrong" = "कांय तरी चुकीचें घडलें। कृपया परत यत्न करात।";
+
+"dataRequestsSubtitleLong" = "तुमच्या डेटाचो प्रवेश, दुरुस्ती, हुसवप वा तक्रार खातीर विनंती सादर करात।";
+"contact" = "संपर्क";
+"description" = "वर्णन";
+"attachment" = "जोडणी";
+"saveDraft" = "मसुदो जतन करात";
+"uploadAnotherFile" = "आनीक एक फायल अपलोड करात";
+"purposeQuestionAccess" = "तुमी खंयचो डेटा प्रवेश करूंक सोदता?";
+"purposeQuestionErasure" = "तुमी खंयचो डेटा हुसयूंक सोदता?";
+"noPurposes" = "खंयचेच उद्देश उपलब्ध ना";
+"dataCollected" = "एकठांय केल्लो डेटा";
+"noFieldsAvailable" = "खंयचींच क्षेत्रां उपलब्ध नांत";
+"selectFieldsToUpdate" = "तुमी अद्ययावत करूंक सोदता तीं क्षेत्रां निवडात";
+"currentValue" = "सद्याचो दर";
+"newValue" = "नवो दर";
+"noGrievanceTypes" = "खंयचेच तक्रार प्रकार उपलब्ध ना";
+"selectGrievanceType" = "तुमचो तक्रार प्रकार निवडात";
+"enterNomineeDetails" = "नामांकित मनशाचे तपशील भरात";
+"requestSubmittedTitle" = "विनंती यशस्वीपणान सादर केली";
+"requestSubmittedSubtitle" = "तुमची विनंती सादर केल्ल्या खातीर देव बरें करूं";
+"requestSubmittedNotice" = "आमी कायद्याप्रमाण 30 दिसांभितर तुमची विनंती प्रक्रिया करतले";
+
+// My Receipt
+"myReceipt" = "म्हजी पावती";
+"myReceiptSubtitle" = "तुमच्यो संमती पावत्यो पळयात";
+"event" = "घडणूक";
+"date" = "तारीख";
+"time" = "वेळ";
+"download" = "डाउनलोड करात";
+"consentGranted" = "संमती दिली";
+"consentRevoked" = "संमती परत घेतली";
+"consentDeclined" = "संमती न्हयकारली";
+"consentExpired" = "संमती सोंपली";
+"failedToFetchReceipts" = "पावत्यो मेळोवपाक अपयश";
+"failedToDownloadReceipt" = "पावती डाउनलोड करपाक अपयश";
+"consented" = "संमती दिली";
+"declined" = "न्हयकारली";
+"withdrawn" = "परत घेतली";
+"dateRange" = "तारीख व्याप्ती";
+"allTime" = "सगळो वेळ";
+"customRange" = "कस्टम व्याप्ती";
+"from" = "पासून";
+"to" = "मेरेन";
+"clearFilters" = "फिल्टर साफ करात";
+"last7Days" = "मागील 7 दिवस";
+"last30Days" = "मागील 30 दिवस";
+"last3Months" = "मागील 3 महिने";
+"noData" = "डेटा ना";
+
+// No data empty state
+"noDataTitle" = "अजून दाखोवपाक कांय ना";
+"noDataDescription" = "तुमच्या खात्याकडेन जोडिल्ली कसलीच संमती, मागण्यो वा कृती आमकां अजून मेळूंक नात. उपलब्ध जातकच तुमच्यो गोपनीयता नोंदी हांगा दिसतल्यो.";
