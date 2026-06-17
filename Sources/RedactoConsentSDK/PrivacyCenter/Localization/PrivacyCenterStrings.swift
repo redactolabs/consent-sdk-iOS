@@ -1,9 +1,29 @@
 import Foundation
 
+/// Anchor type used to locate the framework bundle when built as a CocoaPod
+/// (where `Bundle.module` is not synthesized).
+private final class PCBundleToken {}
+
 public enum PCStrings {
     private static let bundleLock = NSLock()
     private static var bundleCache: [String: Bundle] = [:]
     private static var _currentLanguage: String = "en"
+
+    /// The bundle that holds the shipped `.lproj` resources. SwiftPM synthesizes
+    /// `Bundle.module`; CocoaPods ships them in a `RedactoConsentSDK.bundle`
+    /// nested in the framework, so resolve that by name there.
+    private static let resourceBundle: Bundle = {
+        #if SWIFT_PACKAGE
+        return Bundle.module
+        #else
+        let container = Bundle(for: PCBundleToken.self)
+        if let url = container.url(forResource: "RedactoConsentSDK", withExtension: "bundle"),
+           let bundle = Bundle(url: url) {
+            return bundle
+        }
+        return container
+        #endif
+    }()
 
     /// The language used by `PCStrings.t(_:)`. Set this from `PrivacyCenterStore`
     /// when the in-app language picker changes — `NSLocalizedString` alone honors
@@ -45,7 +65,7 @@ public enum PCStrings {
     private static func bundle(for language: String) -> Bundle? {
         bundleLock.lock(); defer { bundleLock.unlock() }
         if let cached = bundleCache[language] { return cached }
-        if let path = Bundle.module.path(forResource: language, ofType: "lproj"),
+        if let path = resourceBundle.path(forResource: language, ofType: "lproj"),
            let langBundle = Bundle(path: path) {
             bundleCache[language] = langBundle
             return langBundle

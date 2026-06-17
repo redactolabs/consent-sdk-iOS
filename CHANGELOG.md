@@ -40,6 +40,7 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Keep revoked-consent purposes raisable in Privacy Center DSAR forms.
 - Hardened Privacy Center JSON decoding: lenient `CaseMessage` (optional `documents`/`document_uuids`, uuids derived from documents), `Receipt` (accepts `uuid`/`receipt_uuid`/`id`, optional display fields, `ReceiptDetail` `skip`/`limit` pagination), and optional `dpo_url`.
 - Show an error empty state in the receipts list when receipt loading fails.
+- Resolve the localized-strings resource bundle under CocoaPods (`Bundle.module` is SwiftPM-only), so the Privacy Center builds and localizes correctly when installed via CocoaPods.
 
 ## [0.0.4] - 2026-03-30
 
