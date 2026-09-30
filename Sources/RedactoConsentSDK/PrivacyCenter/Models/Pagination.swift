@@ -15,4 +15,11 @@ public struct Pagination: Codable, Sendable, Equatable {
         case totalCount = "total_count"
         case offset, limit
     }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        totalCount = c.lenient(Int.self, forKey: .totalCount)
+        offset = c.lenient(Int.self, forKey: .offset)
+        limit = c.lenient(Int.self, forKey: .limit)
+    }
 }

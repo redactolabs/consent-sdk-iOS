@@ -9,17 +9,28 @@ struct DpoInfoView: View {
     let getTranslatedDpoText: (String, String) -> String
     let activeTTSSegmentKey: String?
     let linkColor: Color
+    /// The modal notice's rules: an empty link label takes the SDK default, and
+    /// a link shows only when it has somewhere to go.
+    var linksNeedTargets = false
+    var textColorOverride: Color?
+    /// Space between the stacked lines, so they sit as far apart as wrapped ones.
+    var lineGap: CGFloat = 0
 
     private var textColor: Color {
-        Color(hex: settings?.textColor ?? "#344054")
+        textColorOverride ?? Color(hex: settings?.textColor ?? "#344054")
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: lineGap) {
             grievanceAndEmailRow
             dpBoardRow
             dpoRow
         }
+    }
+
+    private func label(_ key: String, _ value: String, fallback: String) -> String {
+        guard linksNeedTargets else { return getTranslatedDpoText(key, value) }
+        return getTranslatedDpoText(key, value.isEmpty ? fallback : value)
     }
 
     private var grievanceAndEmailRow: some View {
@@ -39,7 +50,7 @@ struct DpoInfoView: View {
     private var dpBoardRow: some View {
         Text(linkedSentenceText(
             text: getTranslatedDpoText("dp_board_text", dpoInfo.dpBoardText),
-            anchor: getTranslatedDpoText("dp_board_anchor_text", dpoInfo.dpBoardAnchorText),
+            anchor: label("dp_board_anchor_text", dpoInfo.dpBoardAnchorText, fallback: DpoCopy.dpBoardAnchor),
             urlString: dpoInfo.dpBoardUrl
         ))
         .foregroundColor(textColor)
@@ -53,10 +64,13 @@ struct DpoInfoView: View {
     }
 
     private var dpoRow: some View {
-        Text(linkedSentenceText(
+        let target = linksNeedTargets
+            ? (dpoInfo.dpoEmail.flatMap { $0.isEmpty ? nil : "mailto:\($0)" } ?? "")
+            : (dpoInfo.dpoContactUrl ?? "")
+        return Text(linkedSentenceText(
             text: getTranslatedDpoText("dpo_text", dpoInfo.dpoText),
-            anchor: getTranslatedDpoText("dpo_anchor_text", dpoInfo.dpoAnchorText),
-            urlString: dpoInfo.dpoContactUrl ?? ""
+            anchor: label("dpo_anchor_text", dpoInfo.dpoAnchorText, fallback: DpoCopy.dpoAnchor),
+            urlString: target
         ))
         .foregroundColor(textColor)
         .tint(linkColor)
@@ -71,14 +85,14 @@ struct DpoInfoView: View {
     private var grievanceAndEmailText: AttributedString {
         var result = linkedSentenceText(
             text: getTranslatedDpoText("grievance_text", dpoInfo.grievanceText),
-            anchor: getTranslatedDpoText("grievance_anchor_text", dpoInfo.grievanceAnchorText),
+            anchor: label("grievance_anchor_text", dpoInfo.grievanceAnchorText, fallback: DpoCopy.grievanceAnchor),
             urlString: dpoInfo.grievanceUrl
         )
 
         if !dpoInfo.grievanceEmail.isEmpty {
             let connector = getTranslatedDpoText(
                 "grievance_email_connector_text",
-                dpoInfo.grievanceEmailConnectorText ?? "or email to"
+                dpoInfo.grievanceEmailConnectorText.flatMap { $0.isEmpty ? nil : $0 } ?? DpoCopy.emailConnector
             )
 
             result.append(AttributedString(" "))
@@ -98,6 +112,7 @@ struct DpoInfoView: View {
     private func linkedSentenceText(text: String, anchor: String, urlString: String) -> AttributedString {
         var result = AttributedString(text)
         guard !anchor.isEmpty else { return result }
+        if linksNeedTargets && urlString.isEmpty { return result }
 
         result.append(AttributedString(" "))
         var anchorText = AttributedString(anchor)

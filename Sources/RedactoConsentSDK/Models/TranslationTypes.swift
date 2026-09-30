@@ -55,6 +55,7 @@ private struct PurposeTranslationFull: Codable {
 public struct LanguageTranslation: Codable {
     public let noticeText: String?
     public let additionalText: String?
+    public let acceptAllButtonText: String?
     public let confirmButtonText: String?
     public let declineButtonText: String?
     public let privacyPolicyPrefixText: String?
@@ -65,10 +66,13 @@ public struct LanguageTranslation: Codable {
     public let dataElements: [String: String]?
     public let purposes: [String: PurposeTranslation]?
     public let dpoInfo: DpoInfoTranslation?
+    public let products: [String: PurposeTranslation]?
+    public let productPrivacyPoliciesLabel: String?
 
     enum CodingKeys: String, CodingKey {
         case noticeText = "notice_text"
         case additionalText = "additional_text"
+        case acceptAllButtonText = "accept_all_button_text"
         case confirmButtonText = "confirm_button_text"
         case declineButtonText = "decline_button_text"
         case privacyPolicyPrefixText = "privacy_policy_prefix_text"
@@ -79,6 +83,8 @@ public struct LanguageTranslation: Codable {
         case dataElements = "data_elements"
         case purposes
         case dpoInfo = "dpo_info"
+        case products
+        case productPrivacyPoliciesLabel = "product_privacy_policies_label"
     }
 
     public init(from decoder: Decoder) throws {
@@ -87,6 +93,7 @@ public struct LanguageTranslation: Codable {
         // Decode simple string fields (all optional, won't fail)
         noticeText = try container.decodeIfPresent(String.self, forKey: .noticeText)
         additionalText = try container.decodeIfPresent(String.self, forKey: .additionalText)
+        acceptAllButtonText = try container.decodeIfPresent(String.self, forKey: .acceptAllButtonText)
         confirmButtonText = try container.decodeIfPresent(String.self, forKey: .confirmButtonText)
         declineButtonText = try container.decodeIfPresent(String.self, forKey: .declineButtonText)
         privacyPolicyPrefixText = try container.decodeIfPresent(String.self, forKey: .privacyPolicyPrefixText)
@@ -95,6 +102,8 @@ public struct LanguageTranslation: Codable {
         purposeSectionHeading = try container.decodeIfPresent(String.self, forKey: .purposeSectionHeading)
         noticeBannerHeading = try container.decodeIfPresent(String.self, forKey: .noticeBannerHeading)
         dpoInfo = try? container.decodeIfPresent(DpoInfoTranslation.self, forKey: .dpoInfo)
+        products = try? container.decodeIfPresent([String: PurposeTranslation].self, forKey: .products)
+        productPrivacyPoliciesLabel = try? container.decodeIfPresent(String.self, forKey: .productPrivacyPoliciesLabel)
 
         // Resilient decoding for purposes — decode each entry individually
         if let purposesContainer = try? container.decodeIfPresent([String: PurposeTranslation].self, forKey: .purposes) {
@@ -142,6 +151,7 @@ public struct LanguageTranslation: Codable {
         switch key {
         case "notice_text": return noticeText
         case "additional_text": return additionalText
+        case "accept_all_button_text": return acceptAllButtonText
         case "confirm_button_text": return confirmButtonText
         case "decline_button_text": return declineButtonText
         case "privacy_policy_prefix_text": return privacyPolicyPrefixText
@@ -149,6 +159,7 @@ public struct LanguageTranslation: Codable {
         case "privacy_center_anchor_text": return privacyCenterAnchorText
         case "purpose_section_heading": return purposeSectionHeading
         case "notice_banner_heading": return noticeBannerHeading
+        case "product_privacy_policies_label": return productPrivacyPoliciesLabel
         default: return nil
         }
     }

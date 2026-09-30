@@ -150,6 +150,7 @@ final class TTSAudioTests: XCTestCase {
             noticeId: "notice-1",
             accessToken: "token",
             refreshToken: "refresh",
+            baseUrl: "https://api.example.test/consent",
             onAccept: {},
             onDecline: {}
         )
@@ -201,6 +202,7 @@ final class TTSAudioTests: XCTestCase {
                     status: "active",
                     noticeText: "Notice",
                     additionalText: "",
+                    acceptAllButtonText: nil,
                     confirmButtonText: "Accept",
                     declineButtonText: "Decline",
                     logoUrl: "",

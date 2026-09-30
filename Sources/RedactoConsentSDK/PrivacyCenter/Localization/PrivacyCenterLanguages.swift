@@ -12,7 +12,7 @@ public struct PrivacyCenterLanguage: Identifiable, Hashable, Sendable {
 }
 
 public enum PrivacyCenterLanguages {
-    /// 24 languages mirroring `consent-sdk-react-native/src/RedactoPrivacyCenter/lib/constants.ts:8-33`.
+    /// 23 languages mirroring `consent-sdk-react-native/src/RedactoPrivacyCenter/lib/constants.ts:8-33`.
     public static let all: [PrivacyCenterLanguage] = [
         .init(code: "en", label: "English"),
         .init(code: "hi", label: "हिन्दी (Hindi)"),
@@ -34,7 +34,6 @@ public enum PrivacyCenterLanguages {
         .init(code: "mni-Mtei", label: "ꯃꯩꯇꯩꯂꯣꯟ (Manipuri)"),
         .init(code: "gom", label: "कोंकणी (Goan Konkani)"),
         .init(code: "sa", label: "संस्कृतम् (Sanskrit)"),
-        .init(code: "bho", label: "भोजपुरी (Bhojpuri)"),
         .init(code: "brx", label: "बड़ो (Bodo)"),
         .init(code: "ks", label: "كٲشُر (Kashmiri)"),
         .init(code: "sat", label: "ᱥᱟᱱᱛᱟᱲᱤ (Santali)"),

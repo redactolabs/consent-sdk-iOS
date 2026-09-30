@@ -9,9 +9,15 @@ struct MultipartFormBuilder {
 
     var contentType: String { "multipart/form-data; boundary=\(boundary)" }
 
-    func body(filename: String, mimeType: String, fileData: Data) -> Data {
+    /// The upload endpoints require a JSON `payload` part next to `file`; without
+    /// it they answer 422.
+    func body(filename: String, mimeType: String, fileData: Data, payload: Data) -> Data {
         var body = Data()
         appendString("--\(boundary)\r\n", to: &body)
+        appendString("Content-Disposition: form-data; name=\"payload\"\r\n", to: &body)
+        appendString("Content-Type: application/json\r\n\r\n", to: &body)
+        body.append(payload)
+        appendString("\r\n--\(boundary)\r\n", to: &body)
         appendString("Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"\r\n", to: &body)
         appendString("Content-Type: \(mimeType)\r\n\r\n", to: &body)
         body.append(fileData)

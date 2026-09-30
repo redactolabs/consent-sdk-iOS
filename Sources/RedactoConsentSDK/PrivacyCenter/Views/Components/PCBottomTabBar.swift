@@ -10,9 +10,10 @@ public struct PCBottomTabBar: View {
 
     public var body: some View {
         HStack(spacing: 0) {
-            tabButton(page: .consentManager, icon: "shield.lefthalf.filled", label: PCStrings.consents)
-            tabButton(page: .form, icon: "tray.full", label: PCStrings.requests)
-            tabButton(page: .activity, icon: "clock.arrow.circlepath", label: PCStrings.activities)
+            // React's menu names (HREF_TO_NAME_KEY).
+            tabButton(page: .consentManager, icon: "shield.lefthalf.filled", label: PCStrings.consentManager)
+            tabButton(page: .form, icon: "tray.full", label: PCStrings.grievance)
+            tabButton(page: .activity, icon: "clock.arrow.circlepath", label: PCStrings.activity)
             tabButton(page: .receipts, icon: "doc.text.magnifyingglass", label: PCStrings.myReceipt)
         }
         .padding(.top, 10)
@@ -36,6 +37,8 @@ public struct PCBottomTabBar: View {
                     .font(.system(size: 18, weight: .medium))
                 Text(label)
                     .font(.system(size: 11, weight: .medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
             }
             .foregroundColor(isActive ? theme.primary : theme.textSecondary)
             .frame(maxWidth: .infinity)

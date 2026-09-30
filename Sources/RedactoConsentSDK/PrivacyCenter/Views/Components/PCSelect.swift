@@ -53,9 +53,13 @@ public struct PCSelect<Value: Hashable>: View {
                 }
             } label: {
                 HStack {
+                    // A Menu label centres wrapped text; a select reads as one line.
                     Text(selectedLabel)
                         .font(.system(size: 15))
                         .foregroundColor(selection == nil ? theme.textTertiary : theme.text)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .multilineTextAlignment(.leading)
                     Spacer()
                     Image(systemName: "chevron.down")
                         .font(.system(size: 12, weight: .medium))

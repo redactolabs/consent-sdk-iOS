@@ -4,6 +4,10 @@ public struct ConsentContent: Codable {
     public let code: Int
     public let status: String
     public let detail: ConsentDetail
+
+    enum CodingKeys: String, CodingKey {
+        case code, status, detail
+    }
 }
 
 public struct ConsentDetail: Codable {
@@ -18,6 +22,7 @@ public struct ConsentDetail: Codable {
     public let complianceRequirement: String?
     public let isMinor: Bool?
     public let purposeSelections: [String: PurposeSelection]?
+    public var productPurposeSelections: [String: [String: PurposeSelection]]?
     public let reconsentRequired: Bool?
     public let createdAt: String
     public let updatedAt: String
@@ -33,6 +38,7 @@ public struct ConsentDetail: Codable {
         case complianceRequirement = "compliance_requirement"
         case isMinor = "is_minor"
         case purposeSelections = "purpose_selections"
+        case productPurposeSelections = "product_purpose_selections"
         case reconsentRequired = "reconsent_required"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
@@ -65,6 +71,10 @@ public struct ActiveConfig: Codable {
     public let status: String
     public let noticeText: String
     public let additionalText: String
+    /// Optional: absent from an older consent-server. The notice falls back to
+    /// the bundled English defaults in `NoticeButtonDefaults`.
+    public let acceptAllButtonText: String?
+    /// The "accept selected" slot — submits exactly what the user ticked.
     public let confirmButtonText: String
     public let declineButtonText: String
     public let logoUrl: String
@@ -85,6 +95,14 @@ public struct ActiveConfig: Codable {
     public let purposeSectionHeading: String
     public let noticeBannerHeading: String
     public let dpoInfo: DpoInfo?
+    public var products: [NoticeProduct]?
+    public var productPurposeOrder: [String: [String]]?
+    public var productPrivacyPolicies: [String: String]?
+    public var purposePreselection: String?
+    public var logoPosition: String?
+    /// The look the admin set in the Redacto console. Absent (an older server)
+    /// or empty means classic, drawn from the primary and secondary colours.
+    public var appearance: NoticeAppearance?
 
     enum CodingKeys: String, CodingKey {
         case uuid, purposes, status
@@ -94,6 +112,7 @@ public struct ActiveConfig: Codable {
         case version
         case noticeText = "notice_text"
         case additionalText = "additional_text"
+        case acceptAllButtonText = "accept_all_button_text"
         case confirmButtonText = "confirm_button_text"
         case declineButtonText = "decline_button_text"
         case logoUrl = "logo_url"
@@ -113,6 +132,12 @@ public struct ActiveConfig: Codable {
         case purposeSectionHeading = "purpose_section_heading"
         case noticeBannerHeading = "notice_banner_heading"
         case dpoInfo = "dpo_info"
+        case products
+        case productPurposeOrder = "product_purpose_order"
+        case productPrivacyPolicies = "product_privacy_policies"
+        case purposePreselection = "purpose_preselection"
+        case logoPosition = "logo_position"
+        case appearance
     }
 }
 
@@ -122,10 +147,12 @@ public struct ActiveConfigPurpose: Codable {
     public let description: String
     public let industries: String?
     public let dataElements: [ActiveConfigDataElement]
+    public var productUuids: [String]?
 
     enum CodingKeys: String, CodingKey {
         case uuid, name, description, industries
         case dataElements = "data_elements"
+        case productUuids = "product_uuids"
     }
 }
 
@@ -136,4 +163,8 @@ public struct ActiveConfigDataElement: Codable {
     public let industries: String?
     public let enabled: Bool
     public let required: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case uuid, name, description, industries, enabled, required
+    }
 }

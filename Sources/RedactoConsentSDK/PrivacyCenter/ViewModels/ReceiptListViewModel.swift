@@ -99,67 +99,111 @@ public final class ReceiptListViewModel: ObservableObject {
     }
 
     // MARK: - Loading
+
+    /// React pages receipts (skip = (page - 1) * size) rather than appending.
+    @Published public var currentPage: Int = 1
+    public static let pageSizeOptions = [5, 10, 15, 20, 25]
+
+    public var totalPages: Int { max(1, (pagination.totalCount + pageSize - 1) / pageSize) }
+
     public func loadInitial() async {
-        if isCustomRangeInvalid { return }
+        await load(page: currentPage)
+    }
+
+    public func load(page: Int) async {
+        if isCustomRangeInvalid || store.isSessionExpired { return }
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
         let range = dateRangeParams()
         do {
             let result = try await store.api.getReceipts(
-                skip: 0,
+                skip: (page - 1) * pageSize,
                 limit: pageSize,
                 eventType: eventType?.rawValue,
                 createdAfter: range.after,
                 createdBefore: range.before,
-                language: store.language
+                language: store.langParam
             )
             self.receipts = result.items
             self.pagination = result.page
+            self.currentPage = page
         } catch {
-            if !isCancellationError(error) {
-                errorMessage = PCStrings.failedToFetchReceipts
-                store.reportError(error)
-            }
+            if isSilentPrivacyCenterError(error) { return }
+            receipts = []
+            pagination = Pagination(totalCount: 0, offset: 0, limit: pageSize)
+            errorMessage = PCStrings.failedToFetchReceipts
+            store.showToast(PCStrings.failedToFetchReceipts, kind: .error)
+            store.reportError(error)
         }
+    }
+
+    public func goToPage(_ page: Int) {
+        Task { await load(page: max(1, min(page, totalPages))) }
+    }
+
+    public func setPageSize(_ size: Int) {
+        pageSize = size
+        Task { await load(page: 1) }
     }
 
     public func loadMore() async {
-        guard hasMore, !isLoadingMore else { return }
-        isLoadingMore = true
-        defer { isLoadingMore = false }
-        let range = dateRangeParams()
-        do {
-            let result = try await store.api.getReceipts(
-                skip: receipts.count,
-                limit: pageSize,
-                eventType: eventType?.rawValue,
-                createdAfter: range.after,
-                createdBefore: range.before,
-                language: store.language
-            )
-            self.receipts += result.items
-            self.pagination = result.page
-        } catch {
-            if !isCancellationError(error) {
-                errorMessage = PCStrings.failedToFetchReceipts
-                store.reportError(error)
-            }
-        }
+        guard hasMore else { return }
+        await load(page: currentPage + 1)
     }
 
     public func refresh() async {
-        await loadInitial()
+        await load(page: currentPage)
     }
 
-    /// Changing any filter resets to page 1 (i.e. a fresh load from skip = 0).
+    /// Changing any filter resets to page 1.
     public func reload() async {
-        await loadInitial()
+        await load(page: 1)
     }
 
     public func applyCustomRange() async {
         guard datePreset == .custom else { return }
         await reload()
+    }
+
+    /// The chips under the filters (React `activeFilterLabels`).
+    public var activeFilterLabels: [(label: String, value: String)] {
+        var chips: [(String, String)] = []
+        if let eventType {
+            chips.append((PCStrings.event, Self.eventLabel(eventType)))
+        }
+        if let datePreset {
+            var value = Self.dateLabel(datePreset)
+            if datePreset == .custom {
+                let f = DateFormatter()
+                f.locale = PrivacyCenterDateFormatters.locale()
+                f.setLocalizedDateFormatFromTemplate("ddMMMyyyy")
+                let from = customFrom.map { f.string(from: $0) } ?? PCStrings.from
+                let to = customTo.map { f.string(from: $0) } ?? PCStrings.to
+                value = "\(from) - \(to)"
+            }
+            chips.append((PCStrings.dateRange, value))
+        }
+        return chips
+    }
+
+    public static func eventLabel(_ event: ReceiptEventFilter) -> String {
+        switch event {
+        case .granted: return PCStrings.consentGranted
+        case .withdrawn: return PCStrings.consentRevoked
+        case .declined: return PCStrings.consentDeclined
+        case .expired: return PCStrings.consentExpired
+        }
+    }
+
+    public static func dateLabel(_ preset: ReceiptDateFilter) -> String {
+        switch preset {
+        case .today: return PCStrings.today
+        case .last7Days: return PCStrings.last7Days
+        case .last30Days: return PCStrings.last30Days
+        case .last3Months: return PCStrings.last3Months
+        case .custom: return PCStrings.customRange
+        }
     }
 
     public func clearFilters() {
@@ -186,6 +230,7 @@ public final class ReceiptListViewModel: ObservableObject {
         } catch {
             if !isCancellationError(error) {
                 downloadError = PCStrings.failedToDownloadReceipt
+                store.showToast(PCStrings.failedToDownloadReceipt, kind: .error)
                 store.reportError(error)
             }
             return nil

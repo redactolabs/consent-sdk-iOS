@@ -26,6 +26,29 @@ public struct MessageDocument: Codable, Sendable, Identifiable, Equatable {
         case fileSize = "file_size"
         case fileUrl = "file_url"
     }
+
+    public init(uuid: String, fileName: String? = nil, contentType: String? = nil, fileSize: Int? = nil, fileUrl: FileUrlMap? = nil) {
+        self.uuid = uuid
+        self.fileName = fileName
+        self.contentType = contentType
+        self.fileSize = fileSize
+        self.fileUrl = fileUrl
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        uuid = c.lenient(String.self, forKey: .uuid)
+        fileName = c.optional(String.self, forKey: .fileName)
+        contentType = c.optional(String.self, forKey: .contentType)
+        fileSize = c.optional(Int.self, forKey: .fileSize)
+        fileUrl = c.optional(FileUrlMap.self, forKey: .fileUrl)
+    }
+
+    /// React `getDownloadUrl`: `url || download_url`.
+    public var downloadURL: URL? {
+        guard let raw = fileUrl?.url.pcNonEmpty ?? fileUrl?.downloadUrl.pcNonEmpty else { return nil }
+        return URL(string: raw)
+    }
 }
 
 public struct DocumentRequestMetadata: Codable, Sendable, Equatable {
@@ -41,6 +64,18 @@ public struct DocumentRequestMetadata: Codable, Sendable, Equatable {
         case documentRequestStatus = "document_request_status"
         case documentRequestUuid = "document_request_uuid"
         case rejectionReason = "rejection_reason"
+    }
+
+    /// The server leaves a fresh request's text fields null (Kotlin 0.3.3 hit the
+    /// same "Document requested: null" card), and one throw here fails the whole
+    /// thread on every 10-second poll.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        title = c.lenient(String.self, forKey: .title)
+        acceptedDocument = c.lenient(String.self, forKey: .acceptedDocument)
+        documentRequestStatus = c.optional(DocumentRequestStatus.self, forKey: .documentRequestStatus) ?? .pending
+        documentRequestUuid = c.optional(String.self, forKey: .documentRequestUuid)
+        rejectionReason = c.lenient(String.self, forKey: .rejectionReason)
     }
 }
 
@@ -98,19 +133,17 @@ public struct CaseMessage: Codable, Sendable, Identifiable, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         uuid = try container.decode(String.self, forKey: .uuid)
-        caseUuid = try container.decode(String.self, forKey: .caseUuid)
-        senderRole = try container.decode(SenderRole.self, forKey: .senderRole)
-        triggeredByEmail = try container.decode(String.self, forKey: .triggeredByEmail)
-        createdAt = try container.decode(String.self, forKey: .createdAt)
-        body = try container.decode(String.self, forKey: .body)
+        caseUuid = container.lenient(String.self, forKey: .caseUuid)
+        senderRole = container.optional(SenderRole.self, forKey: .senderRole) ?? .other("")
+        triggeredByEmail = container.lenient(String.self, forKey: .triggeredByEmail)
+        createdAt = container.lenient(String.self, forKey: .createdAt)
+        body = container.lenient(String.self, forKey: .body)
         documents = try container.decodeIfPresent([MessageDocument].self, forKey: .documents) ?? []
         documentUuids = try container.decodeIfPresent([String].self, forKey: .documentUuids)
             ?? documents.map(\.uuid)
-        messageType = try container.decode(MessageType.self, forKey: .messageType)
-        documentRequestMetadata = try container.decodeIfPresent(
-            DocumentRequestMetadata.self,
-            forKey: .documentRequestMetadata
-        )
+        // A message type added server-side after this release reads as a plain message.
+        messageType = container.optional(MessageType.self, forKey: .messageType) ?? .messageSent
+        documentRequestMetadata = container.optional(DocumentRequestMetadata.self, forKey: .documentRequestMetadata)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -154,6 +187,26 @@ public struct UploadDocumentResponse: Codable, Sendable, Equatable {
         case fileHash = "file_hash"
         case status
         case allowAiProcessing = "allow_ai_processing"
+    }
+}
+
+extension UploadDocumentResponse {
+    /// The document's `uuid` is the only thing a caller needs back; a response
+    /// that omits the file's name or size must not fail an upload that landed.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        uuid = try c.decode(String.self, forKey: .uuid)
+        suid = c.optional(String.self, forKey: .suid)
+        fileName = c.lenient(String.self, forKey: .fileName)
+        fileType = c.optional(String.self, forKey: .fileType)
+        contentType = c.optional(String.self, forKey: .contentType)
+        fileSize = c.lenient(Int.self, forKey: .fileSize)
+        createdAt = c.optional(String.self, forKey: .createdAt)
+        isPublic = c.optional(Bool.self, forKey: .isPublic)
+        file = c.optional(String.self, forKey: .file)
+        fileHash = c.optional(String.self, forKey: .fileHash)
+        status = c.optional(String.self, forKey: .status)
+        allowAiProcessing = c.optional(Bool.self, forKey: .allowAiProcessing)
     }
 }
 

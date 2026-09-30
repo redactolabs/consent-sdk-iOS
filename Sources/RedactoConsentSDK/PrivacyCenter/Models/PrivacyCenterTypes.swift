@@ -24,6 +24,21 @@ public enum ConsentStatus: String, Codable, Sendable {
     case withdrawn = "WITHDRAW"
     case expired = "EXPIRED"
     case declined = "DECLINED"
+    /// A status this SDK does not know. It renders without actions rather than
+    /// failing the decode of every consent in the response.
+    case unknown = "UNKNOWN"
+
+    /// The servers write a revocation as `WITHDRAW`, `WITHDRAWN` or `REVOKED`
+    /// (React's `ConsentStatusEnum` carries `REVOKED`); all three are one state.
+    public init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self).uppercased()
+        switch raw {
+        case "WITHDRAW", "WITHDRAWN", "REVOKED":
+            self = .withdrawn
+        default:
+            self = ConsentStatus(rawValue: raw) ?? .unknown
+        }
+    }
 }
 
 public enum ConsentAction: String, Codable, Sendable {
@@ -56,9 +71,28 @@ public enum DocumentRequestStatus: String, Codable, Sendable {
     case replacementRequested = "replacement_requested"
 }
 
-public enum SenderRole: String, Codable, Sendable {
-    case dataFiduciary = "data_fiduciary"
-    case dataPrincipal = "data_principal"
+/// A role the server adds after this release stays `.other`, so its messages
+/// are never attributed to the principal or the fiduciary.
+public enum SenderRole: RawRepresentable, Codable, Sendable, Hashable {
+    case dataFiduciary
+    case dataPrincipal
+    case other(String)
+
+    public init(rawValue: String) {
+        switch rawValue {
+        case "data_fiduciary": self = .dataFiduciary
+        case "data_principal": self = .dataPrincipal
+        default: self = .other(rawValue)
+        }
+    }
+
+    public var rawValue: String {
+        switch self {
+        case .dataFiduciary: return "data_fiduciary"
+        case .dataPrincipal: return "data_principal"
+        case .other(let raw): return raw
+        }
+    }
 }
 
 public enum ActivityBadgeStatus: String, Codable, Sendable {

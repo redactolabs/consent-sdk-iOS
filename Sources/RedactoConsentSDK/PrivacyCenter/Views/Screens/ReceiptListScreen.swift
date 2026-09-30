@@ -38,14 +38,7 @@ public struct ReceiptListScreen: View {
     // MARK: - Header
     @ViewBuilder
     private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(PCStrings.myReceipt)
-                .font(.system(size: 22, weight: .bold))
-                .foregroundColor(theme.text)
-            Text(PCStrings.myReceiptSubtitle)
-                .font(.system(size: 13))
-                .foregroundColor(theme.textSecondary)
-        }
+        PCPageHeader(title: PCStrings.myReceipt, description: PCStrings.myReceiptSubtitle)
     }
 
     // MARK: - Filter bar
@@ -71,24 +64,28 @@ public struct ReceiptListScreen: View {
     @ViewBuilder
     private var filterBar: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                HStack(spacing: 6) {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
-                        .font(.system(size: 13, weight: .medium))
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "line.3.horizontal.decrease")
+                            .font(.system(size: 13, weight: .medium))
+                        Text(PCStrings.filterReceipts)
+                            .font(.system(size: 13, weight: .semibold))
+                    }
+                    .foregroundColor(theme.text)
+                    Text(PCStrings.receiptFiltersHint)
+                        .font(.system(size: 12))
                         .foregroundColor(theme.textSecondary)
-                    Text(PCStrings.filter)
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(theme.text)
                 }
                 Spacer()
-                if vm.hasActiveFilters {
-                    Button(action: { vm.clearFilters() }) {
-                        Text(PCStrings.clearFilters)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(theme.primary)
-                    }
-                    .buttonStyle(.plain)
+                Button(action: { vm.clearFilters() }) {
+                    Text(PCStrings.clearFilters)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(theme.primary)
                 }
+                .buttonStyle(.plain)
+                .disabled(!vm.hasActiveFilters)
+                .opacity(vm.hasActiveFilters ? 1 : 0.4)
             }
 
             PCSelect(
@@ -106,6 +103,28 @@ public struct ReceiptListScreen: View {
 
             if vm.datePreset == .custom {
                 customRange
+            }
+            HStack(alignment: .top) {
+                Text(PCStrings.totalRecords(vm.pagination.totalCount))
+                    .font(.system(size: 12))
+                    .foregroundColor(theme.textSecondary)
+                Spacer()
+            }
+            let chips = vm.activeFilterLabels
+            if !chips.isEmpty {
+                FlowLayoutCompat(spacing: 6) {
+                    ForEach(Array(chips.enumerated()), id: \.offset) { _, chip in
+                        (Text("\(chip.label): ").fontWeight(.semibold) + Text(chip.value))
+                            .font(.system(size: 11))
+                            .foregroundColor(theme.text)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(theme.background)
+                            .overlay(Capsule().stroke(theme.border, lineWidth: 1))
+                            .clipShape(Capsule())
+                    }
+                }
+                .accessibilityLabel(PCStrings.filtersApplied)
             }
         }
         .padding(12)
@@ -150,7 +169,7 @@ public struct ReceiptListScreen: View {
                 Spacer()
             }
             if vm.isCustomRangeInvalid {
-                Text(PCStrings.someThingWentWrong)
+                Text(PCStrings.receiptDateRangeInvalid)
                     .font(.system(size: 11))
                     .foregroundColor(theme.error)
             }
@@ -171,19 +190,14 @@ public struct ReceiptListScreen: View {
                 ForEach(vm.receipts) { receipt in
                     receiptRow(receipt)
                 }
-                if vm.hasMore {
-                    Button(action: { Task { await vm.loadMore() } }) {
-                        Text(vm.isLoadingMore ? PCStrings.loading : PCStrings.loadMore)
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(theme.primary)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(theme.surface)
-                            .cornerRadius(8)
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(vm.isLoadingMore)
-                }
+                PCPaginationBar(
+                    currentPage: vm.currentPage,
+                    totalPages: vm.totalPages,
+                    pageSize: vm.pageSize,
+                    pageSizeOptions: ReceiptListViewModel.pageSizeOptions,
+                    onPage: { vm.goToPage($0) },
+                    onPageSize: { vm.setPageSize($0) }
+                )
             }
         }
     }
@@ -223,7 +237,7 @@ public struct ReceiptListScreen: View {
     @ViewBuilder
     private func eventBadge(_ receipt: Receipt) -> some View {
         let raw = receipt.eventType.uppercased()
-        let label = receipt.eventTypeDisplay ?? eventFallbackLabel(raw)
+        let label = receipt.eventTypeDisplay.pcNonEmpty ?? eventFallbackLabel(raw)
         PCBadge(label, variant: eventVariant(raw))
     }
 
@@ -248,7 +262,7 @@ public struct ReceiptListScreen: View {
 
     // MARK: - Helpers
     private func productName(_ receipt: Receipt) -> String {
-        receipt.productNameDisplay ?? receipt.productName ?? "—"
+        receipt.productNameDisplay.pcNonEmpty ?? receipt.productName.pcNonEmpty ?? "—"
     }
 
     private func productInitials(_ receipt: Receipt) -> String {
@@ -265,7 +279,7 @@ public struct ReceiptListScreen: View {
         case "WITHDRAWN": return PCStrings.consentRevoked
         case "DECLINED": return PCStrings.consentDeclined
         case "EXPIRED": return PCStrings.consentExpired
-        default: return raw.isEmpty ? "—" : PCFormatting.humanize(raw)
+        default: return raw.isEmpty ? "—" : raw
         }
     }
 

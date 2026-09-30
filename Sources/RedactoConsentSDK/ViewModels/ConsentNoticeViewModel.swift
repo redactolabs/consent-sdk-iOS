@@ -62,6 +62,8 @@ enum TTSQueueBuilder {
             }
         }
 
+        // Action buttons, read in the order they are laid out.
+        appendIfPresent("accept_all_button_text", urls: urls, queue: &queue)
         appendIfPresent("confirm_button_text", urls: urls, queue: &queue)
         appendIfPresent("decline_button_text", urls: urls, queue: &queue)
 
@@ -69,37 +71,79 @@ enum TTSQueueBuilder {
     }
 }
 
+/// The two notice-body sections a collapsible layout draws as disclosures.
+enum NoticeSection: Hashable {
+    case about
+    case dpo
+}
+
+/// Everything one accept submits, captured when the button is pressed so a
+/// token swap that resets the notice cannot change what is sent.
+struct PreparedAccept {
+    let params: ConsentAPI.SubmitConsentEventParams
+}
+
 /// ViewModel for the modal RedactoNoticeConsent view.
 /// Port of RedactoNoticeConsent.tsx state management and business logic.
 @MainActor
 public class ConsentNoticeViewModel: ObservableObject {
     // MARK: - Configuration
-    let noticeId: String
-    let accessToken: String
-    let refreshToken: String
+    var noticeId: String
+    var accessToken: String
+    var refreshToken: String
     let baseUrl: String?
+    var ledgerBaseUrl: String?
+    /// Resolved sandbox config, or nil for the JWT/live path.
+    var sandbox: SandboxConfig?
+    /// A sandbox config that failed to resolve (a non-empty sandbox token was
+    /// supplied with a missing org/workspace/identity). Surfaced through `onError`
+    /// from the load path — never synchronously during view construction.
+    var sandboxConfigError: Error?
     let settings: ConsentSettings?
-    let initialLanguage: String
+    /// The host's `language`: what the notice is read in. The visible language
+    /// then follows the notice's default language.
+    var initialLanguage: String
     let blockUI: Bool
     let onAccept: () -> Void
     let onDecline: () -> Void
     let onError: ((Error) -> Void)?
-    let applicationId: String?
-    let validateAgainst: String
-    let includeFullyConsentedData: Bool
+    var applicationId: String?
+    var validateAgainst: String
+    var includeFullyConsentedData: Bool
     let reviewModeButtonText: String?
+    let defaultOpenProducts: [String]?
+    var otpGate: OtpGate?
+    var otpFlow = OtpGateFlow()
 
     // MARK: - Published State
     @Published var content: ConsentContent?
     @Published var isLoading = true
+    @Published var hasAlreadyConsented = false
     @Published var isSubmitting = false
+    @Published var isSubmittingAccept = false
     @Published var selectedLanguage: String
     @Published var collapsedPurposes: [String: Bool] = [:]
     @Published var selectedPurposes: [String: Bool] = [:]
     @Published var selectedDataElements: [String: Bool] = [:]
     @Published var initialDataElementSelections: [String: Bool] = [:]
+    @Published var collapsedProducts: [String: Bool] = [:]
+    @Published var recordedPurposeSelections: [String: Bool] = [:]
+    @Published var consentedProducts: [String: Bool] = [:]
+    @Published var consentedPurposes: [String: Bool] = [:]
+    /// The reconsent split; nil unless the server asks for reconsent.
+    @Published var categorizedPurposes: CategorizedPurposes?
+    /// A submit or guardian-gate failure, shown as a dismissible banner.
     @Published var errorMessage: String?
+    /// The notice could not be read: the dialog replaces the notice.
+    @Published var fetchErrorMessage: String?
+    /// The host's props are unusable: nothing is read.
+    @Published var configurationErrorMessage: String?
     @Published var isVisible = false
+    @Published var otpPanel = OtpPanelState()
+    @Published var pendingConfirmAction: ConfirmAction?
+    @Published var openSections: Set<NoticeSection> = []
+    /// The appearance last served for this notice, for the loading state.
+    @Published var cachedAppearance: NoticeAppearance?
 
     // Reconsent / review / age
     @Published var isReconsentMode = false
@@ -121,6 +165,7 @@ public class ConsentNoticeViewModel: ObservableObject {
     private var ttsQueue: [TTSQueueItem] = []
     private var ttsIndex = 0
     private var playerObserver: Any?
+    private var ttsTask: Task<Void, Never>?
 
     // Guardian verification
     @Published var isMinorFlow = false
@@ -132,16 +177,19 @@ public class ConsentNoticeViewModel: ObservableObject {
     @Published var verificationError: String?
     @Published var verificationErrorCode: String?
     @Published var canRetryVerification = false
-    private var verificationReference: String?
-    private var selfDeclaredAdult = false
-    private var verificationSessionToken: String?
-    private var pollingTask: Task<Void, Never>?
-    private var autoTransitionTask: Task<Void, Never>?
+    var verificationReference: String?
+    var selfDeclaredAdult = false
+    var verificationSessionToken: String?
+    var pollingTask: Task<Void, Never>?
+    var guardianTask: Task<Void, Never>?
+    var autoTransitionTask: Task<Void, Never>?
+    /// Seams for tests: how DigiLocker is opened and how often it is polled.
+    var openURL: (URL) async -> Bool = { url in await UIApplication.shared.open(url) }
+    var pollIntervalNanos: UInt64 = 3_000_000_000
 
     // Language dropdown
     @Published var isLanguageDropdownOpen = false
 
-    private var hasBootstrappedLanguage = false
     private var fetchTask: Task<Void, Never>?
 
     public struct GuardianFormData {
@@ -156,7 +204,10 @@ public class ConsentNoticeViewModel: ObservableObject {
         noticeId: String,
         accessToken: String,
         refreshToken: String,
-        baseUrl: String? = nil,
+        baseUrl: String,
+        ledgerBaseUrl: String? = nil,
+        sandbox: SandboxConfig? = nil,
+        sandboxConfigError: Error? = nil,
         settings: ConsentSettings? = nil,
         language: String = "en",
         blockUI: Bool = true,
@@ -166,12 +217,17 @@ public class ConsentNoticeViewModel: ObservableObject {
         applicationId: String? = nil,
         validateAgainst: String = "all",
         includeFullyConsentedData: Bool = false,
-        reviewModeButtonText: String? = nil
+        reviewModeButtonText: String? = nil,
+        defaultOpenProducts: [String]? = nil,
+        otpGate: OtpGate? = nil
     ) {
         self.noticeId = noticeId
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         self.baseUrl = baseUrl
+        self.ledgerBaseUrl = ledgerBaseUrl
+        self.sandbox = sandbox
+        self.sandboxConfigError = sandboxConfigError
         self.settings = settings
         self.initialLanguage = language
         self.selectedLanguage = language
@@ -183,11 +239,16 @@ public class ConsentNoticeViewModel: ObservableObject {
         self.validateAgainst = validateAgainst
         self.includeFullyConsentedData = includeFullyConsentedData
         self.reviewModeButtonText = reviewModeButtonText
+        self.defaultOpenProducts = defaultOpenProducts
+        self.otpGate = otpGate
+        self.cachedAppearance = NoticeAppearanceCache.read(noticeId: noticeId)
     }
 
     deinit {
         fetchTask?.cancel()
+        ttsTask?.cancel()
         pollingTask?.cancel()
+        guardianTask?.cancel()
         autoTransitionTask?.cancel()
         audioPlayer?.pause()
         audioPlayer = nil
@@ -198,137 +259,130 @@ public class ConsentNoticeViewModel: ObservableObject {
 
     // MARK: - Fetch Content
 
-    func fetchContent() {
+    @discardableResult
+    func fetchContent(clearingCache: Bool = false) -> Task<Void, Never> {
         fetchTask?.cancel()
-        fetchTask = Task { [weak self] in
+        let task = Task { [weak self] in
+            if clearingCache {
+                await ConsentAPI.clearCache()
+            }
             guard let self else { return }
             await self.performFetch()
         }
+        fetchTask = task
+        return task
+    }
+
+    /// Why the host's props cannot be used, checked before anything is read.
+    var propValidationError: String? {
+        if noticeId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return NoticeErrorCopy.missingNoticeId
+        }
+        if let sandboxConfigError {
+            return sandboxConfigError.localizedDescription
+        }
+        if sandbox == nil && accessToken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return NoticeErrorCopy.missingAccessToken
+        }
+        return nil
     }
 
     private func performFetch() async {
         isLoading = true
-        errorMessage = nil
+        fetchErrorMessage = nil
+        showAgeVerification = false
+        showGuardianForm = false
+
+        if let invalid = propValidationError {
+            configurationErrorMessage = invalid
+            // Fail loud (deferred out of `init`) for a sandbox config the host
+            // got wrong; the JWT/live path is unaffected.
+            if let sandboxConfigError {
+                onError?(sandboxConfigError)
+            }
+            isLoading = false
+            return
+        }
+        configurationErrorMessage = nil
 
         do {
             let data = try await ConsentAPI.fetchConsentContent(.init(
                 noticeId: noticeId,
                 accessToken: accessToken,
                 baseUrl: baseUrl,
-                language: selectedLanguage,
+                ledgerBaseUrl: ledgerBaseUrl,
+                language: initialLanguage,
                 specificUuid: applicationId,
                 validateAgainst: validateAgainst,
-                includeFullyConsentedData: includeFullyConsentedData
+                includeFullyConsentedData: includeFullyConsentedData,
+                sandbox: sandbox
             ))
 
             if Task.isCancelled { return }
 
             let activeConfig = data.detail.activeConfig
-            let purposeSelections = data.detail.purposeSelections
-            let reconsentRequired = data.detail.reconsentRequired ?? false
-            let noticeIsMinor = data.detail.isMinor ?? false
-
-            isMinor = noticeIsMinor
-
-            // Initialize collapsed/selected states
-            var initialCollapsed: [String: Bool] = [:]
-            var initialPurposeState: [String: Bool] = [:]
-            var initialDataElementState: [String: Bool] = [:]
-            var initialDataElementSelectionsMap: [String: Bool] = [:]
-
-            for purpose in activeConfig.purposes {
-                initialCollapsed[purpose.uuid] = true
-                let sel = purposeSelections?[purpose.uuid]
-                let purposeSelected = sel?.selected ?? false
-                initialPurposeState[purpose.uuid] = purposeSelected
-
-                for el in purpose.dataElements {
-                    let combinedId = "\(purpose.uuid)-\(el.uuid)"
-                    let elementSel = sel?.dataElements[el.uuid]?.selected ?? false
-                    initialDataElementState[combinedId] = elementSel
-                    initialDataElementSelectionsMap[combinedId] = elementSel
-                }
+            if let opening = NoticeTranslation.openingLanguage(defaultLanguage: activeConfig.defaultLanguage) {
+                selectedLanguage = opening
             }
 
-            collapsedPurposes = initialCollapsed
-            selectedPurposes = initialPurposeState
-            selectedDataElements = initialDataElementState
-            initialDataElementSelections = initialDataElementSelectionsMap
-
-            if !hasBootstrappedLanguage {
-                hasBootstrappedLanguage = true
-                if !activeConfig.defaultLanguage.isEmpty && activeConfig.defaultLanguage != selectedLanguage {
-                    selectedLanguage = activeConfig.defaultLanguage
-                }
-            }
-
+            seedSelectionState(from: data)
             content = data
-            isReconsentMode = reconsentRequired
+            NoticeAppearanceCache.write(noticeId: activeConfig.noticeUuid, appearance: activeConfig.appearance)
 
-            // Review mode: if includeFullyConsentedData AND all purposes are fully consented
-            if includeFullyConsentedData && !reconsentRequired {
-                let allFullyConsented = activeConfig.purposes.allSatisfy { purpose in
-                    let sel = purposeSelections?[purpose.uuid]
-                    return (sel?.selected ?? false) && !(sel?.needsReconsent ?? false)
-                }
-                if allFullyConsented && !activeConfig.purposes.isEmpty {
-                    isReviewMode = true
-                }
-            }
-
-            if noticeIsMinor {
-                showAgeVerification = true
+            isMinor = data.detail.isMinor ?? false
+            if isMinor {
                 isMinorFlow = true
+                showAgeVerification = true
             }
 
             isVisible = true
-
-            // Fetch TTS audio
-            await fetchTTS()
-
-        } catch let error as RedactoAPIError {
+            isLoading = false
+            refreshTTS()
+        } catch {
             if Task.isCancelled { return }
-
-            if error.statusCode == 409 {
+            if (error as? RedactoAPIError)?.statusCode == 409 {
+                hasAlreadyConsented = true
+                isLoading = false
                 onAccept()
                 return
             }
-
-            if error.statusCode == 401 {
-                errorMessage = "Unauthorized: Invalid or expired token"
-            } else {
-                errorMessage = error.localizedDescription
-            }
+            let message = error.localizedDescription
+            fetchErrorMessage = message.isEmpty ? NoticeErrorCopy.fallback : message
             onError?(error)
-        } catch {
-            if Task.isCancelled { return }
-            errorMessage = error.localizedDescription
-            onError?(error)
+            isLoading = false
         }
-
-        isLoading = false
     }
 
     // MARK: - TTS
 
-    private func fetchTTS() async {
+    /// Talkback restarts from nothing whenever the notice or its language
+    /// changes: the old audio stops and the new language's is read.
+    private var ttsLanguageCode: String?
+
+    func refreshTTS() {
+        ttsTask?.cancel()
+        isTTSAvailable = false
+        ttsAudioUrls = [:]
+        stopAudio()
         guard let content else { return }
-
-        // Map language for TTS API — English uses "English", others use their key
-        let languageCode: String
-        if selectedLanguage == "en" || selectedLanguage == "EN" {
-            languageCode = "English"
-        } else {
-            languageCode = selectedLanguage
+        let languageCode = NoticeTranslation.audioLanguage(selectedLanguage, config: content.detail.activeConfig)
+        ttsLanguageCode = languageCode
+        ttsTask = Task { [weak self] in
+            await self?.fetchTTS(content: content, languageCode: languageCode)
         }
+    }
 
+    private func fetchTTS(content: ConsentContent, languageCode: String) async {
         do {
             let data = try await ConsentAPI.fetchTTSAudioUrls(.init(
                 accessToken: accessToken,
                 baseUrl: baseUrl,
+                ledgerBaseUrl: ledgerBaseUrl,
                 noticeUuid: content.detail.activeConfig.noticeUuid,
-                language: languageCode
+                language: languageCode,
+                sandbox: sandbox
             ))
+            if Task.isCancelled { return }
 
             var urls: [String: String] = [:]
             urls["notice_text"] = data.detail.noticeTextAudioUrl
@@ -338,6 +392,7 @@ public class ConsentNoticeViewModel: ObservableObject {
             urls["privacy_policy_prefix_text"] = data.detail.privacyPolicyPrefixTextAudioUrl
             urls["privacy_policy_anchor_text"] = data.detail.privacyPolicyAnchorTextAudioUrl
             urls["privacy_center_anchor_text"] = data.detail.privacyCenterAnchorTextAudioUrl
+            urls["accept_all_button_text"] = data.detail.acceptAllButtonTextAudioUrl
             urls["confirm_button_text"] = data.detail.confirmButtonTextAudioUrl
             urls["decline_button_text"] = data.detail.declineButtonTextAudioUrl
 
@@ -365,13 +420,22 @@ public class ConsentNoticeViewModel: ObservableObject {
             }
 
             ttsAudioUrls = urls
-            isTTSAvailable = !urls.isEmpty
+            isTTSAvailable = true
         } catch {
+            if Task.isCancelled { return }
             #if DEBUG
             print("[RedactoConsentSDK] TTS fetch failed for language '\(languageCode)': \(error.localizedDescription)")
             #endif
             isTTSAvailable = false
         }
+    }
+
+    /// The purposes talkback reads, in the order they render.
+    var ttsPurposes: [ActiveConfigPurpose] {
+        if let categorizedPurposes {
+            return categorizedPurposes.alreadyConsented + categorizedPurposes.needsConsent
+        }
+        return renderedPurposes
     }
 
     func toggleAudio() {
@@ -395,11 +459,12 @@ public class ConsentNoticeViewModel: ObservableObject {
         let ac = content.detail.activeConfig
         ttsQueue = TTSQueueBuilder.buildQueue(
             urls: ttsAudioUrls,
-            purposes: ac.purposes,
+            purposes: ttsPurposes,
             hasAdditionalText: !ac.additionalText.isEmpty,
             hasPrivacyCenterUrl: !ac.privacyCenterUrl.isEmpty,
             hasDpoInfo: ac.dpoInfo != nil
         )
+        guard !ttsQueue.isEmpty else { return }
         ttsIndex = 0
         isPlaying = true
         isPaused = false
@@ -425,7 +490,6 @@ public class ConsentNoticeViewModel: ObservableObject {
         let playerItem = AVPlayerItem(url: url)
         audioPlayer = AVPlayer(playerItem: playerItem)
 
-        // Remove existing observer
         if let observer = playerObserver {
             NotificationCenter.default.removeObserver(observer)
         }
@@ -435,7 +499,7 @@ public class ConsentNoticeViewModel: ObservableObject {
             object: playerItem,
             queue: .main
         ) { [weak self] _ in
-            self?.playNextInQueue()
+            Task { @MainActor [weak self] in self?.playNextInQueue() }
         }
 
         audioPlayer?.play()
@@ -458,130 +522,60 @@ public class ConsentNoticeViewModel: ObservableObject {
         }
     }
 
+    var isTalkbackActive: Bool { isPlaying || isPaused }
+
+    // MARK: - Notice sections
+
+    /// Talkback reads the notice text and the DPO block, so both stay open for
+    /// the whole session, paused included.
+    func isSectionOpen(_ section: NoticeSection) -> Bool {
+        openSections.contains(section) || isTalkbackActive
+    }
+
+    func toggleSection(_ section: NoticeSection) {
+        guard !isTalkbackActive else { return }
+        if openSections.contains(section) {
+            openSections.remove(section)
+        } else {
+            openSections.insert(section)
+        }
+    }
+
     // MARK: - Translation Helper
 
-    /// Check if the given language is the default/base language.
-    /// Matching the React SDK's `isDefaultLanguage()` — only English is treated as default.
-    private func isDefaultLanguage(_ lang: String) -> Bool {
-        guard content != nil else { return true }
-        return lang == "English" || lang == "en" || lang == "EN"
-    }
-
     func getTranslatedText(_ key: String, defaultText: String, itemId: String? = nil) -> String {
-        guard let content else { return defaultText }
-        let activeConfig = content.detail.activeConfig
-
-        // For default language, return the base text from activeConfig directly
-        if isDefaultLanguage(selectedLanguage) {
-            return defaultText
-        }
-
-        guard let translationMap = activeConfig.supportedLanguagesAndTranslations[selectedLanguage] else {
-            return defaultText
-        }
-
-        if let itemId {
-            if key == "purposes.name" || key == "purposes.description" {
-                if let purposeData = translationMap.purposes?[itemId] {
-                    switch purposeData {
-                    case .name(let str):
-                        return key == "purposes.name" ? (str.isEmpty ? defaultText : str) : defaultText
-                    case .full(let name, let description):
-                        if key == "purposes.name" {
-                            return name.isEmpty ? defaultText : name
-                        }
-                        return description.isEmpty ? defaultText : description
-                    }
-                }
-                return defaultText
-            }
-            if key.hasPrefix("data_elements.") {
-                if let translated = translationMap.dataElements?[itemId], !translated.isEmpty {
-                    return translated
-                }
-                return defaultText
-            }
-        }
-
-        if let value = translationMap.value(forKey: key), !value.isEmpty {
-            return value
-        }
-        return defaultText
+        NoticeTranslation.text(activeConfig, language: selectedLanguage, key: key, defaultText: defaultText, itemId: itemId)
     }
 
-    /// Translate DPO info text fields.
-    /// Port of `getTranslatedDpoText` from the React SDK.
     func getTranslatedDpoText(_ key: String, defaultText: String) -> String {
-        guard let content else { return defaultText }
-        let activeConfig = content.detail.activeConfig
-
-        // For default language, return default text
-        if isDefaultLanguage(selectedLanguage) {
-            return defaultText
-        }
-
-        // Check if we have a translation map for the selected language
-        guard let translationMap = activeConfig.supportedLanguagesAndTranslations[selectedLanguage] else {
-            return defaultText
-        }
-
-        // Look up the DPO translation
-        if let dpoTranslation = translationMap.dpoInfo {
-            let translated: String?
-            switch key {
-            case "grievance_text": translated = dpoTranslation.grievanceText
-            case "grievance_anchor_text": translated = dpoTranslation.grievanceAnchorText
-            case "grievance_email_connector_text": translated = dpoTranslation.grievanceEmailConnectorText
-            case "dp_board_text": translated = dpoTranslation.dpBoardText
-            case "dp_board_anchor_text": translated = dpoTranslation.dpBoardAnchorText
-            case "dpo_text": translated = dpoTranslation.dpoText
-            case "dpo_anchor_text": translated = dpoTranslation.dpoAnchorText
-            default: translated = nil
-            }
-            if let translated, !translated.isEmpty {
-                return translated
-            }
-        }
-
-        return defaultText
+        NoticeTranslation.dpoText(activeConfig, language: selectedLanguage, key: key, defaultText: defaultText)
     }
 
     /// Called when selectedLanguage changes to re-fetch TTS audio.
+    /// The read settles the notice on its default language, which lands here
+    /// after the read already fetched that language's audio: only a different
+    /// audio language needs a second request.
     func onLanguageChanged() {
-        guard content != nil else { return }
-        // Reset TTS and re-fetch for new language
-        isTTSAvailable = false
-        ttsAudioUrls = [:]
-        stopAudio()
-        Task { [weak self] in
-            await self?.fetchTTS()
-        }
+        guard let content else { return }
+        let languageCode = NoticeTranslation.audioLanguage(selectedLanguage, config: content.detail.activeConfig)
+        guard languageCode != ttsLanguageCode else { return }
+        refreshTTS()
+    }
+
+    /// A fully consented notice has nothing to submit: its one button hands
+    /// control back to the host, as React's review-mode "Continue" does.
+    func continueFromReview() {
+        onAccept()
     }
 
     // MARK: - Purpose/Element Toggles
-
-    func handlePurposeToggle(_ purposeUuid: String) {
-        let newState = !(selectedPurposes[purposeUuid] ?? false)
-        selectedPurposes[purposeUuid] = newState
-
-        guard let purposes = content?.detail.activeConfig.purposes,
-              let purpose = purposes.first(where: { $0.uuid == purposeUuid }) else { return }
-
-        for el in purpose.dataElements {
-            selectedDataElements["\(purposeUuid)-\(el.uuid)"] = newState
-        }
-    }
-
-    func handlePurposeCollapse(_ purposeUuid: String) {
-        collapsedPurposes[purposeUuid] = !(collapsedPurposes[purposeUuid] ?? true)
-    }
 
     private func autoExpandPurposeIfNeeded(for segmentKey: String) {
         guard let purposeUuid = purposeUUID(for: segmentKey) else {
             return
         }
-        if collapsedPurposes[purposeUuid] == true {
-            collapsedPurposes[purposeUuid] = false
+        for key in rowKeys(forPurpose: purposeUuid) where collapsedPurposes[key] == true {
+            collapsedPurposes[key] = false
         }
     }
 
@@ -601,111 +595,87 @@ public class ConsentNoticeViewModel: ObservableObject {
         return nil
     }
 
-    func handleDataElementToggle(_ elementUuid: String, purposeUuid: String) {
-        guard let purposes = content?.detail.activeConfig.purposes,
-              let purpose = purposes.first(where: { $0.uuid == purposeUuid }) else { return }
-
-        let combinedId = "\(purposeUuid)-\(elementUuid)"
-        selectedDataElements[combinedId] = !(selectedDataElements[combinedId] ?? false)
-
-        let requiredElements = purpose.dataElements.filter { $0.required }
-        let shouldCheckPurpose: Bool
-        if !requiredElements.isEmpty {
-            shouldCheckPurpose = requiredElements.allSatisfy { el in
-                selectedDataElements["\(purposeUuid)-\(el.uuid)"] ?? false
-            }
-        } else {
-            shouldCheckPurpose = purpose.dataElements.contains { el in
-                selectedDataElements["\(purposeUuid)-\(el.uuid)"] ?? false
-            }
-        }
-        selectedPurposes[purposeUuid] = shouldCheckPurpose
-    }
-
     // MARK: - Submit
 
-    func handleAccept() {
-        guard let content else { return }
+    /// Shared by all three accept buttons. The mode only decides which
+    /// purposes/data elements are submitted — everything downstream, including
+    /// the host's `onAccept` callback, is identical.
+    func handleAccept(mode: AcceptMode = .selected) {
+        guard let prepared = prepareAccept(mode: mode) else { return }
+        submit(prepared)
+    }
 
-        // Block if minor flow active but verification reference missing
+    /// Runs the gates an accept passes through and captures what it submits.
+    /// Nil when a gate holds it (the OTP step, a missing guardian check).
+    func prepareAccept(mode: AcceptMode) -> PreparedAccept? {
+        guard let content else { return nil }
+        if holdForOtp(mode) { return nil }
+
         if isMinorFlow && verificationReference == nil {
-            errorMessage = "Guardian verification is required before consent can be submitted."
-            return
+            errorMessage = NoticeCopy.minorVerificationRequired
+            return nil
         }
 
+        let rows = purposeRows
+        let selection = ProductConsent.selectionForMode(
+            rows: rows,
+            mode: mode,
+            current: SelectionState(
+                selectedPurposes: selectedPurposes,
+                selectedDataElements: selectedDataElements
+            )
+        )
+        // Reflect the shortcut's selection in the checkboxes so the notice shows
+        // what was sent if the request fails and it stays open.
+        if mode != .selected {
+            selectedPurposes = selection.selectedPurposes
+            selectedDataElements = selection.selectedDataElements
+        }
+
+        let purposes = ProductConsent.submissionPurposes(
+            rows: rows,
+            selection: selection,
+            mode: mode,
+            recordedPurposeSelections: modificationBaseline,
+            initialDataElementSelections: initialDataElementSelections
+        )
+        let specificUuid = applicationId.flatMap { $0.isEmpty ? nil : $0 }
+        return PreparedAccept(params: ConsentAPI.SubmitConsentEventParams(
+            accessToken: accessToken,
+            baseUrl: baseUrl,
+            ledgerBaseUrl: ledgerBaseUrl,
+            noticeUuid: content.detail.activeConfig.noticeUuid,
+            purposes: purposes,
+            declined: false,
+            language: NoticeLanguageCodes.toBcp47Code(selectedLanguage),
+            metaData: specificUuid.map { MetaData(specificUuid: $0) },
+            guardianVerificationReference: verificationReference,
+            selfDeclaredAdult: selfDeclaredAdult ? true : nil,
+            sandbox: sandbox
+        ))
+    }
+
+    func submit(_ prepared: PreparedAccept) {
+        isSubmitting = true
+        isSubmittingAccept = true
+        errorMessage = nil
+
         Task { [weak self] in
-            guard let self else { return }
-            self.isSubmitting = true
-            self.errorMessage = nil
-
             do {
-                let activeConfig = content.detail.activeConfig
-                let purposeSelections = content.detail.purposeSelections
-
-                let purposes = activeConfig.purposes.map { purpose -> Purpose in
-                    // Check if this is an already-consented purpose
-                    let sel = purposeSelections?[purpose.uuid]
-                    let isAlreadyConsented = (sel?.selected ?? false) && !(sel?.needsReconsent ?? false)
-
-                    var purposeSelected = self.selectedPurposes[purpose.uuid] ?? false
-
-                    // For already-consented purposes, check if any data element was modified
-                    if isAlreadyConsented {
-                        let wasModified = purpose.dataElements.contains { el in
-                            let combinedId = "\(purpose.uuid)-\(el.uuid)"
-                            let current = self.selectedDataElements[combinedId] ?? false
-                            let initial = self.initialDataElementSelections[combinedId] ?? false
-                            return current != initial
-                        }
-                        if wasModified {
-                            purposeSelected = true
-                        }
-                    }
-
-                    return Purpose(
-                        uuid: purpose.uuid,
-                        name: purpose.name,
-                        description: purpose.description,
-                        industries: purpose.industries,
-                        selected: purposeSelected,
-                        dataElements: purpose.dataElements.map { el in
-                            DataElement(
-                                uuid: el.uuid,
-                                name: el.name,
-                                description: el.description,
-                                industries: el.industries,
-                                enabled: el.enabled,
-                                required: el.required,
-                                selected: el.required ? true : (self.selectedDataElements["\(purpose.uuid)-\(el.uuid)"] ?? false)
-                            )
-                        }
-                    )
-                }
-
-                try await ConsentAPI.submitConsentEvent(.init(
-                    accessToken: self.accessToken,
-                    baseUrl: self.baseUrl,
-                    noticeUuid: activeConfig.noticeUuid,
-                    purposes: purposes,
-                    declined: false,
-                    metaData: self.applicationId.map { MetaData(specificUuid: $0) },
-                    guardianVerificationReference: self.verificationReference,
-                    selfDeclaredAdult: self.selfDeclaredAdult ? true : nil
-                ))
-
+                try await ConsentAPI.submitConsentEvent(prepared.params)
+                guard let self else { return }
                 self.stopAudio()
                 await ConsentAPI.clearCache()
                 self.isVisible = false
                 self.onAccept()
             } catch {
-                let apiError = error as? RedactoAPIError
-                self.errorMessage = apiError?.statusCode == 500
-                    ? "An error occurred. Please try again later."
-                    : error.localizedDescription
+                guard let self else { return }
+                let message = error.localizedDescription
+                self.errorMessage = message.isEmpty ? NoticeCopy.submitFailed : message
                 self.onError?(error)
             }
-
-            self.isSubmitting = false
+            self?.isSubmitting = false
+            self?.isSubmittingAccept = false
         }
     }
 
@@ -714,326 +684,9 @@ public class ConsentNoticeViewModel: ObservableObject {
         autoTransitionTask?.cancel()
         autoTransitionTask = nil
         stopAudio()
+        otpPanel = OtpPanelState()
         isVisible = false
         onDecline()
-    }
-
-    // MARK: - Guardian Form
-
-    func handleGuardianFormChange(_ field: String, _ value: String) {
-        switch field {
-        case "guardianName":
-            guardianFormData.guardianName = value
-        case "guardianContact":
-            guardianFormData.guardianContact = value
-        case "guardianRelationship":
-            guardianFormData.guardianRelationship = value
-        default:
-            break
-        }
-        guardianFormErrors[field] = nil
-    }
-
-    func handleGuardianFormNext() {
-        var errors: [String: String] = [:]
-        if guardianFormData.guardianName.trimmingCharacters(in: .whitespaces).isEmpty {
-            errors["guardianName"] = "Guardian name is required"
-        }
-        if guardianFormData.guardianContact.trimmingCharacters(in: .whitespaces).isEmpty {
-            errors["guardianContact"] = "Guardian contact is required"
-        }
-        if guardianFormData.guardianRelationship.trimmingCharacters(in: .whitespaces).isEmpty {
-            errors["guardianRelationship"] = "Relationship is required"
-        }
-        guard errors.isEmpty else {
-            guardianFormErrors = errors
-            return
-        }
-
-        Task { [weak self] in
-            guard let self else { return }
-            self.isSubmittingGuardian = true
-            self.guardianFormErrors = [:]
-            self.verificationError = nil
-
-            do {
-                let response = try await ConsentAPI.initiateGuardianVerification(.init(
-                    accessToken: self.accessToken,
-                    baseUrl: self.baseUrl,
-                    guardianName: self.guardianFormData.guardianName,
-                    guardianContact: self.guardianFormData.guardianContact,
-                    guardianRelationship: self.guardianFormData.guardianRelationship
-                ))
-
-                self.isSubmittingGuardian = false
-
-                if response.alreadyVerified == true {
-                    // Guardian already verified — show success flash and auto-transition
-                    self.verificationReference = response.verificationReference
-                    self.showGuardianForm = false
-                    self.showVerificationScreen = true
-                    self.isVerificationComplete = true
-                    self.isAutoTransitioning = true
-
-                    self.autoTransitionTask = Task { @MainActor [weak self] in
-                        try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
-                        guard let self, !Task.isCancelled else { return }
-                        self.showVerificationScreen = false
-                        self.isVerificationComplete = false
-                        self.isAutoTransitioning = false
-                    }
-                } else if let sessionToken = response.sessionToken,
-                          let redirectUrl = response.digilockerRedirectUrl,
-                          let url = URL(string: redirectUrl) {
-                    // New verification: show verification screen, open DigiLocker, start polling
-                    self.showGuardianForm = false
-                    self.showVerificationScreen = true
-                    self.isInitiatingVerification = true
-
-                    await UIApplication.shared.open(url)
-
-                    self.isInitiatingVerification = false
-                    self.isPollingStatus = true
-                    self.startStatusPolling(sessionToken: sessionToken)
-                } else if response.verificationReference != nil {
-                    // Direct verification reference (no DigiLocker needed)
-                    self.verificationReference = response.verificationReference
-                    self.showGuardianForm = false
-                    self.showVerificationScreen = true
-                    self.isVerificationComplete = true
-                    self.isAutoTransitioning = true
-
-                    self.autoTransitionTask = Task { @MainActor [weak self] in
-                        try? await Task.sleep(nanoseconds: 1_000_000_000)
-                        guard let self, !Task.isCancelled else { return }
-                        self.showVerificationScreen = false
-                        self.isVerificationComplete = false
-                        self.isAutoTransitioning = false
-                    }
-                } else {
-                    self.guardianFormErrors["general"] = "Invalid response from server: missing required fields"
-                }
-            } catch {
-                self.isSubmittingGuardian = false
-                let apiError = error as? RedactoAPIError
-
-                if apiError?.statusCode == 422 {
-                    // Validation error — parse field-specific errors
-                    let message = error.localizedDescription
-                    if message.contains("guardian_contact") {
-                        self.guardianFormErrors["guardianContact"] = message
-                    } else if message.contains("guardian_name") {
-                        self.guardianFormErrors["guardianName"] = message
-                    } else if message.contains("guardian_relationship") {
-                        self.guardianFormErrors["guardianRelationship"] = message
-                    } else {
-                        self.guardianFormErrors["general"] = message
-                    }
-                    self.showVerificationScreen = false
-                    self.showGuardianForm = true
-                } else {
-                    self.guardianFormErrors["general"] = error.localizedDescription
-                    self.showVerificationScreen = false
-                    self.showGuardianForm = true
-                }
-            }
-        }
-    }
-
-    // MARK: - Age Verification
-
-    func handleAgeVerificationYes() {
-        showAgeVerification = false
-        isMinorFlow = false
-        selfDeclaredAdult = true
-    }
-
-    func handleAgeVerificationNo() {
-        showAgeVerification = false
-        if isMinor {
-            showGuardianForm = true
-        }
-    }
-
-    // MARK: - Verification Polling
-
-    private func getVerificationErrorMessage(errorCode: String?, fallbackError: String?) -> String {
-        switch errorCode {
-        case "GUARDIAN_UNDER_18":
-            return "The guardian must be 18 years or older. Please provide details of a different guardian."
-        case "TOKEN_FAILED":
-            return "DigiLocker verification could not be completed. Please try again."
-        case "DIGILOCKER_AUTH_FAILED":
-            return "DigiLocker authorization was cancelled or failed. Please try again."
-        case "NO_AUTH_CODE":
-            return "DigiLocker did not return an authorization code. Please try again."
-        case "SESSION_EXPIRED":
-            return "Verification session has expired. Please try again."
-        default:
-            return fallbackError ?? "Verification failed. Please try again."
-        }
-    }
-
-    private func startStatusPolling(sessionToken: String) {
-        stopPolling()
-        verificationSessionToken = sessionToken
-        isPollingStatus = true
-
-        pollingTask = Task { [weak self] in
-            guard let self else { return }
-
-            let maxAttempts = 40
-            let maxConsecutiveErrors = 3
-            let pollIntervalNanos: UInt64 = 3_000_000_000 // 3 seconds
-            var attempts = 0
-            var consecutiveErrors = 0
-            var paused = false
-
-            // Observe app lifecycle for pause/resume
-            let willResignObserver = NotificationCenter.default.addObserver(
-                forName: UIApplication.willResignActiveNotification,
-                object: nil,
-                queue: .main
-            ) { _ in paused = true }
-
-            let didBecomeActiveObserver = NotificationCenter.default.addObserver(
-                forName: UIApplication.didBecomeActiveNotification,
-                object: nil,
-                queue: .main
-            ) { _ in paused = false }
-
-            defer {
-                NotificationCenter.default.removeObserver(willResignObserver)
-                NotificationCenter.default.removeObserver(didBecomeActiveObserver)
-            }
-
-            while !Task.isCancelled {
-                // Wait for poll interval (but fire immediately on first resume from background)
-                if attempts > 0 {
-                    try? await Task.sleep(nanoseconds: pollIntervalNanos)
-                    if Task.isCancelled { break }
-                }
-
-                // Skip poll if app is in background
-                if paused {
-                    try? await Task.sleep(nanoseconds: 500_000_000) // check every 0.5s
-                    continue
-                }
-
-                attempts += 1
-
-                if attempts > maxAttempts {
-                    await MainActor.run {
-                        self.verificationError = self.getVerificationErrorMessage(errorCode: "SESSION_EXPIRED", fallbackError: nil)
-                        self.verificationErrorCode = "SESSION_EXPIRED"
-                        self.canRetryVerification = true
-                        self.isPollingStatus = false
-                        self.isInitiatingVerification = false
-                    }
-                    break
-                }
-
-                do {
-                    let response = try await ConsentAPI.verifyGuardianStatus(.init(
-                        accessToken: self.accessToken,
-                        baseUrl: self.baseUrl,
-                        sessionToken: sessionToken
-                    ))
-
-                    if Task.isCancelled { break }
-                    consecutiveErrors = 0
-
-                    if response.status == "verified" {
-                        let ref = response.verificationReference
-                        guard let ref else {
-                            await MainActor.run {
-                                self.verificationError = "Verification completed but no reference received. Please try again."
-                                self.canRetryVerification = true
-                                self.isPollingStatus = false
-                                self.isInitiatingVerification = false
-                            }
-                            break
-                        }
-                        await MainActor.run {
-                            self.verificationReference = ref
-                            self.isVerificationComplete = true
-                            self.isPollingStatus = false
-                            self.isInitiatingVerification = false
-                        }
-                        break
-                    }
-
-                    if response.status == "failed" || response.status == "expired" {
-                        await MainActor.run {
-                            self.verificationError = self.getVerificationErrorMessage(
-                                errorCode: response.errorCode,
-                                fallbackError: response.error
-                            )
-                            self.verificationErrorCode = response.errorCode
-                            self.canRetryVerification = response.canRetry ?? false
-                            self.isPollingStatus = false
-                            self.isInitiatingVerification = false
-                        }
-                        break
-                    }
-
-                    // status is "pending" or "in_progress" — continue polling
-                } catch {
-                    if Task.isCancelled { break }
-                    consecutiveErrors += 1
-
-                    let apiError = error as? RedactoAPIError
-                    if apiError?.statusCode == 404 || apiError?.statusCode == 410 {
-                        await MainActor.run {
-                            self.verificationError = "Verification session not found or expired. Please try again."
-                            self.verificationErrorCode = "SESSION_EXPIRED"
-                            self.canRetryVerification = true
-                            self.isPollingStatus = false
-                            self.isInitiatingVerification = false
-                        }
-                        break
-                    }
-
-                    if consecutiveErrors >= maxConsecutiveErrors {
-                        await MainActor.run {
-                            self.verificationError = error.localizedDescription
-                            self.canRetryVerification = true
-                            self.isPollingStatus = false
-                            self.isInitiatingVerification = false
-                        }
-                        break
-                    }
-                }
-            }
-        }
-    }
-
-    private func stopPolling() {
-        pollingTask?.cancel()
-        pollingTask = nil
-        isPollingStatus = false
-        isInitiatingVerification = false
-    }
-
-    func handleBackToGuardianForm(clearName: Bool = false) {
-        stopPolling()
-        autoTransitionTask?.cancel()
-        autoTransitionTask = nil
-        showVerificationScreen = false
-        showGuardianForm = true
-        verificationError = nil
-        verificationErrorCode = nil
-        canRetryVerification = false
-        isVerificationComplete = false
-        isAutoTransitioning = false
-        if clearName {
-            guardianFormData.guardianName = ""
-        }
-    }
-
-    func handleVerificationContinue() {
-        showVerificationScreen = false
-        isVerificationComplete = false
     }
 
     // MARK: - Derived
@@ -1049,37 +702,12 @@ public class ConsentNoticeViewModel: ObservableObject {
 
     var supportedLanguages: [String] {
         guard let ac = activeConfig else { return [] }
-        var languages = ["English"]
-
-        let defaultLang = ac.defaultLanguage
-        if !defaultLang.isEmpty && defaultLang != "English" && defaultLang != "en" && defaultLang != "EN" {
-            languages.append(defaultLang)
-        }
-
-        for key in ac.supportedLanguagesAndTranslations.keys.sorted() {
-            if !languages.contains(key) {
-                languages.append(key)
-            }
-        }
-
-        return languages
-    }
-
-    /// Whether all required data elements across all purposes are checked.
-    /// Matching React SDK's `areAllRequiredElementsChecked` (lines 1621-1631).
-    var areAllRequiredElementsChecked: Bool {
-        guard let ac = activeConfig else { return false }
-        return ac.purposes.allSatisfy { purpose in
-            let requiredElements = purpose.dataElements.filter { $0.required }
-            return requiredElements.allSatisfy { el in
-                selectedDataElements["\(purpose.uuid)-\(el.uuid)"] ?? false
-            }
-        }
+        return NoticeTranslation.supportedLanguages(ac)
     }
 
     /// Accept button should be disabled when submitting or not all required elements are checked.
     var acceptDisabled: Bool {
-        isSubmitting || !areAllRequiredElementsChecked
+        isSubmitting || !confirmVerdict.ok
     }
 
     var translatedNoticeText: String {

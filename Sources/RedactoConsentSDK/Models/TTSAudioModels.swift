@@ -12,6 +12,7 @@ public struct TTSAudioDetail: Codable {
     public let noticeTextAudioUrl: String?
     public let additionalTextAudioUrl: String?
     public let noticeSummaryAudioUrl: String?
+    public let acceptAllButtonTextAudioUrl: String?
     public let confirmButtonTextAudioUrl: String?
     public let declineButtonTextAudioUrl: String?
     public let privacyPolicyPrefixTextAudioUrl: String?
@@ -28,6 +29,7 @@ public struct TTSAudioDetail: Codable {
         case noticeTextAudioUrl = "notice_text_audio_url"
         case additionalTextAudioUrl = "additional_text_audio_url"
         case noticeSummaryAudioUrl = "notice_summary_audio_url"
+        case acceptAllButtonTextAudioUrl = "accept_all_button_text_audio_url"
         case confirmButtonTextAudioUrl = "confirm_button_text_audio_url"
         case declineButtonTextAudioUrl = "decline_button_text_audio_url"
         case privacyPolicyPrefixTextAudioUrl = "privacy_policy_prefix_text_audio_url"

@@ -10,6 +10,5 @@
 //   - ValidateAgainst: Validation mode enum
 //   - ConsentAPI: Direct API access (advanced)
 //   - PrivacyCenterAPI: Direct Privacy Center API access (advanced)
-//   - RedactoConstants: API base URL constant
 
 import Foundation

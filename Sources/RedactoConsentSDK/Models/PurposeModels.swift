@@ -7,19 +7,22 @@ public struct Purpose: Codable {
     public let industries: String?
     public var selected: Bool
     public var dataElements: [DataElement]
+    public var productUuid: String?
 
     enum CodingKeys: String, CodingKey {
         case uuid, name, description, industries, selected
         case dataElements = "data_elements"
+        case productUuid = "product_uuid"
     }
 
-    public init(uuid: String, name: String, description: String, industries: String? = nil, selected: Bool, dataElements: [DataElement]) {
+    public init(uuid: String, name: String, description: String, industries: String? = nil, selected: Bool, dataElements: [DataElement], productUuid: String? = nil) {
         self.uuid = uuid
         self.name = name
         self.description = description
         self.industries = industries
         self.selected = selected
         self.dataElements = dataElements
+        self.productUuid = productUuid
     }
 }
 
@@ -60,4 +63,8 @@ public struct DataElementSelection: Codable {
     public let selected: Bool
     public let enabled: Bool
     public let required: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case selected, enabled, required
+    }
 }

@@ -54,6 +54,28 @@ public enum PCStrings {
         return String(format: t(key), arguments: args)
     }
 
+    /// Fill i18next-style `{{name}}` placeholders, the form every string shared
+    /// with the React SDK is written in.
+    public static func t(_ key: String, vars: [String: String]) -> String {
+        interpolate(t(key), vars)
+    }
+
+    /// i18next plural lookup: `<key>_one` for a count of one, `<key>_other`
+    /// otherwise, with `{{count}}` filled in.
+    public static func plural(_ key: String, count: Int, vars: [String: String] = [:]) -> String {
+        var all = vars
+        all["count"] = String(count)
+        return t(count == 1 ? "\(key)_one" : "\(key)_other", vars: all)
+    }
+
+    static func interpolate(_ template: String, _ vars: [String: String]) -> String {
+        var result = template
+        for (name, value) in vars {
+            result = result.replacingOccurrences(of: "{{\(name)}}", with: value)
+        }
+        return result
+    }
+
     private static func lookup(_ key: String, in bundle: Bundle?) -> String? {
         guard let bundle else { return nil }
         // Use a sentinel so we can detect "key not found" instead of getting the key back.
@@ -163,10 +185,13 @@ public enum PCStrings {
     public static var regrant: String { t("regrant") }
     public static var renew: String { t("renew") }
     public static var revokeConfirmTitle: String { t("revokeConfirmTitle") }
-    public static var revokeConfirmBody: String { t("revokeConfirmBody") }
+    public static var revokeConsentWarning: String { t("revokeConsentWarning") }
     public static var consentRevokedSuccess: String { t("consentRevokedSuccess") }
     public static var consentRegrantedSuccess: String { t("consentRegrantedSuccess") }
     public static var consentRenewedSuccess: String { t("consentRenewedSuccess") }
+    public static var unableToRevokeConsent: String { t("unableToRevokeConsent") }
+    public static var unableToRegrantConsent: String { t("unableToRegrantConsent") }
+    public static var unableToRenewConsent: String { t("unableToRenewConsent") }
     public static var validTill: String { t("validTill") }
     public static var givenOn: String { t("givenOn") }
     public static var dataElementsLabel: String { t("dataElementsLabel") }
@@ -228,6 +253,13 @@ public enum PCStrings {
     // MARK: - No data empty state
     public static var noDataTitle: String { t("noDataTitle") }
     public static var noDataDescription: String { t("noDataDescription") }
+
+    public static var switchProfile: String { t("switchProfile") }
+    public static var chooseYourProfile: String { t("chooseYourProfile") }
+    public static var loginIdentifierLinkedToMultipleProfiles: String { t("loginIdentifierLinkedToMultipleProfiles") }
+    public static var signingInEllipsis: String { t("signingInEllipsis") }
+    public static var couldNotSwitchProfile: String { t("couldNotSwitchProfile") }
+    public static func userIdLabel(_ id: String) -> String { t("userIdLabel", vars: ["id": id]) }
 
     // MARK: - Misc
     public static var poweredBy: String { t("poweredBy") }

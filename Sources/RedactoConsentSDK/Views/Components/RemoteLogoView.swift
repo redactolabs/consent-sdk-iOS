@@ -7,6 +7,8 @@ import WebKit
 struct RemoteLogoView: View {
     let url: URL
     let size: CGFloat
+    /// Set, a raster logo keeps its aspect ratio at `size` tall, up to this wide.
+    var maxWidth: CGFloat?
 
     @State private var logoImage: UIImage?
     @State private var isSVG = false
@@ -25,10 +27,18 @@ struct RemoteLogoView: View {
                 Color.clear
             }
         }
-        .frame(width: size, height: size)
+        .frame(width: frameWidth, height: size)
         .task(id: url) {
             await loadImage()
         }
+    }
+
+    /// The logo's own width at `size` tall, capped at `maxWidth`. A box wider
+    /// than the image would centre it inside, pushing a left-aligned logo inward.
+    private var frameWidth: CGFloat {
+        guard let maxWidth, !isSVG else { return size }
+        guard let image = logoImage, image.size.height > 0 else { return size }
+        return min(maxWidth, size * image.size.width / image.size.height)
     }
 
     private func loadImage() async {
@@ -61,9 +71,15 @@ struct RemoteLogoView: View {
 private struct SVGWebView: UIViewRepresentable {
     let svgData: Data
     let size: CGFloat
+    /// Set, a raster logo keeps its aspect ratio at `size` tall, up to this wide.
+    var maxWidth: CGFloat?
 
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        // iPad web views default to desktop mode, which ignores the viewport tag
+        // and lays the page out ~980pt wide: the SVG then draws outside its box.
+        let configuration = WKWebViewConfiguration()
+        configuration.defaultWebpagePreferences.preferredContentMode = .mobile
+        let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.backgroundColor = .clear

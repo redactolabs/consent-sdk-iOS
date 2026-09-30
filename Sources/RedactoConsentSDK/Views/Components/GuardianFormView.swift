@@ -7,26 +7,21 @@ struct GuardianFormView: View {
 
     private let relationshipOptions = ["Father", "Mother", "Legal Guardian", "Grandparent"]
 
-    private var headingColor: Color {
-        Color(hex: viewModel.settings?.headingColor ?? "#323B4B")
-    }
+    @Environment(\.noticeTheme) private var environmentTheme
 
-    private var textColor: Color {
-        Color(hex: viewModel.settings?.textColor ?? "#344054")
-    }
-
-    private var borderColor: Color {
-        Color(hex: viewModel.settings?.borderColor ?? "#d0d5dd")
-    }
+    private var theme: NoticeTheme { environmentTheme ?? .classic }
+    private var headingColor: Color { theme.heading }
+    private var textColor: Color { theme.text }
+    private var borderColor: Color { theme.border ?? Color(hex: "#d0d5dd") }
 
     var body: some View {
         VStack(spacing: 0) {
             topSection
 
-            ScrollView(showsIndicators: false) {
+            FittedScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Since you are under the age of consent, a legal guardian must verify their identity via DigiLocker before you can proceed.")
-                        .font(.system(size: 13))
+                        .noticeFont(size: 13)
                         .foregroundColor(textColor)
                         .lineSpacing(2)
 
@@ -63,16 +58,14 @@ struct GuardianFormView: View {
 
                     if let generalError = viewModel.guardianFormErrors["general"] {
                         Text(generalError)
-                            .font(.system(size: 13))
+                            .noticeFont(size: 13)
                             .foregroundColor(Color(hex: "#DC2626"))
                             .padding(12)
                             .background(Color(hex: "#FEF2F2"))
                             .cornerRadius(8)
                     }
                 }
-                .padding(.top, 16)
             }
-            .padding(.horizontal, 20)
 
             bottomSection
         }
@@ -88,7 +81,7 @@ struct GuardianFormView: View {
                 .padding(.top, 1)
 
             Text("The guardian's name will be matched against their DigiLocker identity document (e.g. Aadhaar). Please enter the name exactly as it appears on the document.")
-                .font(.system(size: 12))
+                .noticeFont(size: 12)
                 .foregroundColor(Color(hex: "#1E40AF"))
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -108,10 +101,10 @@ struct GuardianFormView: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 0) {
                 Text("Relationship ")
-                    .font(.system(size: 13, weight: .medium))
+                    .noticeFont(size: 13, weight: .medium)
                     .foregroundColor(textColor)
                 Text("*")
-                    .font(.system(size: 13, weight: .medium))
+                    .noticeFont(size: 13, weight: .medium)
                     .foregroundColor(Color(hex: "#DC2626"))
             }
 
@@ -126,7 +119,7 @@ struct GuardianFormView: View {
                     Text(viewModel.guardianFormData.guardianRelationship.isEmpty
                         ? "Select relationship"
                         : viewModel.guardianFormData.guardianRelationship)
-                        .font(.system(size: 14))
+                        .noticeFont(size: 14)
                         .foregroundColor(viewModel.guardianFormData.guardianRelationship.isEmpty
                             ? Color(hex: "#9CA3AF")
                             : Color(hex: "#344054"))
@@ -149,7 +142,7 @@ struct GuardianFormView: View {
 
             if let error = viewModel.guardianFormErrors["guardianRelationship"] {
                 Text(error)
-                    .font(.system(size: 12))
+                    .noticeFont(size: 12)
                     .foregroundColor(Color(hex: "#DC2626"))
             }
         }
@@ -158,60 +151,43 @@ struct GuardianFormView: View {
     // MARK: - Top Section
 
     private var topSection: some View {
-        HStack {
-            HStack(spacing: 8) {
-                if let logoUrl = viewModel.logoUrl {
-                    RemoteLogoView(url: logoUrl, size: 32)
-                }
-
-                Text("Guardian Verification")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(headingColor)
+        HStack(spacing: 10) {
+            if let logoUrl = viewModel.logoUrl {
+                RemoteLogoView(
+                    url: logoUrl,
+                    size: theme.appearance.logoHeight(isPhone: theme.isPhone),
+                    maxWidth: theme.appearance.logoMaxWidth(isPhone: theme.isPhone)
+                )
             }
-            Spacer()
+            Text(GuardianCopy.title)
+                .noticeFont(size: 16, weight: .semibold)
+                .foregroundColor(headingColor)
+            Spacer(minLength: 0)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
-        .overlay(Divider(), alignment: .bottom)
+        .padding(.bottom, 15)
     }
 
     // MARK: - Bottom Section
 
+    @ViewBuilder
     private var bottomSection: some View {
-        VStack(spacing: 8) {
-            Button {
-                viewModel.handleGuardianFormNext()
-            } label: {
-                Text(viewModel.isSubmittingGuardian ? "Submitting..." : "Verify via DigiLocker")
-                    .font(.system(size: 16, weight: .regular))
-                    .foregroundColor(Color(hex: viewModel.settings?.button?.accept?.textColor ?? "#ffffff"))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 9)
-                    .background(Color(hex: viewModel.settings?.button?.accept?.backgroundColor ?? viewModel.activeConfig?.primaryColor ?? "#4f87ff"))
-                    .cornerRadius(8)
+        let verify = NoticeActionButton(
+            title: viewModel.isSubmittingGuardian ? GuardianCopy.verifying : GuardianCopy.verify,
+            paint: theme.acceptAll,
+            theme: theme,
+            disabled: viewModel.isSubmittingGuardian,
+            action: { viewModel.handleGuardianFormNext() }
+        )
+        .accessibilityLabel(viewModel.isSubmittingGuardian ? "Verifying guardian identity" : "Proceed to guardian verification")
+        let cancel = NoticeActionButton(title: GuardianCopy.cancel, paint: theme.decline, theme: theme, action: viewModel.handleDecline)
+        Group {
+            if theme.isPhone {
+                VStack(spacing: 12) { verify; cancel }
+            } else {
+                HStack(spacing: 16) { verify; cancel }
             }
-            .disabled(viewModel.isSubmittingGuardian)
-            .buttonStyle(.plain)
-
-            Button {
-                viewModel.handleDecline()
-            } label: {
-                Text("Cancel")
-                    .font(.system(size: 16, weight: .regular))
-                    .foregroundColor(Color(hex: viewModel.settings?.button?.decline?.textColor ?? "#000000"))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 9)
-                    .background(Color(hex: viewModel.settings?.button?.decline?.backgroundColor ?? "#ffffff"))
-                    .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color(hex: viewModel.settings?.borderColor ?? "#d0d5dd"), lineWidth: 1)
-                    )
-            }
-            .buttonStyle(.plain)
         }
-        .padding(20)
-        .overlay(Divider(), alignment: .top)
+        .padding(.top, 12)
     }
 
     // MARK: - Form Field Builder
@@ -228,15 +204,15 @@ struct GuardianFormView: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 0) {
                 Text("\(label) ")
-                    .font(.system(size: 13, weight: .medium))
+                    .noticeFont(size: 13, weight: .medium)
                     .foregroundColor(textColor)
                 Text("*")
-                    .font(.system(size: 13, weight: .medium))
+                    .noticeFont(size: 13, weight: .medium)
                     .foregroundColor(Color(hex: "#DC2626"))
             }
 
             TextField(placeholder, text: value)
-                .font(.system(size: 14))
+                .noticeFont(size: 14)
                 .foregroundColor(Color(hex: "#344054"))
                 .padding(10)
                 .background(Color.white)
@@ -250,13 +226,13 @@ struct GuardianFormView: View {
 
             if let hint {
                 Text(hint)
-                    .font(.system(size: 11))
+                    .noticeFont(size: 11)
                     .foregroundColor(Color(hex: "#667085"))
             }
 
             if let error {
                 Text(error)
-                    .font(.system(size: 12))
+                    .noticeFont(size: 12)
                     .foregroundColor(Color(hex: "#DC2626"))
             }
         }

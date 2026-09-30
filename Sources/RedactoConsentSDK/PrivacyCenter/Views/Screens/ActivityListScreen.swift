@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// The activity timeline (React ActivitiesList + ActivityTimeline).
 public struct ActivityListScreen: View {
     @Environment(\.privacyCenterTheme) private var theme
     @EnvironmentObject private var store: PrivacyCenterStore
@@ -12,11 +13,11 @@ public struct ActivityListScreen: View {
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                header
+                PCPageHeader(title: PCStrings.activities, description: PCStrings.activitiesSubtitle)
                 content
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.bottom, 12)
         }
         .background(theme.background)
         .task { await vm.loadInitial() }
@@ -27,97 +28,117 @@ public struct ActivityListScreen: View {
     }
 
     @ViewBuilder
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(PCStrings.activities)
-                .font(.system(size: 22, weight: .bold))
-                .foregroundColor(theme.text)
-            Text(PCStrings.activitiesSubtitle)
-                .font(.system(size: 13))
-                .foregroundColor(theme.textSecondary)
-        }
-    }
-
-    @ViewBuilder
     private var content: some View {
         if vm.isLoading {
-            VStack(spacing: 8) { ForEach(0..<5, id: \.self) { _ in PCSkeletonCard(height: 72) } }
+            VStack(spacing: 8) { ForEach(0..<6, id: \.self) { _ in PCSkeletonCard(height: 56) } }
         } else if vm.activities.isEmpty {
-            PCEmpty(title: PCStrings.noActivities, icon: "clock.arrow.circlepath")
+            PCEmpty(title: PCStrings.noActivitiesYet, subtitle: PCStrings.noActivitiesDescription, icon: "clock.arrow.circlepath")
         } else {
-            VStack(spacing: 8) {
-                ForEach(vm.activities) { activity in
-                    activityRow(activity)
-                }
-                if vm.hasMore {
-                    Button(action: { Task { await vm.loadMore() } }) {
-                        Text(vm.isLoadingMore ? PCStrings.loading : PCStrings.loadMore)
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(theme.primary)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(theme.surface)
-                            .cornerRadius(8)
+            VStack(alignment: .leading, spacing: 18) {
+                ForEach(vm.dayGroups) { group in
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Text(group.label)
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(theme.text)
+                                .textCase(.uppercase)
+                            Text(PrivacyCenterDateFormatters.timeAgo(group.newest))
+                                .font(.system(size: 12))
+                                .foregroundColor(theme.textTertiary)
+                        }
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(group.items) { activity in
+                                TimelineRow(activity: activity, isLast: activity.id == group.items.last?.id)
+                            }
+                        }
                     }
-                    .buttonStyle(.plain)
-                    .disabled(vm.isLoadingMore)
                 }
+                footer
             }
         }
     }
 
     @ViewBuilder
-    private func activityRow(_ activity: Activity) -> some View {
-        HStack(alignment: .top, spacing: 12) {
+    private var footer: some View {
+        if vm.hasMore {
             ZStack {
-                Circle()
-                    .fill(activityColor(activity).opacity(0.15))
-                    .frame(width: 36, height: 36)
-                Image(systemName: activityIcon(activity))
-                    .font(.system(size: 14))
-                    .foregroundColor(activityColor(activity))
+                Color.clear.frame(height: 44)
+                if vm.isLoadingMore { ProgressView().tint(theme.primary) }
             }
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(activity.titleDisplay ?? activity.title)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(theme.text)
-                    Spacer()
-                    if let status = activity.statusDisplay ?? activity.status {
-                        PCCaseStatusBadge(status: status)
-                    }
-                }
-                if !activity.description.isEmpty {
-                    Text(activity.descriptionDisplay ?? activity.description)
-                        .font(.system(size: 12))
-                        .foregroundColor(theme.textSecondary)
-                        .lineLimit(2)
-                }
-                Text(PrivacyCenterDateFormatters.formatDateTime(activity.timestamp))
+            .onAppear { Task { await vm.loadMore() } }
+        } else {
+            Text(PCStrings.allCaughtUp)
+                .font(.system(size: 12))
+                .foregroundColor(theme.textTertiary)
+                .frame(maxWidth: .infinity, minHeight: 44)
+        }
+    }
+}
+
+/// One timeline entry: time, a category marker on the rail, then content.
+private struct TimelineRow: View {
+    @Environment(\.privacyCenterTheme) private var theme
+    let activity: Activity
+    let isLast: Bool
+    @State private var isExpanded = false
+
+    /// React `getActivityCategory`: colour by category, not by outcome.
+    private var category: (variant: PCBadgeVariant, icon: String, color: Color) {
+        let type = activity.activityType.lowercased()
+        if type.contains("consent") || type.contains("grant") { return (.success, "checkmark.shield", theme.success) }
+        if type.contains("case") { return (.info, "doc.text", theme.info) }
+        if type.contains("access") || type.contains("view") { return (.info, "eye", theme.info) }
+        if type.contains("grievance") || type.contains("request") { return (.warning, "exclamationmark.bubble", theme.warning) }
+        return (.secondary, "waveform.path.ecg", theme.textSecondary)
+    }
+
+    var body: some View {
+        let cat = category
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(PrivacyCenterDateFormatters.formatTime(activity.timestamp))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(theme.textSecondary)
+                    .lineLimit(1)
+                Text(PrivacyCenterDateFormatters.timeAgo(activity.timestamp))
                     .font(.system(size: 11))
                     .foregroundColor(theme.textTertiary)
+                    .lineLimit(1)
             }
+            .frame(width: 64, alignment: .trailing)
+            .padding(.top, 8)
+            ZStack(alignment: .top) {
+                if !isLast {
+                    Rectangle().fill(theme.border).frame(width: 2).padding(.top, 30)
+                }
+                Circle()
+                    .fill(theme.background)
+                    .overlay(Circle().fill(cat.color.opacity(0.12)))
+                    .frame(width: 30, height: 30)
+                    .overlay(Image(systemName: cat.icon).font(.system(size: 13, weight: .semibold)).foregroundColor(cat.color))
+                    .padding(.top, 8)
+            }
+            .frame(width: 34)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
+                    Text(activity.displayTitle)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(theme.text)
+                        .lineLimit(1)
+                    PCBadge(activity.displayType, variant: cat.variant)
+                }
+                if !activity.displayDescription.isEmpty {
+                    Text(activity.displayDescription)
+                        .font(.system(size: 13))
+                        .foregroundColor(theme.textSecondary)
+                        .lineLimit(isExpanded ? nil : 2)
+                        .onTapGesture { isExpanded.toggle() }
+                }
+            }
+            .padding(.vertical, 8)
+            .padding(.bottom, 8)
         }
-        .padding(12)
-        .background(theme.surface)
-        .cornerRadius(10)
-    }
-
-    private func activityIcon(_ a: Activity) -> String {
-        let t = a.activityType.lowercased()
-        if t.contains("consent_given") || t.contains("granted") { return "checkmark" }
-        if t.contains("revoke") { return "xmark" }
-        if t.contains("renew") { return "arrow.clockwise" }
-        if t.contains("case_created") { return "doc.text" }
-        if t.contains("complete") { return "checkmark.seal" }
-        return "info.circle"
-    }
-
-    private func activityColor(_ a: Activity) -> Color {
-        let s = (a.statusDisplay ?? a.status ?? "").lowercased()
-        if s.contains("complete") { return theme.success }
-        if s.contains("reject") { return theme.error }
-        if s.contains("process") || s.contains("pending") { return theme.warning }
-        return theme.primary
+        .accessibilityElement(children: .combine)
+        .accessibilityHint(PrivacyCenterDateFormatters.formatDateTime(activity.timestamp))
     }
 }

@@ -1,37 +1,82 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+extension PCUploadValidation {
+    /// The picker opens on the accepted types only.
+    static var allowedContentTypes: [UTType] {
+        allowedMimeTypes.compactMap { UTType(mimeType: $0) }
+    }
+}
+
+extension RequestType {
+    /// React `useRequestTypeLabels`.
+    var label: String {
+        switch self {
+        case .access: return PCStrings.access
+        case .correction: return PCStrings.correction
+        case .erasure: return PCStrings.erasure
+        case .grievance: return PCStrings.grievance
+        case .nomination: return PCStrings.nomination
+        }
+    }
+}
+
+extension GrievanceType {
+    /// React translates the option by its value, not the server's label.
+    var label: String {
+        switch self {
+        case .consentViolation: return PCStrings.consentViolation
+        case .unlawfulProcessing: return PCStrings.unlawfulProcessing
+        case .dataBreach: return PCStrings.dataBreach
+        }
+    }
+}
+
+/// The data-request form (React components/Form.tsx) and its success card
+/// (RequestSubmit.tsx).
 public struct DSRFormScreen: View {
     @Environment(\.privacyCenterTheme) private var theme
     @EnvironmentObject private var store: PrivacyCenterStore
     @StateObject private var vm: DSRFormViewModel
     @State private var showFilePicker: Bool = false
+    @State private var expandedPurposes: Set<String> = []
+    private let onBack: (() -> Void)?
 
-    public init(store: PrivacyCenterStore) {
+    public init(store: PrivacyCenterStore, onBack: (() -> Void)? = nil) {
         _vm = StateObject(wrappedValue: DSRFormViewModel(store: store))
+        self.onBack = onBack
     }
 
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                if vm.isLoading {
-                    PCLoader(label: PCStrings.loading)
-                        .padding(.top, 40)
-                } else if vm.caseSubmitted {
+                if vm.caseSubmitted {
+                    PCPageHeader(title: PCStrings.grievanceRequests, description: PCStrings.grievanceSubtitle)
                     successView
                 } else {
-                    formCard
+                    PCPageHeader(title: PCStrings.yourPrivacyCenter, description: PCStrings.yourRightsOverDataSimplified)
+                    if let onBack {
+                        backButton(onBack)
+                    }
+                    if vm.isLoading {
+                        PCLoader(label: PCStrings.loading).padding(.top, 40)
+                    } else {
+                        formCard
+                    }
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.top, 12)
             .padding(.bottom, 32)
         }
         .background(theme.background)
         .task { await vm.loadFormData() }
+        .onReceive(NotificationCenter.default.publisher(for: .privacyCenterLanguageChanged)) { _ in
+            Task { await vm.applyLanguageChange() }
+        }
+        .onChange(of: vm.requestType) { _ in expandedPurposes = [] }
         .sheet(isPresented: $showFilePicker) {
             FilePickerView(
-                allowedTypes: [.pdf, .image, .text, .data],
+                allowedTypes: PCUploadValidation.allowedContentTypes,
                 onPick: { picked in
                     showFilePicker = false
                     Task {
@@ -41,381 +86,399 @@ public struct DSRFormScreen: View {
                 onCancel: { showFilePicker = false }
             )
         }
+        .sheet(isPresented: $vm.isErasureModalOpen) {
+            erasureModal
+                .environment(\.privacyCenterTheme, theme)
+                .presentationDetents([.medium, .large])
+                .interactiveDismissDisabled(vm.isSubmitting)
+        }
     }
 
-    // MARK: - Top description
-
-    @ViewBuilder
-    private var description: some View {
-        Text(PCStrings.dataRequestsSubtitleLong)
-            .font(.system(size: 13))
+    private func backButton(_ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: "arrow.left").font(.system(size: 13, weight: .semibold))
+                Text(PCStrings.backToHome).font(.system(size: 13, weight: .medium))
+            }
             .foregroundColor(theme.textSecondary)
-            .lineSpacing(2)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Card
 
-    @ViewBuilder
     private var formCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            description
-
+        VStack(alignment: .leading, spacing: 10) {
+            Text(PCStrings.description)
+                .font(.system(size: 13))
+                .foregroundColor(theme.textSecondary)
+                .lineSpacing(2)
             VStack(alignment: .leading, spacing: 0) {
-                cardHeader
-                cardBody
+                Text(PCStrings.raiseDataRequest)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(theme.text)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(14)
+                    .background(theme.surface)
+                VStack(alignment: .leading, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        requiredLabel(PCStrings.contact)
+                        PCInput(text: .constant(vm.contact), placeholder: PCStrings.contactPlaceholder, isDisabled: true)
+                    }
+                    VStack(alignment: .leading, spacing: 6) {
+                        requiredLabel(PCStrings.requestType)
+                        PCSelect(
+                            selection: $vm.requestType,
+                            options: RequestType.allCases.map { PCSelectOption(value: $0, label: $0.label) },
+                            placeholder: PCStrings.selectRequestType
+                        )
+                    }
+                    requestDetailsAccordion
+                    supportingDocs
+                    if vm.requestType == .access {
+                        PCSelect(
+                            selection: Binding(get: { vm.timePeriod.isEmpty ? nil : vm.timePeriod }, set: { vm.timePeriod = $0 ?? "" }),
+                            options: [
+                                PCSelectOption(value: "1", label: PCStrings.today),
+                                PCSelectOption(value: "7", label: PCStrings.last7Days),
+                                PCSelectOption(value: "30", label: PCStrings.last30Days),
+                                PCSelectOption(value: "90", label: PCStrings.last3Months),
+                            ],
+                            placeholder: PCStrings.selectPlaceholder,
+                            label: PCStrings.timePeriod
+                        )
+                    }
+                    PCTextarea(text: $vm.additionalNote, placeholder: PCStrings.reasonOptional, label: PCStrings.additionalNote)
+                    PCCheckbox(isOn: $vm.confirmChecked, label: "\(PCStrings.confirmCheckBox) *")
+                    HStack {
+                        Spacer()
+                        PCButton(PCStrings.submit, fullWidth: false, isLoading: vm.isSubmitting, isDisabled: !vm.canSubmit) {
+                            Task { await vm.submitTapped() }
+                        }
+                    }
+                }
+                .padding(14)
             }
             .background(theme.background)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(theme.border, lineWidth: 1)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(RoundedRectangle(cornerRadius: theme.panelRadius).stroke(theme.border, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: theme.panelRadius))
         }
     }
 
-    @ViewBuilder
-    private var cardHeader: some View {
-        Text(PCStrings.grievanceRequests)
-            .font(.system(size: 15, weight: .bold))
-            .foregroundColor(theme.text)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
-            .background(theme.surface)
-            .overlay(
-                Rectangle().fill(theme.border).frame(height: 1),
-                alignment: .bottom
-            )
-    }
-
-    @ViewBuilder
-    private var cardBody: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            contactField
-            requestTypeField
-            requestDetailsAccordion
-            supportingDocs
-            additionalNote
-            confirmRow
-            if let err = vm.errorMessage {
-                Text(err)
-                    .font(.system(size: 12))
-                    .foregroundColor(theme.error)
-            }
-            actionButtons
-        }
-        .padding(14)
-    }
-
-    // MARK: - Sections
-
-    @ViewBuilder
-    private var contactField: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            requiredLabel(PCStrings.contact)
-            PCInput(
-                text: .constant(store.contact ?? ""),
-                placeholder: PCStrings.contact,
-                isDisabled: true
-            )
-        }
-    }
-
-    @ViewBuilder
-    private var requestTypeField: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            requiredLabel(PCStrings.requestType)
-            PCSelect(
-                selection: $vm.requestType,
-                options: [
-                    PCSelectOption(value: RequestType.access, label: PCStrings.access),
-                    PCSelectOption(value: RequestType.correction, label: PCStrings.correction),
-                    PCSelectOption(value: RequestType.erasure, label: PCStrings.erasure),
-                    PCSelectOption(value: RequestType.grievance, label: PCStrings.grievance),
-                    PCSelectOption(value: RequestType.nomination, label: PCStrings.nomination),
-                ],
-                placeholder: PCStrings.selectRequestType
-            )
-        }
-    }
-
-    @ViewBuilder
     private var requestDetailsAccordion: some View {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: { vm.isRequestDetailsExpanded.toggle() }) {
                 HStack {
-                    HStack(spacing: 4) {
-                        Text(PCStrings.requestDetails)
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(theme.text)
-                        Text("*")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(theme.error)
-                    }
+                    requiredLabel(PCStrings.requestDetails)
                     Spacer()
-                    Image(systemName: vm.isRequestDetailsExpanded ? "chevron.down" : "chevron.right")
-                        .font(.system(size: 12, weight: .semibold))
+                    Image(systemName: vm.isRequestDetailsExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(theme.textSecondary)
                 }
                 .padding(12)
-                .background(theme.surface)
             }
             .buttonStyle(.plain)
             if vm.isRequestDetailsExpanded {
-                VStack(alignment: .leading, spacing: 10) {
+                Divider()
+                VStack(alignment: .leading, spacing: 12) {
                     requestDetailsBody
                 }
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(theme.surface)
-                .overlay(
-                    Rectangle().fill(theme.border).frame(height: 1),
-                    alignment: .top
-                )
             }
         }
         .background(theme.surface)
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(theme.border, lineWidth: 1)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .overlay(RoundedRectangle(cornerRadius: theme.controlRadius + 2).stroke(theme.border, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: theme.controlRadius + 2))
     }
 
     @ViewBuilder
     private var requestDetailsBody: some View {
-        if let type = vm.requestType {
-            switch type {
-            case .access, .erasure:
-                purposesList(title: type == .access ? PCStrings.purposeQuestionAccess : PCStrings.purposeQuestionErasure)
-            case .correction:
-                correctionList
-            case .grievance:
-                grievanceList
-            case .nomination:
-                nominationFields
+        if vm.isProductScoped {
+            if !vm.skipProductStep {
+                productSection
             }
+            if let group = vm.selectedGroup {
+                productPanel(group)
+            }
+        } else if vm.requestType == .grievance {
+            grievanceSection
+        } else if vm.requestType == .nomination {
+            nominationSection
         } else {
             Text(PCStrings.selectRequestType)
                 .font(.system(size: 13))
                 .foregroundColor(theme.textSecondary)
-                .frame(maxWidth: .infinity, minHeight: 64, alignment: .center)
+                .frame(maxWidth: .infinity, minHeight: 100)
                 .multilineTextAlignment(.center)
         }
     }
 
-    // MARK: - Purposes (ACCESS / ERASURE)
+    // MARK: - Products (React ProductSelectionSection)
 
     @ViewBuilder
-    private func purposesList(title: String) -> some View {
-        if vm.purposes.isEmpty {
-            Text(PCStrings.noPurposes)
-                .font(.system(size: 13))
-                .foregroundColor(theme.textSecondary)
+    private var productSection: some View {
+        if vm.isTranslating {
+            HStack(spacing: 8) {
+                ForEach(0..<3, id: \.self) { _ in
+                    RoundedRectangle(cornerRadius: 8).fill(theme.border.opacity(0.5)).frame(width: 90, height: 36)
+                }
+            }
+        } else if vm.groups.isEmpty {
+            PCEmpty(title: PCStrings.noProductsAvailable, subtitle: PCStrings.noProductsAvailableDescription, icon: "shippingbox")
         } else {
-            Text(title)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(theme.text)
-            Text(PCStrings.revocationNotDeletionNote)
+            Text(vm.requestType.map { PCStrings.selectProductsForRequest($0.label) } ?? PCStrings.selectProductsForRequestGeneric)
                 .font(.system(size: 12))
                 .foregroundColor(theme.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.leading, 8)
-                .overlay(alignment: .leading) {
-                    Rectangle()
-                        .fill(theme.primary)
-                        .frame(width: 2)
-                }
-            VStack(spacing: 8) {
-                ForEach(vm.purposes) { purpose in
-                    purposeCard(purpose)
+            FlowLayoutCompat(spacing: 8) {
+                ForEach(vm.directGroups + vm.nominatedGroups) { group in
+                    productChip(group)
                 }
             }
         }
     }
 
-    @ViewBuilder
-    private func purposeCard(_ purpose: PrivacyPurpose) -> some View {
-        let isSelected = vm.selectedPurposeIds.contains(purpose.uuid)
-        VStack(alignment: .leading, spacing: 8) {
-            Button(action: { vm.togglePurpose(purpose) }) {
-                HStack(alignment: .top, spacing: 10) {
-                    checkbox(isOn: isSelected, size: 20)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(purpose.name)
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(theme.text)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                        if !purpose.description.isEmpty {
-                            Text(purpose.description)
-                                .font(.system(size: 12))
-                                .foregroundColor(theme.textSecondary)
-                                .lineLimit(3)
-                                .multilineTextAlignment(.leading)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+    private func productChip(_ group: FormProductGroup) -> some View {
+        let isSelected = vm.selectedProductKey == group.id
+        return Button(action: { vm.selectProduct(group) }) {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 4) {
+                    Text(group.productName)
+                        .font(.system(size: 13, weight: .semibold))
+                        .lineLimit(1)
+                    if let nominator = group.nominator {
+                        Text(PCStrings.nominationChipSuffix(nominator.name.pcNonEmpty ?? nominator.email ?? ""))
+                            .font(.system(size: 12))
+                            .lineLimit(1)
                     }
-                    Spacer(minLength: 0)
                 }
+                Text(PCStrings.activePurposes(DSRFormViewModel.groupPurposes(group).count))
+                    .font(.system(size: 11))
+                    .foregroundColor(isSelected ? theme.primary : theme.textSecondary)
             }
-            .buttonStyle(.plain)
-            if isSelected, !purpose.dataElements.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(PCStrings.dataCollected)
-                        .font(.system(size: 11, weight: .semibold))
+            .foregroundColor(isSelected ? theme.primary : theme.text)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(isSelected ? theme.primarySoft : theme.background)
+            .overlay(RoundedRectangle(cornerRadius: theme.isGlass ? 999 : 10).stroke(isSelected ? theme.primary : theme.border, lineWidth: isSelected ? 1.5 : 1))
+            .clipShape(RoundedRectangle(cornerRadius: theme.isGlass ? 999 : 10))
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private func productPanel(_ group: FormProductGroup) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Text(group.productName)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(theme.text)
+                    if let nominator = group.nominator {
+                        Text(PCStrings.actingOnBehalfOfShort(nominator.name.pcNonEmpty ?? nominator.email ?? ""))
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(theme.textSecondary)
+                    }
+                }
+                Text(PCStrings.selectPurposesForThisProduct)
+                    .font(.system(size: 12))
+                    .foregroundColor(theme.textSecondary)
+            }
+            if vm.requestType == .correction {
+                correctionSection
+            } else {
+                purposeSection
+            }
+        }
+        .padding(12)
+        .background(theme.background)
+        .overlay(RoundedRectangle(cornerRadius: theme.controlRadius).stroke(theme.border, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: theme.controlRadius))
+    }
+
+    // MARK: - Purposes (React PurposeSelectionSection)
+
+    @ViewBuilder
+    private var purposeSection: some View {
+        let isErasure = vm.requestType == .erasure
+        Text(isErasure ? PCStrings.whatDataToDelete : PCStrings.whatDataToAccess)
+            .font(.system(size: 12))
+            .foregroundColor(theme.textSecondary)
+        Text(PCStrings.revocationNotDeletionNote)
+            .font(.system(size: 12))
+            .foregroundColor(theme.textSecondary)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.leading, 8)
+            .overlay(alignment: .leading) { Rectangle().fill(theme.primary).frame(width: 2) }
+        if !isErasure {
+            PCCheckbox(
+                isOn: Binding(get: { vm.isAllSelected && !vm.purposes.isEmpty }, set: { vm.setAllPurposes(selected: $0) }),
+                label: PCStrings.selectAll
+            )
+        }
+        VStack(spacing: 6) {
+            ForEach(vm.purposes) { purpose in
+                purposeRow(purpose, isErasure: isErasure)
+            }
+        }
+    }
+
+    private func purposeRow(_ purpose: PrivacyPurpose, isErasure: Bool) -> some View {
+        let isOpen = expandedPurposes.contains(purpose.uuid)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top) {
+                PCCheckbox(
+                    isOn: Binding(get: { vm.isPurposeFullySelected(purpose) }, set: { vm.setPurpose(purpose, selected: $0) }),
+                    label: purpose.name.pcCapitalized
+                )
+                Spacer(minLength: 8)
+                Button(action: {
+                    if isOpen { expandedPurposes.remove(purpose.uuid) } else { expandedPurposes.insert(purpose.uuid) }
+                }) {
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(theme.textSecondary)
-                        .textCase(.uppercase)
-                        .padding(.bottom, 2)
-                    ForEach(purpose.dataElements) { de in
-                        let deSelected = vm.selectedDataElementsByPurpose[purpose.uuid]?.contains(de.uuid) ?? false
-                        Button(action: { vm.toggleDataElement(purpose: purpose, elementUuid: de.uuid) }) {
-                            HStack(spacing: 8) {
-                                checkbox(isOn: deSelected, size: 16, lineWidth: 1.5)
-                                Text(de.name)
-                                    .font(.system(size: 13))
-                                    .foregroundColor(theme.text)
-                                    .multilineTextAlignment(.leading)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                Spacer(minLength: 0)
-                            }
+                        .rotationEffect(.degrees(isOpen ? 180 : 0))
+                }
+                .buttonStyle(.plain)
+            }
+            if isOpen {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(PCStrings.dataCollected)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(theme.text)
+                    if purpose.dataElements.isEmpty {
+                        Text(PCStrings.noDataElementsAvailable)
+                            .font(.system(size: 13))
+                            .foregroundColor(theme.textSecondary)
+                    }
+                    ForEach(purpose.dataElements) { element in
+                        if isErasure {
+                            Text(element.name.pcCapitalized)
+                                .font(.system(size: 13))
+                                .foregroundColor(theme.text)
+                        } else {
+                            PCCheckbox(
+                                isOn: Binding(
+                                    get: { vm.selectedElements[purpose.uuid]?.contains(element.uuid) ?? false },
+                                    set: { _ in vm.toggleDataElement(purpose: purpose, elementUuid: element.uuid) }
+                                ),
+                                label: element.name.pcCapitalized
+                            )
                         }
-                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.leading, 30)
             }
         }
         .padding(10)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(theme.background)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(theme.border, lineWidth: 1)
-        )
+        .background(theme.surface)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
-    // MARK: - Correction list
+    // MARK: - Correction (React CorrectionDataSection)
 
     @ViewBuilder
-    private var correctionList: some View {
-        if vm.uniqueDataElements.isEmpty {
-            Text(PCStrings.noFieldsAvailable)
-                .font(.system(size: 13))
-                .foregroundColor(theme.textSecondary)
-        } else {
-            Text(PCStrings.selectFieldsToUpdate)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(theme.text)
-            VStack(spacing: 8) {
-                ForEach(vm.uniqueDataElements) { de in
-                    correctionRow(de)
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func correctionRow(_ de: PrivacyDataElement) -> some View {
-        let isSelected = vm.selectedCorrectionFields.contains(de.uuid)
-        VStack(alignment: .leading, spacing: 8) {
-            Button(action: { vm.toggleCorrectionField(de.uuid) }) {
-                HStack(spacing: 10) {
-                    checkbox(isOn: isSelected, size: 20)
-                    Text(de.name)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(theme.text)
-                    Spacer(minLength: 0)
-                }
-            }
-            .buttonStyle(.plain)
-            if isSelected {
-                VStack(spacing: 8) {
-                    PCInput(
-                        text: Binding(
-                            get: { vm.correctionValues[de.uuid]?.current ?? "" },
-                            set: { vm.updateCorrection(uuid: de.uuid, current: $0) }
-                        ),
-                        placeholder: PCStrings.currentValue,
-                        label: PCStrings.currentValue
-                    )
-                    PCInput(
-                        text: Binding(
-                            get: { vm.correctionValues[de.uuid]?.updated ?? "" },
-                            set: { vm.updateCorrection(uuid: de.uuid, updated: $0) }
-                        ),
-                        placeholder: PCStrings.newValue,
-                        label: PCStrings.newValue
-                    )
-                }
-                .padding(.leading, 30)
-            }
-        }
-    }
-
-    // MARK: - Grievance list
-
-    @ViewBuilder
-    private var grievanceList: some View {
-        if vm.grievanceOptions.isEmpty {
-            Text(PCStrings.noGrievanceTypes)
-                .font(.system(size: 13))
-                .foregroundColor(theme.textSecondary)
-        } else {
-            Text(PCStrings.selectGrievanceType)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(theme.text)
-            VStack(spacing: 6) {
-                ForEach(vm.grievanceOptions) { option in
-                    Button(action: { vm.toggleGrievance(option.value) }) {
-                        HStack(spacing: 10) {
-                            checkbox(isOn: vm.selectedGrievances.contains(option.value), size: 20)
-                            Text(option.label)
-                                .font(.system(size: 14))
-                                .foregroundColor(theme.text)
-                                .multilineTextAlignment(.leading)
-                            Spacer(minLength: 0)
-                        }
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-        }
-    }
-
-    // MARK: - Nomination
-
-    @ViewBuilder
-    private var nominationFields: some View {
+    private var correctionSection: some View {
+        Text(PCStrings.selectFieldsToUpdate)
+            .font(.system(size: 12))
+            .foregroundColor(theme.textSecondary)
         VStack(alignment: .leading, spacing: 10) {
-            Text(PCStrings.enterNomineeDetails)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(theme.text)
-            PCInput(
-                text: $vm.nominationData.nomineeEmail,
-                placeholder: "nominee@example.com",
-                label: PCStrings.nomineeEmail,
-                keyboardType: .emailAddress
+            PCCheckbox(
+                isOn: Binding(get: { vm.isAllCorrectionSelected }, set: { vm.setAllCorrectionFields(selected: $0) }),
+                label: PCStrings.selectAll
             )
-            PCInput(
-                text: Binding(
-                    get: { vm.nominationData.nomineeMobile ?? "" },
-                    set: { vm.nominationData.nomineeMobile = $0.isEmpty ? nil : $0 }
-                ),
-                placeholder: "+919876543210",
-                label: PCStrings.nomineeMobile,
-                keyboardType: .phonePad
-            )
+            ForEach(vm.correctionFields) { field in
+                PCCheckbox(
+                    isOn: Binding(
+                        get: { vm.selectedCorrectionNames.contains(field.element.name) },
+                        set: { _ in vm.toggleCorrectionField(field.element.name) }
+                    ),
+                    label: field.element.name.pcCapitalized
+                )
+            }
+        }
+        .padding(10)
+        .background(theme.surface)
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(theme.border, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        if !vm.selectedCorrectionNames.isEmpty {
+            Divider()
+            (Text("* ").foregroundColor(theme.error) + Text(PCStrings.enterCorrectValue).foregroundColor(theme.text))
+                .font(.system(size: 13, weight: .medium))
+            ForEach(vm.selectedCorrectionNames, id: \.self) { name in
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(name)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(theme.text)
+                    PCInput(
+                        text: Binding(get: { vm.correctionValues[name]?.current ?? "" }, set: { vm.updateCorrection(name: name, current: $0) }),
+                        placeholder: PCStrings.currentValuePlaceholder
+                    )
+                    PCInput(
+                        text: Binding(get: { vm.correctionValues[name]?.updated ?? "" }, set: { vm.updateCorrection(name: name, updated: $0) }),
+                        placeholder: PCStrings.updatedValuePlaceholder
+                    )
+                }
+                .padding(8)
+                .background(theme.surface)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+            }
         }
     }
 
-    // MARK: - Supporting docs / Note / Confirm / Actions
+    // MARK: - Grievance / Nomination
 
     @ViewBuilder
+    private var grievanceSection: some View {
+        Text(PCStrings.selectGrievance)
+            .font(.system(size: 12))
+            .foregroundColor(theme.textSecondary)
+        VStack(alignment: .leading, spacing: 8) {
+            PCCheckbox(
+                isOn: Binding(get: { vm.isAllGrievancesSelected }, set: { vm.setAllGrievances(selected: $0) }),
+                label: PCStrings.selectAll
+            )
+            ForEach(vm.grievanceOptions) { option in
+                PCCheckbox(
+                    isOn: Binding(get: { vm.selectedGrievances.contains(option.value) }, set: { _ in vm.toggleGrievance(option.value) }),
+                    label: option.value.label
+                )
+            }
+        }
+        .padding(10)
+        .background(theme.background)
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(theme.border, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    @ViewBuilder
+    private var nominationSection: some View {
+        Text(PCStrings.enterNomineeDetails)
+            .font(.system(size: 12))
+            .foregroundColor(theme.textSecondary)
+        PCInput(
+            text: $vm.nominationData.nomineeEmail,
+            placeholder: PCStrings.nomineeEmailPlaceholder,
+            label: PCStrings.nomineeEmail,
+            keyboardType: .emailAddress
+        )
+        PCInput(
+            text: Binding(
+                get: { vm.nominationData.nomineeMobile ?? "" },
+                set: { vm.nominationData.nomineeMobile = $0.isEmpty ? nil : $0 }
+            ),
+            placeholder: PCStrings.nomineeMobilePlaceholder,
+            label: PCStrings.nomineeMobile,
+            keyboardType: .phonePad
+        )
+    }
+
+    // MARK: - Documents
+
     private var supportingDocs: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(PCStrings.supportingDocuments)
+            Text(PCStrings.supportingDocumentation)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(theme.text)
             VStack(alignment: .leading, spacing: 8) {
@@ -423,28 +486,25 @@ public struct DSRFormScreen: View {
                     FlowLayoutCompat(spacing: 8) {
                         ForEach(vm.uploadedDocs) { doc in
                             HStack(spacing: 6) {
-                                Image(systemName: "doc")
-                                    .font(.system(size: 11))
+                                Image(systemName: "paperclip")
+                                    .font(.system(size: 12))
                                     .foregroundColor(theme.textSecondary)
                                 Text(doc.fileName)
-                                    .font(.system(size: 12, weight: .medium))
+                                    .font(.system(size: 13, weight: .medium))
                                     .foregroundColor(theme.text)
                                     .lineLimit(1)
                                     .truncationMode(.middle)
                                 Button(action: { vm.removeDocument(doc.id) }) {
-                                    Image(systemName: "xmark")
-                                        .font(.system(size: 11, weight: .bold))
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 13))
                                         .foregroundColor(theme.error)
                                 }
                                 .buttonStyle(.plain)
+                                .accessibilityLabel(PCStrings.removeAttachment)
                             }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 6)
+                            .padding(8)
                             .background(theme.background)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(theme.border, lineWidth: 1)
-                            )
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(theme.border, lineWidth: 1))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     }
@@ -453,178 +513,193 @@ public struct DSRFormScreen: View {
                     HStack(spacing: 8) {
                         if vm.isUploading {
                             ProgressView().scaleEffect(0.8).tint(theme.primary)
+                            Text(PCStrings.uploading)
+                        } else if vm.uploadedDocs.isEmpty {
+                            Image(systemName: "arrow.up.doc").font(.system(size: 26)).foregroundColor(theme.primary)
+                            Text(PCStrings.uploadFile).foregroundColor(theme.textSecondary)
                         } else {
-                            Image(systemName: "arrow.up.doc")
-                                .font(.system(size: vm.uploadedDocs.isEmpty ? 22 : 14))
-                                .foregroundColor(theme.primary)
+                            Image(systemName: "square.and.arrow.up").font(.system(size: 14))
+                            Text(PCStrings.uploadFileButton)
                         }
-                        Text(vm.uploadedDocs.isEmpty ? PCStrings.uploadFile : PCStrings.uploadAnotherFile)
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(theme.textSecondary)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, vm.uploadedDocs.isEmpty ? 18 : 10)
-                    .background(theme.background)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(
-                                theme.border,
-                                style: StrokeStyle(lineWidth: 1, dash: vm.uploadedDocs.isEmpty ? [4, 3] : [])
-                            )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(theme.text)
+                    .frame(maxWidth: vm.uploadedDocs.isEmpty ? .infinity : nil, minHeight: vm.uploadedDocs.isEmpty ? 76 : 0)
+                    .padding(vm.uploadedDocs.isEmpty ? 0 : 8)
+                    .background(vm.uploadedDocs.isEmpty ? Color.clear : theme.background)
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(vm.uploadedDocs.isEmpty ? Color.clear : theme.border, lineWidth: 1))
                 }
                 .buttonStyle(.plain)
                 .disabled(vm.isUploading)
+                .accessibilityLabel(PCStrings.uploadFile)
             }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minHeight: 100)
             .background(theme.surface)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(theme.border, lineWidth: 1)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(theme.border, lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
         }
     }
 
-    @ViewBuilder
-    private var additionalNote: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(PCStrings.additionalNote)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(theme.text)
-            PCTextarea(
-                text: $vm.additionalNote,
-                placeholder: PCStrings.additionalNotePlaceholder
-            )
-        }
-    }
+    // MARK: - Erasure modal
 
-    @ViewBuilder
-    private var confirmRow: some View {
-        PCCheckbox(
-            isOn: $vm.confirmChecked,
-            label: "\(PCStrings.iConfirm) *"
-        )
-    }
-
-    @ViewBuilder
-    private var actionButtons: some View {
-        HStack(spacing: 10) {
-            Spacer()
-            PCButton(PCStrings.saveDraft, variant: .outline) {}
-            PCButton(PCStrings.submit, isLoading: vm.isSubmitting, isDisabled: !vm.canSubmit) {
-                Task { await vm.submit() }
-            }
-        }
-    }
-
-    // MARK: - Success
-
-    @ViewBuilder
-    private var successView: some View {
-        VStack(spacing: 16) {
-            ZStack {
-                Circle()
-                    .fill(theme.badgeSuccessBg)
-                    .frame(width: 72, height: 72)
-                Image(systemName: "checkmark")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(theme.success)
-            }
-            Text(PCStrings.requestSubmittedTitle)
-                .font(.system(size: 18, weight: .bold))
-                .foregroundColor(theme.text)
-                .multilineTextAlignment(.center)
-            Text(PCStrings.requestSubmittedSubtitle)
-                .font(.system(size: 14))
-                .foregroundColor(theme.textSecondary)
-            if let id = vm.submittedCaseId {
-                VStack(spacing: 6) {
-                    Text(PCStrings.caseId)
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(theme.textSecondary)
-                        .textCase(.uppercase)
-                    Text(id)
-                        .font(.system(.title3, design: .monospaced).weight(.bold))
+    private var erasureModal: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                VStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.circle")
+                        .font(.system(size: 24))
+                        .foregroundColor(theme.warning)
+                    Text(PCStrings.revokeConsentModalTitle)
+                        .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(theme.text)
-                    Text(PCStrings.saveCaseIdNotice)
-                        .font(.system(size: 12))
+                        .multilineTextAlignment(.center)
+                    Text(PCStrings.revokeConsentModalQuestion)
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textSecondary)
                         .multilineTextAlignment(.center)
                 }
-                .padding(18)
                 .frame(maxWidth: .infinity)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(PCStrings.revokeConsentModalPurposesLabel)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(theme.textSecondary)
+                    let names = vm.selectedErasurePurposeNames
+                    if names.isEmpty {
+                        Text(PCStrings.revokeConsentModalYourPurposes)
+                            .font(.system(size: 13))
+                            .foregroundColor(theme.textSecondary)
+                    } else {
+                        ForEach(names.prefix(DSRFormViewModel.maxErasurePurposeNames), id: \.self) { name in
+                            Text(name)
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(theme.text)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(theme.surface)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                        }
+                        if names.count > DSRFormViewModel.maxErasurePurposeNames {
+                            Text(PCStrings.revokeConsentModalAndMore(names.count - DSRFormViewModel.maxErasurePurposeNames))
+                                .font(.system(size: 13))
+                                .foregroundColor(theme.textSecondary)
+                        }
+                    }
+                }
+                (Text(PCStrings.revokeConsentModalIfYesLabel).fontWeight(.semibold) + Text(" \(PCStrings.revokeConsentModalIfYesBody)"))
+                    .font(.system(size: 13))
+                    .foregroundColor(theme.badgeWarningText)
+                    .padding(12)
+                    .background(theme.badgeWarningBg)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                HStack(spacing: 10) {
+                    PCButton(PCStrings.revokeConsentNo, variant: .outline, isDisabled: vm.isSubmitting) {
+                        Task { await vm.chooseErasureRevoke(false) }
+                    }
+                    PCButton(PCStrings.revokeConsentYes, fullWidth: true, isLoading: vm.isSubmitting) {
+                        Task { await vm.chooseErasureRevoke(true) }
+                    }
+                }
+            }
+            .padding(20)
+        }
+        .background(theme.background)
+    }
+
+    // MARK: - Success (React RequestSubmit)
+
+    private var successView: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                Circle()
+                    .fill(theme.success.opacity(0.2))
+                    .frame(width: 40, height: 40)
+                    .overlay(Image(systemName: "checkmark").font(.system(size: 18, weight: .bold)).foregroundColor(theme.success))
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(PCStrings.requestSubmittedSuccessfully)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(theme.text)
+                    Text("\(PCStrings.thankYouForSubmittingYourRequest).")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(theme.textSecondary)
+                }
+            }
+            if let submitted = vm.submittedCase {
+                VStack(alignment: .leading, spacing: 4) {
+                    if !submitted.productName.isEmpty {
+                        Text(submitted.productName)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(theme.text)
+                    }
+                    Text("\(PCStrings.caseID): \(submitted.caseId)")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(theme.primary)
+                        .textSelection(.enabled)
+                    Text("\(PCStrings.saveThisID).")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(theme.textSecondary)
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .background(theme.surface)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(theme.border, lineWidth: 1)
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(theme.border, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
             }
-            Text(PCStrings.requestSubmittedNotice)
-                .font(.system(size: 13))
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "envelope").font(.system(size: 14)).foregroundColor(theme.textSecondary)
+                Text("\(PCStrings.confirmationSentTo): \(vm.contact)")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(theme.textSecondary)
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(theme.surface)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            Text("\(PCStrings.processRequest).")
+                .font(.system(size: 12, weight: .medium))
                 .foregroundColor(theme.textSecondary)
-                .multilineTextAlignment(.center)
-            PCButton(PCStrings.newRequest, variant: .primary) {
+            if vm.revokeConsentOnFulfilment {
+                Text(PCStrings.erasureConsentRevokeNotice(vm.erasurePurposeSummary))
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(theme.badgeInfoText)
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(theme.badgeInfoBg)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            PCButton(PCStrings.backToHome) {
                 vm.reset()
-                Task { await vm.loadFormData() }
+                onBack?()
             }
-            .padding(.top, 8)
+            Text("\(PCStrings.yourDataIsSafeWithUs).")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(theme.textTertiary)
+                .frame(maxWidth: .infinity)
         }
-        .padding(.vertical, 24)
-        .frame(maxWidth: .infinity)
+        .padding(16)
+        .background(theme.background)
+        .overlay(RoundedRectangle(cornerRadius: theme.panelRadius).stroke(theme.border, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: theme.panelRadius))
+        .padding(.top, 8)
     }
 
-    // MARK: - Helpers
-
-    @ViewBuilder
     private func requiredLabel(_ text: String) -> some View {
-        HStack(spacing: 4) {
-            Text(text)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(theme.text)
-            Text("*")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(theme.error)
-        }
-    }
-
-    @ViewBuilder
-    private func checkbox(isOn: Bool, size: CGFloat, lineWidth: CGFloat = 2) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 4)
-                .fill(isOn ? theme.primary : theme.background)
-                .frame(width: size, height: size)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 4)
-                        .stroke(isOn ? theme.primary : theme.border, lineWidth: lineWidth)
-                )
-            if isOn {
-                Image(systemName: "checkmark")
-                    .font(.system(size: size * 0.6, weight: .bold))
-                    .foregroundColor(.white)
-            }
-        }
+        (Text(text).foregroundColor(theme.text) + Text("*").foregroundColor(theme.error))
+            .font(.system(size: 14, weight: .semibold))
     }
 }
 
-/// Simple wrap-content layout (for uploaded-doc pills). Falls back to VStack on
-/// older iOS versions.
+/// Simple wrap-content layout (for uploaded-doc pills and product chips).
 struct FlowLayoutCompat<Content: View>: View {
     let spacing: CGFloat
     @ViewBuilder var content: () -> Content
     var body: some View {
-        if #available(iOS 16.0, *) {
-            FlowLayout(spacing: spacing) { content() }
-        } else {
-            VStack(alignment: .leading, spacing: spacing) { content() }
-        }
+        FlowLayout(spacing: spacing) { content() }
     }
 }
 
-@available(iOS 16.0, *)
 struct FlowLayout: Layout {
     let spacing: CGFloat
 
@@ -643,7 +718,7 @@ struct FlowLayout: Layout {
             x += size.width + spacing
             rowHeight = max(rowHeight, size.height)
         }
-        return CGSize(width: maxWidth, height: y + rowHeight)
+        return CGSize(width: maxWidth == .infinity ? x : maxWidth, height: y + rowHeight)
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {

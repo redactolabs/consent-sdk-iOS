@@ -4,6 +4,22 @@ public enum PrivacyCenterThemeMode: String, Sendable, Equatable {
     case light, dark
 }
 
+/// Presentation options for the Privacy Center, mirroring React's
+/// `settings` prop (`PrivacyCenterSettings`).
+public struct PrivacyCenterSettings: Sendable, Equatable {
+    /// `"classic"` (the default) or `"glass"`; both take their colours from
+    /// workspace branding. Anything unrecognised falls back to classic.
+    public var theme: String?
+
+    public init(theme: String? = nil) {
+        self.theme = theme
+    }
+
+    var appearance: AppearanceStyle {
+        theme.flatMap(AppearanceStyle.init(rawValue:)) ?? .classic
+    }
+}
+
 public struct PrivacyCenterTheme: Sendable, Equatable {
     public let mode: PrivacyCenterThemeMode
     public let background: Color
@@ -30,6 +46,16 @@ public struct PrivacyCenterTheme: Sendable, Equatable {
     public let badgeInfoText: Color
     public let badgeSecondaryBg: Color
     public let badgeSecondaryText: Color
+    /// Classic or glass (React `settings.theme`).
+    public var appearance: AppearanceStyle = .classic
+
+    public var isGlass: Bool { appearance == .glass }
+    /// Cards and panels: glass rounds them further (GLASS_RADIUS.panel).
+    public var panelRadius: CGFloat { isGlass ? GlassPalette.Radius.panel : 12 }
+    public var controlRadius: CGFloat { isGlass ? GlassPalette.Radius.control : 8 }
+    public var buttonRadius: CGFloat { isGlass ? GlassPalette.Radius.pill : 10 }
+    /// A frosted fill on glass, the plain surface on classic.
+    public var panelFill: AnyShapeStyle { isGlass ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(surface) }
 
     public static let light = PrivacyCenterTheme(
         mode: .light,
@@ -89,6 +115,53 @@ public struct PrivacyCenterTheme: Sendable, Equatable {
 
     public static func from(mode: PrivacyCenterThemeMode) -> PrivacyCenterTheme {
         mode == .dark ? .dark : .light
+    }
+
+    /// Workspace branding over the defaults (React applyBrandingTheme). The
+    /// branding palette is built for a light surface, so on dark only the
+    /// identity colours (primary, status hues) apply; its surface, text and
+    /// border would turn a dark Privacy Center white.
+    public static func from(
+        mode: PrivacyCenterThemeMode,
+        branding: OrgBrandingTheme?,
+        appearance: AppearanceStyle = .classic
+    ) -> PrivacyCenterTheme {
+        let base = from(mode: mode)
+        func pick(_ raw: String?, _ fallback: Color) -> Color {
+            AppearanceColor.parse(raw)?.color ?? fallback
+        }
+        let surfaces = mode == .light ? branding : nil
+        let primary = pick(branding?.primary, base.primary)
+        let primaryRGBA = AppearanceColor.parse(branding?.primary)
+        var theme = PrivacyCenterTheme(
+            mode: mode,
+            background: pick(surfaces?.surface, base.background),
+            surface: base.surface,
+            surfaceElevated: pick(surfaces?.surface, base.surfaceElevated),
+            text: pick(surfaces?.text, base.text),
+            textSecondary: pick(surfaces?.textMuted, base.textSecondary),
+            textTertiary: base.textTertiary,
+            border: pick(surfaces?.border, base.border),
+            primary: primary,
+            primaryText: pick(branding?.primaryContrast, base.primaryText),
+            primarySoft: primaryRGBA.map { AppearanceColor.withAlpha($0, mode == .light ? 0.1 : 0.25).color } ?? base.primarySoft,
+            error: pick(branding?.danger, base.error),
+            success: pick(branding?.success, base.success),
+            warning: pick(branding?.warning, base.warning),
+            info: primaryRGBA == nil ? base.info : primary,
+            badgeSuccessBg: base.badgeSuccessBg,
+            badgeSuccessText: base.badgeSuccessText,
+            badgeErrorBg: base.badgeErrorBg,
+            badgeErrorText: base.badgeErrorText,
+            badgeWarningBg: base.badgeWarningBg,
+            badgeWarningText: base.badgeWarningText,
+            badgeInfoBg: base.badgeInfoBg,
+            badgeInfoText: base.badgeInfoText,
+            badgeSecondaryBg: base.badgeSecondaryBg,
+            badgeSecondaryText: base.badgeSecondaryText
+        )
+        theme.appearance = appearance
+        return theme
     }
 }
 
