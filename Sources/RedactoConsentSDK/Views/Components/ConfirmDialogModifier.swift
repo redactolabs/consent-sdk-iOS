@@ -5,6 +5,7 @@ import SwiftUI
 /// button comes first, as on the web.
 private struct ConfirmDialogModifier: ViewModifier {
     let action: ConfirmAction?
+    let copy: NoticeChromeCopy
     let onConfirm: (ConfirmAction) -> Void
     let onCancel: () -> Void
 
@@ -33,12 +34,12 @@ private struct ConfirmDialogModifier: ViewModifier {
                 .contentShape(Rectangle())
                 .onTapGesture {}
             VStack(alignment: .leading, spacing: 0) {
-                Text(ConfirmDialogCopy.title(for: action))
+                Text(copy.confirmTitle(action))
                     .noticeFont(size: 16, weight: glass == nil ? .semibold : .bold)
                     .foregroundColor(glass == nil ? Color(hex: "#101828") : theme.heading)
                     .padding(.bottom, 8)
                     .accessibilityAddTraits(.isHeader)
-                Text(ConfirmDialogCopy.detail(for: action))
+                Text(copy.confirmDetail(action))
                     .noticeFont(size: 14)
                     .foregroundColor(glass == nil ? Color(hex: "#475467") : theme.text)
                     .fixedSize(horizontal: false, vertical: true)
@@ -46,7 +47,7 @@ private struct ConfirmDialogModifier: ViewModifier {
                 HStack(spacing: 12) {
                     Spacer(minLength: 0)
                     Button(action: onCancel) {
-                        Text(ConfirmDialogCopy.cancel)
+                        Text(copy.no)
                             .noticeFont(size: 14, weight: glass == nil ? .regular : .semibold)
                             .foregroundColor(buttonText)
                             .padding(.horizontal, 20)
@@ -56,7 +57,7 @@ private struct ConfirmDialogModifier: ViewModifier {
                     }
                     .buttonStyle(.plain)
                     Button { onConfirm(action) } label: {
-                        Text(ConfirmDialogCopy.confirm)
+                        Text(copy.yes)
                             .noticeFont(size: 14, weight: glass == nil ? .regular : .semibold)
                             .foregroundColor(confirm.foreground)
                             .padding(.horizontal, 20)
@@ -81,9 +82,10 @@ private struct ConfirmDialogModifier: ViewModifier {
 extension View {
     func noticeConfirmDialog(
         action: ConfirmAction?,
+        copy: NoticeChromeCopy = .english,
         onConfirm: @escaping (ConfirmAction) -> Void,
         onCancel: @escaping () -> Void
     ) -> some View {
-        modifier(ConfirmDialogModifier(action: action, onConfirm: onConfirm, onCancel: onCancel))
+        modifier(ConfirmDialogModifier(action: action, copy: copy, onConfirm: onConfirm, onCancel: onCancel))
     }
 }

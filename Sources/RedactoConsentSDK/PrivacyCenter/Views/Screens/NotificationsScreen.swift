@@ -13,8 +13,8 @@ struct NotificationsScreen: View {
                 PCPageHeader(title: PCStrings.notificationHub, description: PCStrings.notificationHubSubtitle)
                 Button(action: { store.navigate(to: .consentManager) }) {
                     HStack(spacing: 4) {
-                        Image(systemName: "chevron.left").font(.system(size: 12, weight: .semibold))
-                        Text(PCStrings.backToManageConsent).font(.system(size: 13, weight: .medium))
+                        Image(systemName: "chevron.left").font(theme.font(size: 12, weight: .semibold))
+                        Text(PCStrings.backToManageConsent).font(theme.font(size: 13, weight: .medium))
                     }
                     .foregroundColor(theme.textSecondary)
                 }
@@ -50,10 +50,10 @@ struct NotificationsScreen: View {
     private func stat(_ value: Int, _ label: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("\(value)")
-                .font(.system(size: 22, weight: .bold))
+                .font(theme.font(size: 22, weight: .bold))
                 .foregroundColor(theme.text)
             Text(label)
-                .font(.system(size: 12))
+                .font(theme.font(size: 12))
                 .foregroundColor(theme.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -67,12 +67,12 @@ struct NotificationsScreen: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("\(PCStrings.notifications) (\(vm.totalCount))")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(theme.font(size: 15, weight: .semibold))
                     .foregroundColor(theme.text)
                 Spacer()
                 NotificationRefreshButton(isRefreshing: vm.isRefreshing) { Task { await vm.refreshPage() } }
                 Button(PCStrings.markAllAsRead) { Task { await vm.markAllRead() } }
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(theme.font(size: 12, weight: .semibold))
                     .foregroundColor(theme.primary)
             }
             PCSegmentedTabs(
@@ -82,13 +82,13 @@ struct NotificationsScreen: View {
             )
             if vm.isLoading && !vm.isRefreshing {
                 Text(PCStrings.loadingNotifications)
-                    .font(.system(size: 13))
+                    .font(theme.font(size: 13))
                     .foregroundColor(theme.textSecondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 24)
             } else if vm.notifications.isEmpty {
                 Text(PCStrings.noNotificationsInCategory)
-                    .font(.system(size: 13))
+                    .font(theme.font(size: 13))
                     .foregroundColor(theme.textSecondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 24)
@@ -111,7 +111,7 @@ struct NotificationsScreen: View {
                     }
                     Spacer()
                     Text(PCStrings.paginationRange(vm.skip + 1, end: min(vm.skip + NotificationsViewModel.pageSize, vm.totalCount), total: vm.totalCount))
-                        .font(.system(size: 12))
+                        .font(theme.font(size: 12))
                         .foregroundColor(theme.textSecondary)
                     Spacer()
                     PCButton(PCStrings.next, variant: .outline, size: .compact, isDisabled: !vm.hasMore) {
@@ -144,12 +144,12 @@ struct NotificationDropdown: View {
         VStack(spacing: 0) {
             HStack {
                 Text(PCStrings.notifications)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(theme.font(size: 16, weight: .semibold))
                     .foregroundColor(theme.text)
                 Spacer()
                 NotificationRefreshButton(isRefreshing: vm.isRefreshing) { Task { await vm.refreshRecent() } }
                 Button(PCStrings.markAllAsRead) { Task { await vm.markAllRead() } }
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(theme.font(size: 12, weight: .semibold))
                     .foregroundColor(theme.primary)
             }
             .padding(16)
@@ -158,7 +158,7 @@ struct NotificationDropdown: View {
                 VStack(spacing: 0) {
                     if vm.recent.isEmpty {
                         Text(PCStrings.noNotificationsYet)
-                            .font(.system(size: 13))
+                            .font(theme.font(size: 13))
                             .foregroundColor(theme.textSecondary)
                             .padding(.vertical, 32)
                     } else {
@@ -183,7 +183,7 @@ struct NotificationDropdown: View {
             Divider()
             Button(action: onViewAll) {
                 Text("\(PCStrings.viewAllNotifications) →")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(theme.font(size: 13, weight: .semibold))
                     .foregroundColor(theme.primary)
                     .frame(maxWidth: .infinity)
                     .padding(14)
@@ -202,7 +202,7 @@ struct NotificationRefreshButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "arrow.clockwise")
-                .font(.system(size: 14, weight: .semibold))
+                .font(theme.font(size: 14, weight: .semibold))
                 .foregroundColor(theme.textSecondary)
                 .rotationEffect(.degrees(isRefreshing ? 180 : 0))
                 .animation(isRefreshing ? .linear(duration: 0.6).repeatForever(autoreverses: false) : .default, value: isRefreshing)
@@ -232,7 +232,7 @@ struct NotificationRowView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
                         Text(notification.title)
-                            .font(.system(size: 14, weight: notification.isRead ? .medium : .semibold))
+                            .font(theme.font(size: 14, weight: notification.isRead ? .medium : .semibold))
                             .foregroundColor(theme.text)
                             .multilineTextAlignment(.leading)
                         if !notification.isRead {
@@ -241,7 +241,7 @@ struct NotificationRowView: View {
                         Spacer(minLength: 0)
                         if large {
                             Text(PrivacyCenterDateFormatters.timeAgo(notification.createdAt))
-                                .font(.system(size: 11))
+                                .font(theme.font(size: 11))
                                 .foregroundColor(theme.textTertiary)
                         }
                     }
@@ -250,13 +250,13 @@ struct NotificationRowView: View {
                     }
                     if !notification.description.isEmpty {
                         Text(notification.description)
-                            .font(.system(size: 13))
+                            .font(theme.font(size: 13))
                             .foregroundColor(theme.textSecondary)
                             .multilineTextAlignment(.leading)
                     }
                     if !large {
                         Text(PrivacyCenterDateFormatters.timeAgo(notification.createdAt))
-                            .font(.system(size: 11))
+                            .font(theme.font(size: 11))
                             .foregroundColor(theme.textTertiary)
                     }
                     let ctas = notification.ctas.filter(NotificationsViewModel.isActionable)

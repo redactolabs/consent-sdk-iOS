@@ -253,3 +253,24 @@ extension PCStrings {
     public static var selectPurposesForThisProduct: String { t("selectPurposesForThisProduct") }
     public static var accountMenu: String { t("accountMenu") }
 }
+
+/// The built-in sign-in, the welcome banner and the footer the published
+/// settings add. Shipped in English, as React ships them; another language
+/// reads English until its bundle carries them.
+extension PCStrings {
+    public static var signInAgain: String { t("signInAgain") }
+    public static var signInCountryCode: String { t("signInCountryCode") }
+    public static var signInOrgUnavailable: String { t("signInOrgUnavailable") }
+    public static var otpCodeLabel: String { t("otpCodeLabel") }
+    public static func otpDigitLabel(_ position: Int) -> String { t("otpDigitLabel", vars: ["position": String(position)]) }
+    public static func otpResendIn(label: String, seconds: Int) -> String {
+        t("otpResendIn", vars: ["label": label, "seconds": String(seconds)])
+    }
+    public static var otpUseDifferentContact: String { t("otpUseDifferentContact") }
+    public static var otpEnterAllDigits: String { t("otpEnterAllDigits") }
+    public static var otpSentPhone: String { t("otpSentPhone") }
+    public static var footerLinks: String { t("footerLinks") }
+    public static var footerGrievanceOfficer: String { t("footerGrievanceOfficer") }
+    public static var footerDataProtectionBoard: String { t("footerDataProtectionBoard") }
+    public static var footerGrievanceForm: String { t("footerGrievanceForm") }
+}

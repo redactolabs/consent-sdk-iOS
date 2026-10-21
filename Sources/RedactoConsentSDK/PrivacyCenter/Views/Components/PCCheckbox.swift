@@ -26,12 +26,12 @@ public struct PCCheckbox: View {
                         )
                     if isOn {
                         Image(systemName: "checkmark")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(theme.font(size: 12, weight: .bold))
                             .foregroundColor(.white)
                     }
                 }
                 Text(label)
-                    .font(.system(size: 14))
+                    .font(theme.font(size: 14))
                     .foregroundColor(theme.text)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)

@@ -14,6 +14,17 @@ enum ProductConsent {
         purpose.dataElements.contains(where: isBlockingRequiredElement)
     }
 
+    /// The data elements a tick grants: the mandatory ones where the purpose
+    /// has any, every live one where it has none. One rule for the purpose
+    /// tick and the product tick alike, so ticking a product never records
+    /// consent for an optional element the visitor did not choose. A disabled
+    /// element is never granted.
+    static func seededDataElements(_ purpose: ActiveConfigPurpose) -> Set<String> {
+        let mandatory = purpose.dataElements.filter(isBlockingRequiredElement)
+        let granted = mandatory.isEmpty ? purpose.dataElements.filter(\.enabled) : mandatory
+        return Set(granted.map(\.uuid))
+    }
+
     static func rowKey(_ row: NoticePurposeRow) -> String {
         ProductMatrix.productPurposeKey(row.productUuid, row.purpose.uuid)
     }
@@ -198,9 +209,10 @@ enum ProductConsent {
     ) -> SelectionState {
         let key = ProductMatrix.productPurposeKey(productUuid, purpose.uuid)
         let nextState = !(selectedPurposes[key] ?? false)
+        let seeded = seededDataElements(purpose)
         var selectedDataElements: [String: Bool] = [:]
         for element in purpose.dataElements {
-            selectedDataElements["\(key)-\(element.uuid)"] = element.enabled ? nextState : false
+            selectedDataElements["\(key)-\(element.uuid)"] = nextState && seeded.contains(element.uuid)
         }
         return SelectionState(selectedPurposes: [key: nextState], selectedDataElements: selectedDataElements)
     }
@@ -219,8 +231,9 @@ enum ProductConsent {
         for purpose in sectionPurposes {
             let key = ProductMatrix.productPurposeKey(keyProductUuid, purpose.uuid)
             purposeOverrides[key] = nextState
+            let seeded = seededDataElements(purpose)
             for element in purpose.dataElements {
-                elementOverrides["\(key)-\(element.uuid)"] = element.enabled ? nextState : false
+                elementOverrides["\(key)-\(element.uuid)"] = nextState && seeded.contains(element.uuid)
             }
         }
         return SelectionState(selectedPurposes: purposeOverrides, selectedDataElements: elementOverrides)
@@ -308,6 +321,7 @@ enum ProductConsent {
     static func confirmHint(
         _ verdict: ConfirmVerdict,
         products: [NoticeProduct]?,
+        copy: NoticeChromeCopy = .english,
         productName: (NoticeProduct) -> String
     ) -> String? {
         if verdict.ok { return nil }
@@ -315,11 +329,11 @@ enum ProductConsent {
         case .ok:
             return nil
         case .nothingChosen:
-            return ConfirmHintCopy.nothingChosen
+            return copy.hintNothingChosen
         case .nothingEngaged:
-            return ConfirmHintCopy.nothingEngaged
+            return copy.hintNothingEngaged
         case .requiredOutstanding:
-            return ConfirmHintCopy.requiredOutstanding
+            return copy.hintRequiredOutstanding
         case .productIncomplete:
             let byUuid = Dictionary((products ?? []).map { ($0.uuid, $0) }, uniquingKeysWith: { first, _ in first })
             let names = verdict.blocking.map { uuid in byUuid[uuid].map(productName) ?? uuid }

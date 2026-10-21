@@ -40,7 +40,8 @@ enum SelectionControlRendering: Equatable {
 enum DropdownAnswer: Equatable {
     case yes
     case no
-    case mixed
+    /// Part of the section answered: neither yes nor no.
+    case partly
 }
 
 struct PurposeRowSeed: Equatable {

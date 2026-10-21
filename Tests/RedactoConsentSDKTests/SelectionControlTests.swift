@@ -61,10 +61,10 @@ final class SelectionControlTests: XCTestCase {
         XCTAssertEqual(SelectionControlLogic.rendering(control: .dropdown, locked: true), .settledAnswer)
     }
 
-    func testTheDropdownShowsTheAnswerOrMixed() {
+    func testTheDropdownShowsTheAnswerOrPartly() {
         XCTAssertEqual(SelectionControlLogic.dropdownAnswer(checked: true, indeterminate: false), .yes)
         XCTAssertEqual(SelectionControlLogic.dropdownAnswer(checked: false, indeterminate: false), .no)
-        XCTAssertEqual(SelectionControlLogic.dropdownAnswer(checked: true, indeterminate: true), .mixed)
+        XCTAssertEqual(SelectionControlLogic.dropdownAnswer(checked: true, indeterminate: true), .partly)
     }
 
     func testTheSavedAnswerIsReadOutBesideOnlyTheOptionOnRecord() {

@@ -640,9 +640,9 @@ final class PrivacyCenterParityTests: XCTestCase {
         XCTAssertEqual(PrivacyCenterSettings(theme: "neon").appearance, .classic)
     }
 
-    func testBrandingIsReadFromTheUserServer() {
+    func testBrandingIsReadFromTheUserServerOnTheCallersOwnOrigin() {
         XCTAssertEqual(PrivacyCenterBrandingAPI.userServerBaseUrl(for: "https://api.redacto.io/consent"), "https://api.redacto.io/user/api/0")
-        XCTAssertEqual(PrivacyCenterBrandingAPI.userServerBaseUrl(for: F.base), "https://api.redacto.tech/user/api/0")
+        XCTAssertEqual(PrivacyCenterBrandingAPI.userServerBaseUrl(for: F.base), "https://api.example.test/user/api/0")
     }
 }
 

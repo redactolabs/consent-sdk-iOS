@@ -4,7 +4,49 @@ All notable changes to `RedactoConsentSDK` are documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
-## [Unreleased]
+## [2.1.0] - 2026-10-21
+
+Brings the SDK to parity with the React SDK on staging (`10.4.0-beta.1`).
+
+### Added
+
+- **Published Privacy Center settings** (React #737): `RedactoPrivacyCenter` fetches the settings published in the Redacto console for the organisation and the visitor's language, again on each language switch, cached for five minutes. It never waits for them and never fails because of them: with nothing published, or if the request fails, it renders as before. They drive the branding (style, colours, font, display name, logo, logo height, corner radius), the menu (order, labels, enabled sections; a section switched off can't be opened, and notifications off removes the bell), a welcome message, the request types, grievance categories and revoke-on-erasure choice in the request form, the default withdraw warning, enabled languages and the default one, the footer (links, which wrap onto more rows, privacy policy, contact lines, copyright, "Powered by") and the sign-in screen. A response for an organisation or language the visitor has since left is dropped, and new host tokens for another organisation go back to the defaults until its settings arrive. Once settings are published, Urdu, Sindhi and Kashmiri render right to left; switching direction keeps the screen's state.
+- **`PrivacyCenterSettings` overrides**: `branding`, `signIn`, `portal`, `languages` and `footer` groups, merged field by field over what was published and validated like it. `theme` still works as an alias for `branding.style`. A `languages` override applies from the first screen, whether or not anything is published or the fetch succeeds; a language the visitor switches to later is never undone by a fetch.
+- **Built-in OTP sign-in** (`builtInSignIn`, off by default): with no access token, the Privacy Center asks for a mobile number or email, sends a one-time code (resend after 50 seconds) and signs in with the issued tokens through the existing token store. Layout (card, split or minimal), background, copy, channels, default country code, notice line and support link come from the settings; the organisation and workspace from `organisationUuid` and `workspaceUuid`, both needed without a token (without them it says the organisation is unavailable and sends nothing). The session-expired screen offers signing in again when the host passed no `onBack`.
+- **Lifecycle callbacks**: `onReady` (once; a centre opened before the host has a token reports it when the token arrives), `onConsentChange` (withdraw, regrant or renew, with the purpose, product, data elements and nominator), `onRequestSubmit` (case id, case uuid, request type and product) and `onSignOut` (`.user`, `.timeout`, `.sessionExpired`). The closures from the latest render are the ones called.
+- **Inactivity sign-out**: with `portal.session_timeout_minutes` set, the visitor is signed out after that long without activity, including on return from the background past the deadline, and lands on the session-expired screen. Touches anywhere in the Privacy Center's window, sheets included, and typing in its text fields count as activity. A session the host brings back with new tokens is timed again; a timeout under half a minute rounds to 0 and leaves the timer off.
+- **The notice's chrome is translated** (React 432d9f3, 49ceb7c): the yes/no controls, the confirm dialog, the verification panel, the privacy policy label and the confirm hints follow the notice's language, in English and the 22 languages of the 8th Schedule. A language code matches whatever its case, and a bare or region-tagged code finds its bundle.
+- **The selection control reaches the data elements** (React 46e5506): a notice set to radio or dropdown draws that control on every answerable data element row.
+- **The inline notice runs the confirm step** (React 80c68a0, 4bd8ef2, 6f98d02, 349de4f): with confirm-before-submit on, `RedactoNoticeConsentInline` asks before its automatic submission. Declining holds that selection back without silencing a later change, it never asks again about a submission it made, a failed submission asks again, and a new access token releases a refusal.
+- **`baseUrl` takes the Redacto API host** (for example `https://api.redacto.io`) on `RedactoNoticeConsent`, `RedactoNoticeConsentInline`, `RedactoNoticeAssisted`, `RedactoPrivacyCenter`, `ConsentNoticeViewModel`, `ConsentInlineViewModel`, `PrivacyCenterStore`, `PrivacyCenterAPI`, `PrivacyCenterHTTPClient`, `TokenStore` and the `ConsentAPI` parameter types. From the host the SDK derives the consent server (`{host}/consent`), the consent ledger (`{host}/consent-ledger`) and the user service for Privacy Center branding (`{host}/user/api/0`). Requests route as they do with the consent server URL and a ledger configured, except that sandbox notice audio comes from the ledger, as a JWT session's does. A `baseUrl` ending in `/consent-ledger` is read as its host.
+- With the host, `PrivacyCenterStore.baseUrl` and `ledgerBaseUrl` report the derived consent server and ledger URLs.
+- A one-time warning per process (`os.Logger`, subsystem `io.redacto.RedactoConsentSDK`, category `baseUrl`) when a deprecated form below is used.
+- **`slug` is optional**: `RedactoPrivacyCenter` takes `slug: String? = nil` and `PrivacyCenterStore` defaults it to `""`. The branding is read only by organisation, for the one in the access token, the sandbox config or `organisationUuid`, from `{host}/user/api/0/public/org-branding/{organisation_uuid}`, which returns the same branding (`PublicBrandConfigOut`) as the by-slug route. With no organisation known, none is requested; a token that arrives later loads it. Existing calls compile unchanged.
+
+### Changed
+
+- **The Privacy Center applies the organisation's font** (React 437cad5, 827b196), resolved through the font catalogue the notice uses, when the family is installed on the device. An organisation with no font keeps the system font.
+- **Ticking a purpose or a product heading grants only the purpose's mandatory data elements** (React 69505da, 6e9016a), or every live one when it has none. Ticking a product used to grant every enabled element under it, recording consent for optional data the visitor never chose.
+- **The part-answered dropdown row reads "Partly"**, not "Mixed" (React d3d3875), in every language.
+- **A product section opens from its whole heading row** (React d5efc34), not only its chevron and name.
+- **A switch has two positions** (React 6146b05): a partly ticked product section drawn as switches shows off, and the next tap asks for all of it. Checkboxes keep the dash.
+- **Accept All behind the verification step shows what it will record** (React b851342, dae7b52, d81fab9): the rows tick while the code is typed, and Accept Selected puts the visitor's own ticks back.
+- `AppearanceStyle` is `Sendable`, and `PrivacyCenterTheme` gains `accent`, `fontFamily`, `cornerRadius` and `font(size:weight:)`.
+
+### Deprecated
+
+- **The consent server URL as `baseUrl`** (`https://api.redacto.io/consent`). It keeps working exactly as before: the same requests, including the consent-server fallbacks when no `ledgerBaseUrl` is passed. Pass the API host instead.
+- **`ledgerBaseUrl`.** It is ignored with the API host as `baseUrl` (a one-time warning says so) and still works as before with the consent server URL. Swift cannot deprecate a single parameter, so this is documented on each initializer and logged at runtime; existing code compiles unchanged.
+- **`slug` on `RedactoPrivacyCenter` and `PrivacyCenterStore`.** It is ignored: passing it logs a one-time warning and changes nothing. The organisation comes from the access token, or from `organisationUuid` and `workspaceUuid`. It will be removed in a future major release.
+
+### Fixed
+
+- **The Privacy Center sent custom domains, proxies and localhost to the staging user service** (React c0b296c, 14ff2cf, 9e2b52c). The user service (branding) is now taken from the origin of the `baseUrl` you pass, falling back to production, never staging.
+
+### Not ported
+
+- Custom CSS, the `data-redacto-part` hooks, the CSS theme variables and the `seo` settings are web-only and have no native equivalent. `RedactoNoticePreview` (the console's live preview) and the JS SDK's hosted Privacy Center iframe are web-only too.
+- The inline notice's confirm step is a system alert in English, as React's inline notice draws its dialog in English.
 
 ## [2.0.0] - 2026-09-29
 

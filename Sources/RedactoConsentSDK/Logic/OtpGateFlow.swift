@@ -23,6 +23,23 @@ struct OtpGateFlow {
         deferredMode = mode
     }
 
+    /// What the rows show while an accept waits on the gate, and the
+    /// visitor's own ticks held aside meanwhile. A shortcut shows its own
+    /// selection and holds the ticks it replaced (the first time only, so a
+    /// repeat keeps the visitor's); Accept Selected puts them back.
+    static func pendingSelection(
+        mode: AcceptMode,
+        rows: [NoticePurposeRow],
+        current: SelectionState,
+        held: SelectionState?
+    ) -> (shown: SelectionState, held: SelectionState?) {
+        if mode == .selected {
+            return (held ?? current, nil)
+        }
+        let shown = ProductConsent.selectionForMode(rows: rows, mode: mode, current: current)
+        return (shown, held ?? current)
+    }
+
     mutating func takeDeferredAccept(currentToken: String) -> AcceptMode? {
         guard let mode = deferredMode, currentToken != tokenAtVerify else {
             return nil

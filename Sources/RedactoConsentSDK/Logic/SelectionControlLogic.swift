@@ -22,12 +22,17 @@ enum SelectionControlLogic {
 
     static func dropdownAnswer(checked: Bool, indeterminate: Bool) -> DropdownAnswer {
         if indeterminate {
-            return .mixed
+            return .partly
         }
         return checked ? .yes : .no
     }
 
-    static func optionLabel(_ label: String, value: Bool, recordedAnswer: Bool?) -> String {
-        recordedAnswer == value ? "\(label) \(SelectionControlCopy.onRecord(label))" : label
+    static func optionLabel(
+        _ label: String,
+        value: Bool,
+        recordedAnswer: Bool?,
+        copy: NoticeChromeCopy = .english
+    ) -> String {
+        recordedAnswer == value ? "\(label) \(copy.savedAnswer(label))" : label
     }
 }

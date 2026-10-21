@@ -1,10 +1,10 @@
 import SwiftUI
 
 /// A purpose or product checkbox drawn as a switch, when the console or the
-/// host asks for switches. A partly ticked product parks the thumb mid-track.
+/// host asks for switches. A switch has two positions: a partly ticked product
+/// shows off rather than parking the thumb mid-track.
 struct NoticeSwitchView: View {
     let checked: Bool
-    var indeterminate = false
     var large = false
     let theme: NoticeTheme
     let onChange: () -> Void
@@ -17,14 +17,11 @@ struct NoticeSwitchView: View {
     private let inset: CGFloat = 3
 
     private var offset: CGFloat {
-        let travel = width - thumb - inset * 2
-        if indeterminate { return travel / 2 }
-        return checked ? travel : 0
+        checked ? width - thumb - inset * 2 : 0
     }
 
     private var track: Color {
-        if indeterminate { return theme.switchOn.opacity(0.55) }
-        return checked ? theme.switchOn : theme.switchTrack
+        checked ? theme.switchOn : theme.switchTrack
     }
 
     var body: some View {

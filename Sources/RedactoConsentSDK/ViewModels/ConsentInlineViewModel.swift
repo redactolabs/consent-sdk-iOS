@@ -31,11 +31,20 @@ public class ConsentInlineViewModel: ObservableObject {
     @Published var hasAlreadyConsented = false
     @Published var fetchError: Error?
     @Published var errorMessage: String?
+    /// The notice asks "confirm before submitting": the inline notice has no
+    /// accept button, so the question gates its automatic submission.
+    @Published var awaitingConfirm = false
 
     private var hasSubmitted = false
     var isCheckingConsent = false
     var autoSubmitDeferredByConsentCheck = false
     private var lastSubmissionKey: String?
+    /// The selection the visitor declined to submit: declining stops this
+    /// submission without silencing a selection they go on to change.
+    private var refusedSelectionKey: String?
+    /// The selection the visitor confirmed, so a notice left mounted is not
+    /// asked again about the submission it just made.
+    private var confirmedSelectionKey: String?
     /// Bumped whenever the principal or the consent changes; a submit that
     /// finishes under an older generation belongs to someone else.
     private var submissionGeneration = 0
@@ -46,6 +55,12 @@ public class ConsentInlineViewModel: ObservableObject {
 
     // MARK: - Init
 
+    /// - Parameters:
+    ///   - baseUrl: the API host, e.g. `https://api.redacto.io` (recommended).
+    ///     The consent server URL (`…/consent`) still works but is deprecated.
+    ///   - ledgerBaseUrl: deprecated. Read only when `baseUrl` is the consent
+    ///     server URL (`…/consent`) or omitted, as in earlier releases. Ignored
+    ///     when `baseUrl` is the API host.
     public init(
         orgUuid: String,
         workspaceUuid: String,
@@ -67,7 +82,10 @@ public class ConsentInlineViewModel: ObservableObject {
         self.accessToken = accessToken
         self.baseUrl = baseUrl
         self.ledgerBaseUrl = ledgerBaseUrl
-        self.isCheckingConsent = ConsentInlineViewModel.runsLedgerConsentCheck(ledgerBaseUrl: ledgerBaseUrl, applicationId: applicationId)
+        self.isCheckingConsent = ConsentInlineViewModel.runsLedgerConsentCheck(
+            ledgerBaseUrl: ConsentInlineViewModel.consentCheckLedger(baseUrl: baseUrl, ledgerBaseUrl: ledgerBaseUrl),
+            applicationId: applicationId
+        )
         self.initialLanguage = language
         self.selectedLanguage = language
         self.onAccept = onAccept
@@ -101,6 +119,11 @@ public class ConsentInlineViewModel: ObservableObject {
         isSubmitting || !areAllRequiredElementsChecked || (accessToken ?? "").isEmpty
     }
 
+    /// The host's `settings.confirmBeforeSubmit`, else the console's.
+    var confirmBeforeSubmit: Bool {
+        settings?.confirmBeforeSubmitOverride ?? (activeConfig?.appearance?.confirmBeforeSubmit == true)
+    }
+
     // MARK: - Fetch Notice
 
     /// `.onAppear` fires again whenever the view re-enters the hierarchy (a List
@@ -127,7 +150,7 @@ public class ConsentInlineViewModel: ObservableObject {
         isLoading = true
         fetchError = nil
         hasAlreadyConsented = false
-        isCheckingConsent = Self.runsLedgerConsentCheck(ledgerBaseUrl: ledgerBaseUrl, applicationId: applicationId)
+        isCheckingConsent = Self.runsLedgerConsentCheck(ledgerBaseUrl: consentCheckLedgerBaseUrl, applicationId: applicationId)
         autoSubmitDeferredByConsentCheck = false
 
         do {
@@ -275,6 +298,15 @@ public class ConsentInlineViewModel: ObservableObject {
         let key = InlineSelection.inlineSubmissionKey(token: token, configUuid: ac.uuid, selection: selection)
         guard key != lastSubmissionKey else { return }
 
+        if confirmBeforeSubmit {
+            guard key != refusedSelectionKey, key != confirmedSelectionKey else { return }
+            awaitingConfirm = true
+            return
+        }
+        startSubmission(ac, token: token, selection: selection, key: key)
+    }
+
+    private func startSubmission(_ ac: ActiveConfig, token: String, selection: SelectionState, key: String, confirmed: Bool = false) {
         hasSubmitted = true
         lastSubmissionKey = key
         let generation = submissionGeneration
@@ -284,11 +316,41 @@ public class ConsentInlineViewModel: ObservableObject {
                 try await self.submitConsent(ac, token: token, selection: selection, generation: generation)
             } catch {
                 self.hasSubmitted = false
+                if confirmed {
+                    // Released with it: a confirmed selection held past a
+                    // failure would leave no dialog and no way back to one.
+                    self.confirmedSelectionKey = nil
+                    self.lastSubmissionKey = nil
+                }
                 self.onError?(error)
             }
             self.submitTask = nil
             self.autoSubmitIfReady()
         }
+    }
+
+    /// The visitor answered yes: submit the selection on screen now.
+    func confirmSubmission() {
+        awaitingConfirm = false
+        guard let token = accessToken, !token.isEmpty,
+              let ac = activeConfig,
+              areAllRequiredElementsChecked,
+              !isSubmitting,
+              !hasSubmitted,
+              !hasAlreadyConsented else { return }
+        let selection = SelectionState(selectedPurposes: selectedPurposes, selectedDataElements: selectedDataElements)
+        let key = InlineSelection.inlineSubmissionKey(token: token, configUuid: ac.uuid, selection: selection)
+        confirmedSelectionKey = key
+        startSubmission(ac, token: token, selection: selection, key: key, confirmed: true)
+    }
+
+    /// The visitor answered no: hold this selection back, and ask again only
+    /// once it changes.
+    func refuseSubmission() {
+        awaitingConfirm = false
+        guard let token = accessToken, let ac = activeConfig else { return }
+        let selection = SelectionState(selectedPurposes: selectedPurposes, selectedDataElements: selectedDataElements)
+        refusedSelectionKey = InlineSelection.inlineSubmissionKey(token: token, configUuid: ac.uuid, selection: selection)
     }
 
     /// A new token is a new principal: re-read, so its 409 and ledger check
@@ -299,6 +361,9 @@ public class ConsentInlineViewModel: ObservableObject {
         accessToken = token
         submissionGeneration += 1
         hasSubmitted = false
+        refusedSelectionKey = nil
+        confirmedSelectionKey = nil
+        awaitingConfirm = false
         if (token ?? "").isEmpty {
             checkValidationAndAutoSubmit()
             return nil
@@ -325,6 +390,9 @@ public class ConsentInlineViewModel: ObservableObject {
         selectedDataElements = [:]
         hasSubmitted = false
         lastSubmissionKey = nil
+        refusedSelectionKey = nil
+        confirmedSelectionKey = nil
+        awaitingConfirm = false
         return fetchNotice()
     }
 

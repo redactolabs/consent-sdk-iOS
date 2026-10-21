@@ -10,6 +10,14 @@ public struct RedactoNoticeAssisted: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// - Parameters:
+    ///   - baseUrl: the API host, e.g. `https://api.redacto.io` (recommended):
+    ///     the notice, OTP and audio come from the consent server under it and
+    ///     the consent is written to the ledger. The consent server URL
+    ///     (`…/consent`) still works but is deprecated.
+    ///   - ledgerBaseUrl: deprecated. Read only when `baseUrl` is the consent
+    ///     server URL (`…/consent`) or omitted, as in earlier releases. Ignored
+    ///     when `baseUrl` is the API host.
     public init(
         organisationUuid: String,
         workspaceUuid: String,

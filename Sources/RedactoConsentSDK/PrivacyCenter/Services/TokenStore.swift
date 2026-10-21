@@ -34,6 +34,9 @@ public actor TokenStore {
 
     public private(set) var isSessionExpired = false
 
+    /// - Parameter baseUrl: the API host, e.g. `https://api.redacto.io`
+    ///   (recommended); the OTP refresh goes to the consent server under it.
+    ///   The consent server URL (`…/consent`) still works but is deprecated.
     public init(
         baseUrl: String,
         accessToken: String,
@@ -45,7 +48,7 @@ public actor TokenStore {
         onSessionExpired: (@Sendable () -> Void)? = nil,
         now: @escaping @Sendable () -> Date = { Date() }
     ) {
-        self.baseUrl = baseUrl
+        self.baseUrl = NoticeBaseUrl.consentServerUrl(baseUrl)
         self.onError = onError
         self.updateTokens = updateTokens
         self.sandbox = sandbox

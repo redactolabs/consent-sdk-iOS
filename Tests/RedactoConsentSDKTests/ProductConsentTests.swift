@@ -475,6 +475,47 @@ final class ProductConsentToggleTests: XCTestCase {
         XCTAssertEqual(next.selectedDataElements, ["\(F.key(F.b, mixed))-off": false, "\(F.key(F.b, mixed))-live": true])
     }
 
+    // Ticking a product granted its optional elements too, recording consent
+    // for data the visitor never chose; the purpose tick granted only what it
+    // required. Both now read one rule.
+    func testATickGrantsOnlyTheMandatoryElementsWhenThePurposeHasAny() {
+        let purpose = F.purpose("p", [F.a], elements: [F.element("required", required: true), F.element("optional", required: false)])
+        XCTAssertEqual(ProductConsent.seededDataElements(purpose), ["required"])
+    }
+
+    func testATickGrantsEveryLiveElementWhenThePurposeRequiresNothing() {
+        let purpose = F.purpose("p", [F.a], elements: [F.element("a", required: false), F.element("b", required: false)])
+        XCTAssertEqual(ProductConsent.seededDataElements(purpose), ["a", "b"])
+    }
+
+    func testATickNeverGrantsADisabledElement() {
+        let purpose = F.purpose("p", [F.a], elements: [F.element("off", required: false, enabled: false), F.element("on", required: false)])
+        XCTAssertEqual(ProductConsent.seededDataElements(purpose), ["on"])
+    }
+
+    func testATickFallsBackWhenTheOnlyRequiredElementIsDisabled() {
+        let purpose = F.purpose("p", [F.a], elements: [F.element("required-but-off", required: true, enabled: false), F.element("live", required: false)])
+        XCTAssertEqual(ProductConsent.seededDataElements(purpose), ["live"])
+    }
+
+    func testPurposeToggleLeavesTheOptionalElementsAlone() {
+        let next = ProductConsent.purposeToggle(purpose: F.aReq, productUuid: F.a, selectedPurposes: [:])
+        XCTAssertEqual(next.selectedDataElements["\(F.key(F.a, F.aReq))-a-req-req"], true)
+        XCTAssertEqual(next.selectedDataElements["\(F.key(F.a, F.aReq))-a-req-opt"], false)
+    }
+
+    func testSectionToggleGrantsTheRequiredElementAndLeavesTheOptionalOneAlone() {
+        let next = ProductConsent.sectionToggle(sectionPurposes: [F.aReq], keyProductUuid: F.a, selectedPurposes: [:])
+        XCTAssertEqual(next.selectedPurposes[F.key(F.a, F.aReq)], true)
+        XCTAssertEqual(next.selectedDataElements["\(F.key(F.a, F.aReq))-a-req-req"], true)
+        XCTAssertEqual(next.selectedDataElements["\(F.key(F.a, F.aReq))-a-req-opt"], false)
+    }
+
+    func testSectionToggleGrantsEveryLiveElementOfAnOptionalPurpose() {
+        let next = ProductConsent.sectionToggle(sectionPurposes: [F.aOpt], keyProductUuid: F.a, selectedPurposes: [:])
+        XCTAssertEqual(next.selectedDataElements["\(F.key(F.a, F.aOpt))-a-opt-opt"], true)
+    }
+
     func testPurposeToggleUnticksEveryElementWhenThePurposeClears() {
         let next = ProductConsent.purposeToggle(purpose: F.aReq, productUuid: F.a, selectedPurposes: [F.key(F.a, F.aReq): true])
         XCTAssertTrue(next.selectedDataElements.values.allSatisfy { !$0 })

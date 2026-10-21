@@ -1,12 +1,14 @@
 import Foundation
 
+/// The English verification panel copy; the notice shows it in the language
+/// it is read in (`NoticeChromeCopy`).
 public enum OtpGateCopy {
     public static let length = 6
-    public static let title = "Enter the verification code"
-    public static let description = "Ask the customer to read out the code they were sent. Your selections are locked until it is confirmed."
-    public static let submit = "Confirm code"
-    public static let verifying = "Verifying..."
-    public static let failed = "Could not verify that code."
+    public static let title = NoticeChromeCopy.english.otpTitle
+    public static let description = NoticeChromeCopy.english.otpDescription
+    public static let submit = NoticeChromeCopy.english.otpSubmit
+    public static let verifying = NoticeChromeCopy.english.otpVerifying
+    public static let failed = NoticeChromeCopy.english.otpFailed
 
     static func digitLabel(_ index: Int) -> String {
         "Digit \(index + 1)"
@@ -14,48 +16,35 @@ public enum OtpGateCopy {
 }
 
 public enum ProductPolicyCopy {
-    public static let label = "Privacy policies:"
+    public static let label = NoticeChromeCopy.english.productPoliciesLabel
     static let translationKey = "product_privacy_policies_label"
 }
 
+/// The English yes/no copy; the notice shows it in the language it is read
+/// in (`NoticeChromeCopy`).
 public enum SelectionControlCopy {
-    public static let yes = "Yes"
-    public static let no = "No"
-    public static let mixed = "Mixed"
-
-    static func onRecord(_ answer: String) -> String {
-        "Saved answer: \(answer)"
-    }
+    public static let yes = NoticeChromeCopy.english.yes
+    public static let no = NoticeChromeCopy.english.no
+    /// The part-answered dropdown row: "Partly", not "Mixed".
+    public static let mixed = NoticeChromeCopy.english.mixed
 
     static func settled(_ name: String) -> String {
         "Already consented to \(name)"
     }
 }
 
+/// The English confirm dialog copy; the notice shows it in the language it
+/// is read in (`NoticeChromeCopy`).
 public enum ConfirmDialogCopy {
-    public static let confirm = "Yes"
-    public static let cancel = "No"
+    public static let confirm = NoticeChromeCopy.english.yes
+    public static let cancel = NoticeChromeCopy.english.no
 
     public static func title(for action: ConfirmAction) -> String {
-        switch action {
-        case .acceptAll:
-            return "Accept every purpose?"
-        case .acceptSelected:
-            return "Confirm your selections?"
-        case .decline:
-            return "Decline this notice?"
-        }
+        NoticeChromeCopy.english.confirmTitle(action)
     }
 
     public static func detail(for action: ConfirmAction) -> String {
-        switch action {
-        case .acceptAll:
-            return "This agrees to all purposes on this notice, including any you left unselected."
-        case .acceptSelected:
-            return "Only the purposes you selected are recorded as agreed. The rest are recorded as not agreed."
-        case .decline:
-            return "Nothing is recorded as agreed, including any purposes you selected."
-        }
+        NoticeChromeCopy.english.confirmDetail(action)
     }
 }
 

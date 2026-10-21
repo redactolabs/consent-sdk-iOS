@@ -3,7 +3,7 @@ import Foundation
 /// Surface and layout family a notice is drawn with, chosen in the Redacto
 /// console and served on `active_config.appearance.style`. Colours never come
 /// from the style: they come from the admin's palette, else the notice's brand.
-public enum AppearanceStyle: String, CaseIterable {
+public enum AppearanceStyle: String, CaseIterable, Sendable {
     case classic
     case glass
     case minimal

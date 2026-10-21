@@ -21,9 +21,16 @@ public actor PrivacyCenterHTTPClient {
         return d
     }()
 
+    /// - Parameters:
+    ///   - baseUrl: the API host, e.g. `https://api.redacto.io` (recommended).
+    ///     The consent server URL (`…/consent`) still works but is deprecated.
+    ///   - ledgerBaseUrl: deprecated. Read only when `baseUrl` is the consent
+    ///     server URL (`…/consent`) or omitted, as in earlier releases. Ignored
+    ///     when `baseUrl` is the API host.
     public init(baseUrl: String, ledgerBaseUrl: String? = nil, tokenStore: TokenStore, urlSession: URLSession = .shared) {
-        self.baseUrl = baseUrl
-        self.ledgerBaseUrl = ledgerBaseUrl
+        let endpoints = NoticeBaseUrl.endpoints(baseUrl: baseUrl, ledgerBaseUrl: ledgerBaseUrl)
+        self.baseUrl = endpoints.baseUrl ?? baseUrl
+        self.ledgerBaseUrl = endpoints.ledgerBaseUrl
         self.tokenStore = tokenStore
         self.urlSession = urlSession
     }

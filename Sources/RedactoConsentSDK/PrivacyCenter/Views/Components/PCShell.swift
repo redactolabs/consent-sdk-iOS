@@ -12,7 +12,7 @@ struct PCPageHeader: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 10) {
                 Text(title)
-                    .font(.system(size: 18, weight: .bold))
+                    .font(theme.font(size: 18, weight: .bold))
                     .foregroundColor(theme.text)
                     .lineLimit(1)
                 if let status {
@@ -21,7 +21,7 @@ struct PCPageHeader: View {
                             .fill(status.isSuccess ? theme.success : theme.warning)
                             .frame(width: 7, height: 7)
                         Text(status.label)
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(theme.font(size: 11, weight: .semibold))
                     }
                     .foregroundColor(status.isSuccess ? theme.success : theme.badgeWarningText)
                     .padding(.horizontal, 10)
@@ -33,7 +33,7 @@ struct PCPageHeader: View {
             }
             if let description, !description.isEmpty {
                 Text(description)
-                    .font(.system(size: 13))
+                    .font(theme.font(size: 13))
                     .foregroundColor(theme.textSecondary)
                     .lineLimit(2)
             }
@@ -59,7 +59,7 @@ struct PCPaginationBar: View {
         VStack(spacing: 8) {
             HStack(spacing: 8) {
                 Text(PCStrings.rowsPerPage)
-                    .font(.system(size: 13))
+                    .font(theme.font(size: 13))
                     .foregroundColor(theme.textSecondary)
                 Menu {
                     ForEach(pageSizeOptions, id: \.self) { size in
@@ -71,8 +71,8 @@ struct PCPaginationBar: View {
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Text("\(pageSize)").font(.system(size: 13, weight: .medium))
-                        Image(systemName: "chevron.down").font(.system(size: 10, weight: .semibold))
+                        Text("\(pageSize)").font(theme.font(size: 13, weight: .medium))
+                        Image(systemName: "chevron.down").font(theme.font(size: 10, weight: .semibold))
                     }
                     .foregroundColor(theme.text)
                     .padding(.horizontal, 10)
@@ -82,7 +82,7 @@ struct PCPaginationBar: View {
             }
             HStack(spacing: 8) {
                 Text(PCStrings.pageOf(currentPage, total: max(totalPages, 1)))
-                    .font(.system(size: 13))
+                    .font(theme.font(size: 13))
                     .foregroundColor(theme.textSecondary)
                 pageButton("chevron.left.2", PCStrings.goToFirstPage, enabled: currentPage > 1) { onPage(1) }
                 pageButton("chevron.left", PCStrings.goToPreviousPage, enabled: currentPage > 1) { onPage(currentPage - 1) }
@@ -97,7 +97,7 @@ struct PCPaginationBar: View {
     private func pageButton(_ icon: String, _ label: String, enabled: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.system(size: 12, weight: .bold))
+                .font(theme.font(size: 12, weight: .bold))
                 .foregroundColor(theme.text)
                 .frame(width: 32, height: 32)
                 .background(theme.surfaceElevated)
@@ -119,9 +119,9 @@ struct PCToastView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: icon)
-                .font(.system(size: 14, weight: .semibold))
+                .font(theme.font(size: 14, weight: .semibold))
             Text(toast.text)
-                .font(.system(size: 13, weight: .medium))
+                .font(theme.font(size: 13, weight: .medium))
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -174,7 +174,7 @@ struct PCSegmentedTabs<Value: Hashable>: View {
                     let isActive = option.value == selection
                     Button(action: { onSelect(option.value) }) {
                         Text(option.label)
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(theme.font(size: 12, weight: .semibold))
                             .foregroundColor(isActive ? theme.primaryText : theme.textSecondary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)

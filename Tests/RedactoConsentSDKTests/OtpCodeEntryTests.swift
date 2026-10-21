@@ -17,6 +17,36 @@ final class OtpCodeEntryTests: XCTestCase {
         XCTAssertFalse(OtpGateFlow.shouldHold(required: nil, verified: true))
     }
 
+    private let gatedRows = [NoticePurposeRow(purpose: ProductFixtures.aReq, productUuid: nil)]
+    private let ownTicks = SelectionState(selectedPurposes: [:], selectedDataElements: [:])
+
+    func testAPendingShortcutShowsItsSelectionAndHoldsTheVisitorsTicks() {
+        let next = OtpGateFlow.pendingSelection(mode: .all, rows: gatedRows, current: ownTicks, held: nil)
+        XCTAssertEqual(next.shown.selectedPurposes, [ProductFixtures.aReq.uuid: true])
+        XCTAssertEqual(next.shown.selectedDataElements["a-req-a-req-opt"], true)
+        XCTAssertEqual(next.held?.selectedPurposes, [:])
+    }
+
+    func testARepeatedShortcutKeepsTheTicksItFirstHeld() {
+        let shown = OtpGateFlow.pendingSelection(mode: .all, rows: gatedRows, current: ownTicks, held: nil).shown
+        let again = OtpGateFlow.pendingSelection(mode: .all, rows: gatedRows, current: shown, held: ownTicks)
+        XCTAssertEqual(again.held?.selectedPurposes, [:])
+    }
+
+    func testAcceptSelectedPutsTheHeldTicksBack() {
+        let all = SelectionState(selectedPurposes: [ProductFixtures.aReq.uuid: true], selectedDataElements: [:])
+        let next = OtpGateFlow.pendingSelection(mode: .selected, rows: gatedRows, current: all, held: ownTicks)
+        XCTAssertEqual(next.shown.selectedPurposes, [:])
+        XCTAssertNil(next.held)
+    }
+
+    func testAcceptSelectedWithNothingHeldLeavesTheTicksAlone() {
+        let mine = SelectionState(selectedPurposes: ["p": true], selectedDataElements: [:])
+        let next = OtpGateFlow.pendingSelection(mode: .selected, rows: gatedRows, current: mine, held: nil)
+        XCTAssertEqual(next.shown.selectedPurposes, ["p": true])
+        XCTAssertNil(next.held)
+    }
+
     func testNeverHoldsANoticeWhoseGateIsNotRequired() {
         XCTAssertFalse(OtpGateFlow.shouldHold(required: false, verified: false))
         XCTAssertFalse(OtpGateFlow.shouldHold(required: false, verified: true))

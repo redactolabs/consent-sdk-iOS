@@ -114,6 +114,9 @@ public class ConsentNoticeViewModel: ObservableObject {
     let defaultOpenProducts: [String]?
     var otpGate: OtpGate?
     var otpFlow = OtpGateFlow()
+    /// The visitor's own ticks, held while a shortcut is pending behind the
+    /// verification step, so Accept Selected can put them back.
+    var preGateSelection: SelectionState?
 
     // MARK: - Published State
     @Published var content: ConsentContent?
@@ -200,6 +203,12 @@ public class ConsentNoticeViewModel: ObservableObject {
 
     // MARK: - Init
 
+    /// - Parameters:
+    ///   - baseUrl: the API host, e.g. `https://api.redacto.io` (recommended).
+    ///     The consent server URL (`…/consent`) still works but is deprecated.
+    ///   - ledgerBaseUrl: deprecated. Read only when `baseUrl` is the consent
+    ///     server URL (`…/consent`) or omitted, as in earlier releases. Ignored
+    ///     when `baseUrl` is the API host.
     public init(
         noticeId: String,
         accessToken: String,
@@ -551,6 +560,12 @@ public class ConsentNoticeViewModel: ObservableObject {
         NoticeTranslation.dpoText(activeConfig, language: selectedLanguage, key: key, defaultText: defaultText)
     }
 
+    /// The notice's own chrome (yes/no, the confirm dialog, the verification
+    /// panel, the policy label, the hints) in the language it is read in.
+    var chromeCopy: NoticeChromeCopy {
+        .forLanguage(selectedLanguage)
+    }
+
     /// Called when selectedLanguage changes to re-fetch TTS audio.
     /// The read settles the notice on its default language, which lands here
     /// after the read already fetched that language's audio: only a different
@@ -685,6 +700,7 @@ public class ConsentNoticeViewModel: ObservableObject {
         autoTransitionTask = nil
         stopAudio()
         otpPanel = OtpPanelState()
+        preGateSelection = nil
         isVisible = false
         onDecline()
     }

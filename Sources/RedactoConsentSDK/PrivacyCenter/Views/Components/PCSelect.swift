@@ -43,7 +43,7 @@ public struct PCSelect<Value: Hashable>: View {
         VStack(alignment: .leading, spacing: 6) {
             if let label {
                 Text(label)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(theme.font(size: 13, weight: .medium))
                     .foregroundColor(theme.textSecondary)
             }
             Menu {
@@ -55,14 +55,14 @@ public struct PCSelect<Value: Hashable>: View {
                 HStack {
                     // A Menu label centres wrapped text; a select reads as one line.
                     Text(selectedLabel)
-                        .font(.system(size: 15))
+                        .font(theme.font(size: 15))
                         .foregroundColor(selection == nil ? theme.textTertiary : theme.text)
                         .lineLimit(1)
                         .truncationMode(.tail)
                         .multilineTextAlignment(.leading)
                     Spacer()
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(theme.font(size: 12, weight: .medium))
                         .foregroundColor(theme.textSecondary)
                 }
                 .padding(.horizontal, 12)

@@ -45,10 +45,12 @@ final class OtpGateNoticeTests: XCTestCase {
         XCTAssertEqual(notice.vm.otpPanelDescription, OtpGateCopy.description)
     }
 
+    // Accept Selected leaves the rows as the visitor ticked them, so a toggle
+    // the lock lets through would show.
     @MainActor
     func testALockedPurposeAndElementDoNotToggle() {
         let notice = makeNotice(otpGate: VerifierSpy().gate())
-        notice.vm.handleAccept(mode: .all)
+        notice.vm.handleAccept(mode: .selected)
 
         notice.vm.handlePurposeToggle(NoticeFixtures.orders)
         notice.vm.handleDataElementToggle(NoticeFixtures.phone, purposeUuid: NoticeFixtures.orders)
@@ -64,7 +66,7 @@ final class OtpGateNoticeTests: XCTestCase {
             config: ["products": NoticeProductFixtures.twoProducts()]
         )
         let notice = makeNotice(otpGate: VerifierSpy().gate(), content: content)
-        notice.vm.handleAccept(mode: .all)
+        notice.vm.handleAccept(mode: .selected)
 
         notice.vm.handleProductCheckboxChange("prod-a")
         notice.vm.handleProductCheckboxChange("prod-b", to: true)
@@ -78,11 +80,59 @@ final class OtpGateNoticeTests: XCTestCase {
     func testTheSoleProductCheckboxIsHeldToo() {
         let content = NoticeFixtures.content(config: ["products": [NoticeProductFixtures.product("prod-a", "Product A", mandatory: nil)]])
         let notice = makeNotice(otpGate: VerifierSpy().gate(), content: content)
-        notice.vm.handleAccept(mode: .all)
+        notice.vm.handleAccept(mode: .selected)
 
         notice.vm.handleSoleProductCheckboxChange()
 
         XCTAssertFalse(notice.vm.selectedPurposes.values.contains(true))
+    }
+
+    // The rows stay on screen behind the code entry, so they show what Accept
+    // All will record rather than reading as off against a submission that
+    // grants them all.
+    @MainActor
+    func testAcceptAllBehindTheGateShowsWhatItWillRecord() async {
+        let notice = makeNotice(otpGate: VerifierSpy().gate())
+
+        notice.vm.handleAccept(mode: .all)
+        await settle()
+
+        XCTAssertTrue(notice.vm.otpLocked)
+        XCTAssertEqual(notice.vm.selectedPurposes[NoticeFixtures.orders], true)
+        XCTAssertEqual(notice.vm.selectedDataElements["\(NoticeFixtures.orders)-\(NoticeFixtures.phone)"], true)
+        XCTAssertTrue(SubmitRecorder.submits.isEmpty)
+    }
+
+    // A mis-tapped Accept All must not destroy the visitor's own answer:
+    // Accept Selected re-pends with their ticks put back.
+    @MainActor
+    func testAcceptSelectedAfterAcceptAllPutsTheVisitorsTicksBack() async {
+        let notice = makeNotice(otpGate: VerifierSpy().gate())
+        notice.vm.handlePurposeToggle(NoticeFixtures.orders)
+        let own = notice.vm.selectedDataElements
+
+        notice.vm.handleAccept(mode: .all)
+        notice.vm.handleAccept(mode: .all)
+        XCTAssertEqual(notice.vm.selectedPurposes[NoticeFixtures.marketing], true)
+
+        notice.vm.handleAccept(mode: .selected)
+
+        XCTAssertEqual(notice.vm.otpPanel.pendingMode, .selected)
+        XCTAssertEqual(notice.vm.selectedPurposes[NoticeFixtures.orders], true)
+        XCTAssertNotEqual(notice.vm.selectedPurposes[NoticeFixtures.marketing], true)
+        XCTAssertEqual(notice.vm.selectedDataElements, own)
+        XCTAssertNil(notice.vm.preGateSelection)
+    }
+
+    @MainActor
+    func testAVerifiedCodeDropsTheHeldTicks() async {
+        let notice = makeNotice(otpGate: VerifierSpy().gate())
+
+        notice.vm.handleAccept(mode: .all)
+        XCTAssertNotNil(notice.vm.preGateSelection)
+        await verify(notice)
+
+        XCTAssertNil(notice.vm.preGateSelection)
     }
 
     @MainActor
@@ -172,8 +222,9 @@ final class OtpGateNoticeTests: XCTestCase {
     @MainActor
     func testAStashedAcceptSelectedSendsOnlyWhatWasTicked() async {
         let notice = makeNotice(otpGate: VerifierSpy().gate())
+        // The purpose's tick grants its mandatory email only; the optional
+        // phone stays as the visitor left it.
         notice.vm.handlePurposeToggle(NoticeFixtures.orders)
-        notice.vm.handleDataElementToggle(NoticeFixtures.phone, purposeUuid: NoticeFixtures.orders)
 
         notice.vm.handleAccept(mode: .selected)
         await verify(notice)

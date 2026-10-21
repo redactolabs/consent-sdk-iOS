@@ -4,22 +4,6 @@ public enum PrivacyCenterThemeMode: String, Sendable, Equatable {
     case light, dark
 }
 
-/// Presentation options for the Privacy Center, mirroring React's
-/// `settings` prop (`PrivacyCenterSettings`).
-public struct PrivacyCenterSettings: Sendable, Equatable {
-    /// `"classic"` (the default) or `"glass"`; both take their colours from
-    /// workspace branding. Anything unrecognised falls back to classic.
-    public var theme: String?
-
-    public init(theme: String? = nil) {
-        self.theme = theme
-    }
-
-    var appearance: AppearanceStyle {
-        theme.flatMap(AppearanceStyle.init(rawValue:)) ?? .classic
-    }
-}
-
 public struct PrivacyCenterTheme: Sendable, Equatable {
     public let mode: PrivacyCenterThemeMode
     public let background: Color
@@ -29,13 +13,13 @@ public struct PrivacyCenterTheme: Sendable, Equatable {
     public let textSecondary: Color
     public let textTertiary: Color
     public let border: Color
-    public let primary: Color
-    public let primaryText: Color
-    public let primarySoft: Color
+    public var primary: Color
+    public var primaryText: Color
+    public var primarySoft: Color
     public let error: Color
     public let success: Color
     public let warning: Color
-    public let info: Color
+    public var info: Color
     public let badgeSuccessBg: Color
     public let badgeSuccessText: Color
     public let badgeErrorBg: Color
@@ -46,14 +30,34 @@ public struct PrivacyCenterTheme: Sendable, Equatable {
     public let badgeInfoText: Color
     public let badgeSecondaryBg: Color
     public let badgeSecondaryText: Color
-    /// Classic or glass (React `settings.theme`).
+    /// Classic or glass (React `settings.theme`, now `branding.style`).
     public var appearance: AppearanceStyle = .classic
+    /// The settings' accent colour, which links take; nil uses the primary.
+    public var accent: Color?
+    /// The organisation's font family, resolved to one installed on the
+    /// device; nil keeps the system font.
+    public var fontFamily: String?
+    /// The settings' corner radius, which scales every built-in radius; nil
+    /// keeps them.
+    public var cornerRadius: CGFloat?
 
     public var isGlass: Bool { appearance == .glass }
+    public var link: Color { accent ?? primary }
     /// Cards and panels: glass rounds them further (GLASS_RADIUS.panel).
-    public var panelRadius: CGFloat { isGlass ? GlassPalette.Radius.panel : 12 }
-    public var controlRadius: CGFloat { isGlass ? GlassPalette.Radius.control : 8 }
-    public var buttonRadius: CGFloat { isGlass ? GlassPalette.Radius.pill : 10 }
+    public var panelRadius: CGFloat {
+        cornerRadius.map { ($0 * 1.4).rounded() } ?? (isGlass ? GlassPalette.Radius.panel : 12)
+    }
+    public var controlRadius: CGFloat {
+        cornerRadius.map { ($0 * 0.7).rounded() } ?? (isGlass ? GlassPalette.Radius.control : 8)
+    }
+    public var buttonRadius: CGFloat { cornerRadius ?? (isGlass ? GlassPalette.Radius.pill : 10) }
+
+    /// The Privacy Center's text at `size`, in the organisation's font when it
+    /// set one.
+    public func font(size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        guard let fontFamily else { return .system(size: size, weight: weight) }
+        return Font.custom(fontFamily, fixedSize: size).weight(weight)
+    }
     /// A frosted fill on glass, the plain surface on classic.
     public var panelFill: AnyShapeStyle { isGlass ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(surface) }
 
@@ -162,6 +166,42 @@ public struct PrivacyCenterTheme: Sendable, Equatable {
         )
         theme.appearance = appearance
         return theme
+    }
+
+    /// The published settings over workspace branding (React
+    /// `settingsThemeVars`): their colours once they stop inheriting them, the
+    /// font, and one corner radius that scales the rest. Defaults change
+    /// nothing. The workspace's own font applies first, resolved through the
+    /// catalogue the notice uses.
+    func applying(
+        _ settings: PrivacyCenterBrandingSettings,
+        workspaceFont: String?,
+        resolveFont: (String) -> String? = PrivacyCenterTheme.installedFont
+    ) -> PrivacyCenterTheme {
+        var theme = self
+        theme.appearance = settings.style
+        if let font = workspaceFont?.trimmingCharacters(in: .whitespacesAndNewlines), !font.isEmpty {
+            theme.fontFamily = resolveFont(font)
+        }
+        if !settings.inheritFont, let font = settings.fontFamily, let resolved = resolveFont(font) {
+            theme.fontFamily = resolved
+        }
+        if !settings.inheritColors, let raw = settings.primaryColor, let primary = AppearanceColor.parse(raw) {
+            theme.primary = primary.color
+            theme.info = primary.color
+            theme.primaryText = AppearanceColor.parse(PrivacyCenterBrandColors.contrastText(raw))?.color ?? theme.primaryText
+            theme.primarySoft = AppearanceColor.withAlpha(primary, mode == .light ? 0.1 : 0.25).color
+        }
+        if !settings.inheritColors, let raw = settings.accentColor, let accent = AppearanceColor.parse(raw) {
+            theme.accent = accent.color
+        }
+        theme.cornerRadius = settings.cornerRadius.map { CGFloat($0) }
+        return theme
+    }
+
+    /// A family from the font catalogue, as installed on this device.
+    static func installedFont(_ family: String) -> String? {
+        NoticeFontResolver.resolve(hostFont: nil, noticeFont: family, installed: NoticeFontResolver.installedFamily)
     }
 }
 

@@ -452,7 +452,7 @@ final class AssistedNoticeViewModel: ObservableObject {
 
         let status = await ConsentAPI.fetchNoticeConsentStatus(NoticeConsentStatusParams(
             accessToken: token,
-            ledgerBaseUrl: ledgerBaseUrl,
+            ledgerBaseUrl: NoticeBaseUrl.resolve(baseUrl: baseUrl, ledgerBaseUrl: ledgerBaseUrl).ledgerBaseUrl,
             organisationUuid: organisationUuid,
             workspaceUuid: workspaceUuid,
             noticeUuid: config.noticeUuid

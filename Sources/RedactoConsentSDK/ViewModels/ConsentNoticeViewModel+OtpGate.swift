@@ -6,15 +6,15 @@ extension ConsentNoticeViewModel {
     }
 
     var otpPanelTitle: String {
-        otpGate?.title ?? OtpGateCopy.title
+        otpGate?.title ?? chromeCopy.otpTitle
     }
 
     var otpPanelDescription: String {
-        otpGate?.description ?? OtpGateCopy.description
+        otpGate?.description ?? chromeCopy.otpDescription
     }
 
     var otpPanelSubmitLabel: String {
-        otpPanel.busy ? OtpGateCopy.verifying : (otpGate?.submitLabel ?? OtpGateCopy.submit)
+        otpPanel.busy ? chromeCopy.otpVerifying : (otpGate?.submitLabel ?? chromeCopy.otpSubmit)
     }
 
     var otpConfirmEnabled: Bool {
@@ -23,12 +23,29 @@ extension ConsentNoticeViewModel {
 
     func holdForOtp(_ mode: AcceptMode) -> Bool {
         if otpFlow.holds(required: otpGate?.required) {
+            reflectPendingSelection(mode)
             otpPanel.pendingMode = mode
             otpPanel.error = nil
             return true
         }
         otpFlow.passGate()
         return false
+    }
+
+    /// The rows stay visible behind the gate, so they show what will be sent:
+    /// a shortcut's selection while it is pending, and the visitor's own ticks
+    /// again once Accept Selected takes its place.
+    private func reflectPendingSelection(_ mode: AcceptMode) {
+        let current = SelectionState(selectedPurposes: selectedPurposes, selectedDataElements: selectedDataElements)
+        let next = OtpGateFlow.pendingSelection(
+            mode: mode,
+            rows: purposeRows,
+            current: current,
+            held: preGateSelection
+        )
+        preGateSelection = next.held
+        selectedPurposes = next.shown.selectedPurposes
+        selectedDataElements = next.shown.selectedDataElements
     }
 
     func updateOtpDigits(_ digits: [String]) {
@@ -56,7 +73,7 @@ extension ConsentNoticeViewModel {
 
         guard result.ok else {
             let message = result.message?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            otpPanel.error = message.isEmpty ? OtpGateCopy.failed : message
+            otpPanel.error = message.isEmpty ? chromeCopy.otpFailed : message
             otpPanel.digits = OtpCodeEntry.empty()
             otpPanel.busy = false
             return
@@ -64,6 +81,7 @@ extension ConsentNoticeViewModel {
 
         otpFlow.markVerified(mode: otpPanel.pendingMode ?? pendingMode, token: accessToken)
         otpPanel = OtpPanelState()
+        preGateSelection = nil
     }
 
     func handleAccessTokenChange(_ token: String) {

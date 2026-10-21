@@ -28,7 +28,7 @@ public struct PCNavbar<Trailing: View>: View {
             if let onBack {
                 Button(action: onBack) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(theme.font(size: 16, weight: .semibold))
                         .foregroundColor(theme.text)
                         .frame(width: 32, height: 32)
                         .background(theme.surface)
@@ -38,13 +38,13 @@ public struct PCNavbar<Trailing: View>: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(theme.font(size: 17, weight: .semibold))
                     .foregroundColor(theme.text)
                     .lineLimit(1)
                     .truncationMode(.tail)
                 if let subtitle, !subtitle.isEmpty {
                     Text(subtitle)
-                        .font(.system(size: 11, weight: .medium))
+                        .font(theme.font(size: 11, weight: .medium))
                         .foregroundColor(theme.primary)
                         .lineLimit(1)
                         .truncationMode(.middle)
@@ -55,7 +55,7 @@ public struct PCNavbar<Trailing: View>: View {
             if let onClose {
                 Button(action: onClose) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(theme.font(size: 14, weight: .semibold))
                         .foregroundColor(theme.text)
                         .frame(width: 32, height: 32)
                         .background(theme.surface)
@@ -90,7 +90,7 @@ public struct PCIconButton: View {
     public var body: some View {
         Button(action: action) {
             Image(systemName: systemName)
-                .font(.system(size: 14, weight: .semibold))
+                .font(theme.font(size: 14, weight: .semibold))
                 .foregroundColor(theme.text)
                 .frame(width: 34, height: 34)
                 .background(theme.surface)
@@ -138,9 +138,9 @@ public struct PCLanguagePickerButton: View {
         } label: {
             HStack(spacing: 4) {
                 Image(systemName: "globe")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(theme.font(size: 12, weight: .semibold))
                 Text(selectedCode.uppercased())
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(theme.font(size: 12, weight: .semibold))
                     .lineLimit(1)
             }
             .foregroundColor(theme.text)

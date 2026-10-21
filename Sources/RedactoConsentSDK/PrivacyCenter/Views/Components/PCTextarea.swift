@@ -27,20 +27,20 @@ public struct PCTextarea: View {
         VStack(alignment: .leading, spacing: 6) {
             if let label {
                 Text(label)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(theme.font(size: 13, weight: .medium))
                     .foregroundColor(theme.textSecondary)
             }
             ZStack(alignment: .topLeading) {
                 if text.isEmpty {
                     Text(placeholder)
-                        .font(.system(size: 15))
+                        .font(theme.font(size: 15))
                         .foregroundColor(theme.textTertiary)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 12)
                         .allowsHitTesting(false)
                 }
                 TextEditor(text: $text)
-                    .font(.system(size: 15))
+                    .font(theme.font(size: 15))
                     .foregroundColor(theme.text)
                     .scrollContentBackground(.hidden)
                     .padding(.horizontal, 8)

@@ -13,11 +13,9 @@ enum PurposeStatus {
     static let active = "ACTIVE"
 }
 
+/// The one confirm hint the chrome copy does not translate; the rest are on
+/// `NoticeChromeCopy`.
 enum ConfirmHintCopy {
-    static let nothingChosen = "Select at least one purpose to confirm."
-    static let nothingEngaged = "Select or change a purpose for the product you are consenting to."
-    static let requiredOutstanding = "Accept the required purposes to confirm."
-
     static func productsIncomplete(_ productNames: [String]) -> String {
         "Accept the required purposes for \(productNames.joined(separator: ", ")) to confirm."
     }

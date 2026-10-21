@@ -10,7 +10,11 @@ public struct ModifyConsentModal: View {
     let consentManagerVm: ConsentManagerViewModel
 
     public init(consent: UserConsent, nominatorContact: String?, consentManagerVm: ConsentManagerViewModel) {
-        self._vm = StateObject(wrappedValue: ModifyConsentViewModel(consent: consent, nominatorContact: nominatorContact))
+        self._vm = StateObject(wrappedValue: ModifyConsentViewModel(
+            consent: consent,
+            nominatorContact: nominatorContact,
+            organisationWarning: consentManagerVm.organisationWithdrawWarning
+        ))
         self.consentManagerVm = consentManagerVm
     }
 
@@ -21,13 +25,13 @@ public struct ModifyConsentModal: View {
                 VStack(alignment: .leading, spacing: 16) {
                     if vm.action == nil {
                         Text(PCStrings.noActionsAvailable)
-                            .font(.system(size: 14, weight: .medium))
+                            .font(theme.font(size: 14, weight: .medium))
                             .foregroundColor(theme.textTertiary)
                             .frame(maxWidth: .infinity)
                             .padding(16)
                     } else {
                         Text(vm.descriptionText)
-                            .font(.system(size: 14, weight: .medium))
+                            .font(theme.font(size: 14, weight: .medium))
                             .foregroundColor(theme.textSecondary)
                         purposePanel
                         warning
@@ -47,18 +51,18 @@ public struct ModifyConsentModal: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(vm.consent.purpose)
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(theme.font(size: 16, weight: .semibold))
                             .foregroundColor(theme.text)
                         if !vm.consent.purposeDescription.isEmpty {
                             Text(vm.consent.purposeDescription)
-                                .font(.system(size: 14, weight: .medium))
+                                .font(theme.font(size: 14, weight: .medium))
                                 .foregroundColor(theme.textSecondary)
                                 .multilineTextAlignment(.leading)
                         }
                     }
                     Spacer(minLength: 8)
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(theme.font(size: 14, weight: .semibold))
                         .foregroundColor(theme.textSecondary)
                         .rotationEffect(.degrees(vm.isAccordionOpen ? 0 : -90))
                 }
@@ -68,7 +72,7 @@ public struct ModifyConsentModal: View {
                 Divider()
                 if vm.canRegrant && !vm.regrantEligibleElements.isEmpty {
                     Text(PCStrings.selectDataElementsForRegrant)
-                        .font(.system(size: 13))
+                        .font(theme.font(size: 13))
                         .foregroundColor(theme.textSecondary)
                     ForEach(vm.regrantEligibleElements) { element in
                         PCCheckbox(
@@ -84,14 +88,14 @@ public struct ModifyConsentModal: View {
                     let selected = vm.consent.dataElements.filter(\.selected)
                     if selected.isEmpty {
                         Text(PCStrings.noDataElementsAvailable)
-                            .font(.system(size: 13))
+                            .font(theme.font(size: 13))
                             .foregroundColor(theme.textTertiary)
                     } else {
                         ForEach(selected) { element in
                             HStack(spacing: 8) {
                                 Circle().fill(theme.primary).frame(width: 6, height: 6)
                                 Text(element.name)
-                                    .font(.system(size: 14, weight: .medium))
+                                    .font(theme.font(size: 14, weight: .medium))
                                     .foregroundColor(theme.text)
                             }
                         }
@@ -108,9 +112,9 @@ public struct ModifyConsentModal: View {
     private var warning: some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: "exclamationmark.circle")
-                .font(.system(size: 16, weight: .semibold))
+                .font(theme.font(size: 16, weight: .semibold))
             Text(vm.warningText)
-                .font(.system(size: 14, weight: .medium))
+                .font(theme.font(size: 14, weight: .medium))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .foregroundColor(theme.badgeWarningText)

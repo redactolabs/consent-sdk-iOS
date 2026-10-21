@@ -35,11 +35,19 @@ extension ConsentNoticeViewModel {
         )
     }
 
+    /// Each link named by its translated product name, as the product
+    /// headings name it.
     var productPolicyLinks: [ProductPolicyLink] {
         ProductPolicies.links(
             products: activeConfig?.products,
             policies: activeConfig?.productPrivacyPolicies
-        )
+        ).map { link in
+            ProductPolicyLink(
+                uuid: link.uuid,
+                name: getTranslatedText("products.name", defaultText: link.name, itemId: link.uuid),
+                url: link.url
+            )
+        }
     }
 
     var showsNoticePolicyLink: Bool {

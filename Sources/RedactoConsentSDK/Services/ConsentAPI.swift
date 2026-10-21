@@ -36,7 +36,12 @@ public enum ConsentAPI {
     public struct FetchConsentContentParams {
         public let noticeId: String
         public let accessToken: String
+        /// The API host, e.g. `https://api.redacto.io` (recommended). The
+        /// consent server URL (`…/consent`) still works but is deprecated.
         public var baseUrl: String?
+        /// Deprecated. Read only when `baseUrl` is the consent server URL
+        /// (`…/consent`) or omitted, as in earlier releases. Ignored when
+        /// `baseUrl` is the API host.
         public var ledgerBaseUrl: String?
         public var language: String
         public var specificUuid: String?
@@ -173,7 +178,12 @@ public enum ConsentAPI {
         public let workspaceUuid: String
         public let noticeUuid: String
         public var accessToken: String?
+        /// The API host, e.g. `https://api.redacto.io` (recommended). The
+        /// consent server URL (`…/consent`) still works but is deprecated.
         public var baseUrl: String?
+        /// Deprecated. Read only when `baseUrl` is the consent server URL
+        /// (`…/consent`) or omitted, as in earlier releases. Ignored when
+        /// `baseUrl` is the API host.
         public var ledgerBaseUrl: String?
         public var language: String
         public var specificUuid: String?
@@ -242,7 +252,12 @@ public enum ConsentAPI {
 
     public struct SubmitConsentEventParams {
         public let accessToken: String
+        /// The API host, e.g. `https://api.redacto.io` (recommended). The
+        /// consent server URL (`…/consent`) still works but is deprecated.
         public var baseUrl: String?
+        /// Deprecated. Read only when `baseUrl` is the consent server URL
+        /// (`…/consent`) or omitted, as in earlier releases. Ignored when
+        /// `baseUrl` is the API host.
         public var ledgerBaseUrl: String?
         public let noticeUuid: String
         public let purposes: [Purpose]
@@ -382,6 +397,8 @@ public enum ConsentAPI {
 
     public struct SubmitGuardianInfoParams {
         public let accessToken: String
+        /// The API host, e.g. `https://api.redacto.io` (recommended). The
+        /// consent server URL (`…/consent`) still works but is deprecated.
         public var baseUrl: String?
         public let guardianName: String
         public let guardianContact: String
@@ -445,7 +462,12 @@ public enum ConsentAPI {
 
     public struct FetchTTSAudioUrlsParams {
         public let accessToken: String
+        /// The API host, e.g. `https://api.redacto.io` (recommended). The
+        /// consent server URL (`…/consent`) still works but is deprecated.
         public var baseUrl: String?
+        /// Deprecated. Read only when `baseUrl` is the consent server URL
+        /// (`…/consent`) or omitted, as in earlier releases. Ignored when
+        /// `baseUrl` is the API host.
         public var ledgerBaseUrl: String?
         public let noticeUuid: String
         public let language: String
@@ -524,6 +546,8 @@ public enum ConsentAPI {
 
     public struct InitiateGuardianVerificationParams {
         public let accessToken: String
+        /// The API host, e.g. `https://api.redacto.io` (recommended). The
+        /// consent server URL (`…/consent`) still works but is deprecated.
         public var baseUrl: String?
         public let guardianName: String
         public let guardianContact: String
@@ -656,6 +680,8 @@ public enum ConsentAPI {
 
     public struct VerifyGuardianStatusParams {
         public let accessToken: String
+        /// The API host, e.g. `https://api.redacto.io` (recommended). The
+        /// consent server URL (`…/consent`) still works but is deprecated.
         public var baseUrl: String?
         public let sessionToken: String
 

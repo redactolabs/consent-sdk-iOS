@@ -39,11 +39,11 @@ public struct ActivityListScreen: View {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text(group.label)
-                                .font(.system(size: 12, weight: .bold))
+                                .font(theme.font(size: 12, weight: .bold))
                                 .foregroundColor(theme.text)
                                 .textCase(.uppercase)
                             Text(PrivacyCenterDateFormatters.timeAgo(group.newest))
-                                .font(.system(size: 12))
+                                .font(theme.font(size: 12))
                                 .foregroundColor(theme.textTertiary)
                         }
                         VStack(alignment: .leading, spacing: 0) {
@@ -68,7 +68,7 @@ public struct ActivityListScreen: View {
             .onAppear { Task { await vm.loadMore() } }
         } else {
             Text(PCStrings.allCaughtUp)
-                .font(.system(size: 12))
+                .font(theme.font(size: 12))
                 .foregroundColor(theme.textTertiary)
                 .frame(maxWidth: .infinity, minHeight: 44)
         }
@@ -97,11 +97,11 @@ private struct TimelineRow: View {
         HStack(alignment: .top, spacing: 12) {
             VStack(alignment: .trailing, spacing: 2) {
                 Text(PrivacyCenterDateFormatters.formatTime(activity.timestamp))
-                    .font(.system(size: 13, weight: .medium))
+                    .font(theme.font(size: 13, weight: .medium))
                     .foregroundColor(theme.textSecondary)
                     .lineLimit(1)
                 Text(PrivacyCenterDateFormatters.timeAgo(activity.timestamp))
-                    .font(.system(size: 11))
+                    .font(theme.font(size: 11))
                     .foregroundColor(theme.textTertiary)
                     .lineLimit(1)
             }
@@ -115,21 +115,21 @@ private struct TimelineRow: View {
                     .fill(theme.background)
                     .overlay(Circle().fill(cat.color.opacity(0.12)))
                     .frame(width: 30, height: 30)
-                    .overlay(Image(systemName: cat.icon).font(.system(size: 13, weight: .semibold)).foregroundColor(cat.color))
+                    .overlay(Image(systemName: cat.icon).font(theme.font(size: 13, weight: .semibold)).foregroundColor(cat.color))
                     .padding(.top, 8)
             }
             .frame(width: 34)
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     Text(activity.displayTitle)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(theme.font(size: 14, weight: .semibold))
                         .foregroundColor(theme.text)
                         .lineLimit(1)
                     PCBadge(activity.displayType, variant: cat.variant)
                 }
                 if !activity.displayDescription.isEmpty {
                     Text(activity.displayDescription)
-                        .font(.system(size: 13))
+                        .font(theme.font(size: 13))
                         .foregroundColor(theme.textSecondary)
                         .lineLimit(isExpanded ? nil : 2)
                         .onTapGesture { isExpanded.toggle() }

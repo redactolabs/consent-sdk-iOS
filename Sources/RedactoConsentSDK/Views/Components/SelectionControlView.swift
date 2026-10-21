@@ -13,6 +13,7 @@ struct SelectionControlView: View {
     let onSelect: (Bool) -> Void
 
     @Environment(\.noticeTheme) private var theme
+    @Environment(\.noticeChromeCopy) private var copy
 
     private var settledColor: Color { Color(hex: "#667085") }
     private var borderColor: Color { Color(hex: "#d0d5dd") }
@@ -42,15 +43,16 @@ struct SelectionControlView: View {
             lockedTick
         case .checkbox:
             if let theme, theme.layout.switchControl {
+                // Two positions only: a partly ticked section shows off, and
+                // this click asks for all of it.
                 NoticeSwitchView(
                     checked: checked,
-                    indeterminate: indeterminate,
                     large: level == .product,
                     theme: theme,
                     onChange: { select(indeterminate ? true : !checked) }
                 )
                 .accessibilityLabel(label)
-                .accessibilityValue(accessibilityValue)
+                .accessibilityValue(checked ? copy.yes : copy.no)
             } else {
                 checkbox
             }
@@ -64,7 +66,7 @@ struct SelectionControlView: View {
     }
 
     private var accessibilityValue: String {
-        indeterminate ? SelectionControlCopy.mixed : (checked ? SelectionControlCopy.yes : SelectionControlCopy.no)
+        indeterminate ? copy.mixed : (checked ? copy.yes : copy.no)
     }
 
     private func select(_ next: Bool) {
@@ -103,8 +105,8 @@ struct SelectionControlView: View {
 
     private var radioGroup: some View {
         HStack(spacing: level == .product ? 10 : 8) {
-            radioOption(SelectionControlCopy.yes, value: true)
-            radioOption(SelectionControlCopy.no, value: false)
+            radioOption(copy.yes, value: true)
+            radioOption(copy.no, value: false)
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(locked ? lockedLabel : label)
@@ -134,18 +136,18 @@ struct SelectionControlView: View {
         }
         .buttonStyle(.plain)
         .disabled(locked)
-        .accessibilityLabel(SelectionControlLogic.optionLabel(title, value: value, recordedAnswer: recordedAnswer))
+        .accessibilityLabel(SelectionControlLogic.optionLabel(title, value: value, recordedAnswer: recordedAnswer, copy: copy))
         .accessibilityAddTraits(held ? .isSelected : [])
     }
 
     private var dropdownTitle: String {
         switch SelectionControlLogic.dropdownAnswer(checked: checked, indeterminate: indeterminate) {
         case .yes:
-            return SelectionControlCopy.yes
+            return copy.yes
         case .no:
-            return SelectionControlCopy.no
-        case .mixed:
-            return SelectionControlCopy.mixed
+            return copy.no
+        case .partly:
+            return copy.mixed
         }
     }
 
@@ -158,8 +160,8 @@ struct SelectionControlView: View {
         let glass = theme?.glass
         let radius: CGFloat = glass == nil ? 6 : GlassPalette.Radius.control
         return Menu {
-            Button(SelectionControlCopy.yes) { select(true) }
-            Button(SelectionControlCopy.no) { select(false) }
+            Button(copy.yes) { select(true) }
+            Button(copy.no) { select(false) }
         } label: {
             HStack(spacing: 4) {
                 Text(dropdownTitle)
@@ -183,7 +185,7 @@ struct SelectionControlView: View {
     }
 
     private var settledAnswer: some View {
-        Text(SelectionControlCopy.yes)
+        Text(copy.yes)
             .noticeFont(size: dropdownFontSize, weight: level == .product ? .medium : .regular)
             .foregroundColor(settledColor)
             .lineLimit(1)

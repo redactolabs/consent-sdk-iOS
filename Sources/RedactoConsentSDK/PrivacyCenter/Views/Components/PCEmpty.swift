@@ -15,14 +15,14 @@ public struct PCEmpty: View {
     public var body: some View {
         VStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 32, weight: .light))
+                .font(theme.font(size: 32, weight: .light))
                 .foregroundColor(theme.textTertiary)
             Text(title)
-                .font(.system(size: 15, weight: .semibold))
+                .font(theme.font(size: 15, weight: .semibold))
                 .foregroundColor(theme.text)
             if let subtitle {
                 Text(subtitle)
-                    .font(.system(size: 13))
+                    .font(theme.font(size: 13))
                     .foregroundColor(theme.textSecondary)
                     .multilineTextAlignment(.center)
             }

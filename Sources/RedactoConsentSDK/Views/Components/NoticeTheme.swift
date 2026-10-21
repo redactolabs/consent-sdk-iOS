@@ -381,6 +381,10 @@ private struct NoticeTextScaleKey: EnvironmentKey {
     static let defaultValue: CGFloat = 1
 }
 
+private struct NoticeChromeCopyKey: EnvironmentKey {
+    static let defaultValue: NoticeChromeCopy = .english
+}
+
 extension EnvironmentValues {
     /// Set only inside the modal notice.
     var noticeTheme: NoticeTheme? {
@@ -392,6 +396,13 @@ extension EnvironmentValues {
     var noticeTextScale: CGFloat {
         get { self[NoticeTextScaleKey.self] }
         set { self[NoticeTextScaleKey.self] = newValue }
+    }
+
+    /// The notice's own chrome in the language it is read in; English outside
+    /// the modal notice, as React's inline notice draws it.
+    var noticeChromeCopy: NoticeChromeCopy {
+        get { self[NoticeChromeCopyKey.self] }
+        set { self[NoticeChromeCopyKey.self] = newValue }
     }
 }
 

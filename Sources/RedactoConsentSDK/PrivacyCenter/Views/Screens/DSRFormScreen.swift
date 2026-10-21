@@ -74,6 +74,8 @@ public struct DSRFormScreen: View {
             Task { await vm.applyLanguageChange() }
         }
         .onChange(of: vm.requestType) { _ in expandedPurposes = [] }
+        .onChange(of: store.settings) { _ in vm.dropUnofferedRequestType() }
+        .onChange(of: vm.serverRequestTypes) { _ in vm.dropUnofferedRequestType() }
         .sheet(isPresented: $showFilePicker) {
             FilePickerView(
                 allowedTypes: PCUploadValidation.allowedContentTypes,
@@ -97,8 +99,8 @@ public struct DSRFormScreen: View {
     private func backButton(_ action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 6) {
-                Image(systemName: "arrow.left").font(.system(size: 13, weight: .semibold))
-                Text(PCStrings.backToHome).font(.system(size: 13, weight: .medium))
+                Image(systemName: "arrow.left").font(theme.font(size: 13, weight: .semibold))
+                Text(PCStrings.backToHome).font(theme.font(size: 13, weight: .medium))
             }
             .foregroundColor(theme.textSecondary)
         }
@@ -110,12 +112,12 @@ public struct DSRFormScreen: View {
     private var formCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(PCStrings.description)
-                .font(.system(size: 13))
+                .font(theme.font(size: 13))
                 .foregroundColor(theme.textSecondary)
                 .lineSpacing(2)
             VStack(alignment: .leading, spacing: 0) {
                 Text(PCStrings.raiseDataRequest)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(theme.font(size: 14, weight: .semibold))
                     .foregroundColor(theme.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(14)
@@ -129,7 +131,7 @@ public struct DSRFormScreen: View {
                         requiredLabel(PCStrings.requestType)
                         PCSelect(
                             selection: $vm.requestType,
-                            options: RequestType.allCases.map { PCSelectOption(value: $0, label: $0.label) },
+                            options: vm.requestTypeOptions.map { PCSelectOption(value: $0.type, label: $0.label) },
                             placeholder: PCStrings.selectRequestType
                         )
                     }
@@ -172,7 +174,7 @@ public struct DSRFormScreen: View {
                     requiredLabel(PCStrings.requestDetails)
                     Spacer()
                     Image(systemName: vm.isRequestDetailsExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(theme.font(size: 14, weight: .semibold))
                         .foregroundColor(theme.textSecondary)
                 }
                 .padding(12)
@@ -207,7 +209,7 @@ public struct DSRFormScreen: View {
             nominationSection
         } else {
             Text(PCStrings.selectRequestType)
-                .font(.system(size: 13))
+                .font(theme.font(size: 13))
                 .foregroundColor(theme.textSecondary)
                 .frame(maxWidth: .infinity, minHeight: 100)
                 .multilineTextAlignment(.center)
@@ -228,7 +230,7 @@ public struct DSRFormScreen: View {
             PCEmpty(title: PCStrings.noProductsAvailable, subtitle: PCStrings.noProductsAvailableDescription, icon: "shippingbox")
         } else {
             Text(vm.requestType.map { PCStrings.selectProductsForRequest($0.label) } ?? PCStrings.selectProductsForRequestGeneric)
-                .font(.system(size: 12))
+                .font(theme.font(size: 12))
                 .foregroundColor(theme.textSecondary)
             FlowLayoutCompat(spacing: 8) {
                 ForEach(vm.directGroups + vm.nominatedGroups) { group in
@@ -244,16 +246,16 @@ public struct DSRFormScreen: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
                     Text(group.productName)
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(theme.font(size: 13, weight: .semibold))
                         .lineLimit(1)
                     if let nominator = group.nominator {
                         Text(PCStrings.nominationChipSuffix(nominator.name.pcNonEmpty ?? nominator.email ?? ""))
-                            .font(.system(size: 12))
+                            .font(theme.font(size: 12))
                             .lineLimit(1)
                     }
                 }
                 Text(PCStrings.activePurposes(DSRFormViewModel.groupPurposes(group).count))
-                    .font(.system(size: 11))
+                    .font(theme.font(size: 11))
                     .foregroundColor(isSelected ? theme.primary : theme.textSecondary)
             }
             .foregroundColor(isSelected ? theme.primary : theme.text)
@@ -272,16 +274,16 @@ public struct DSRFormScreen: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(group.productName)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(theme.font(size: 15, weight: .semibold))
                         .foregroundColor(theme.text)
                     if let nominator = group.nominator {
                         Text(PCStrings.actingOnBehalfOfShort(nominator.name.pcNonEmpty ?? nominator.email ?? ""))
-                            .font(.system(size: 11, weight: .medium))
+                            .font(theme.font(size: 11, weight: .medium))
                             .foregroundColor(theme.textSecondary)
                     }
                 }
                 Text(PCStrings.selectPurposesForThisProduct)
-                    .font(.system(size: 12))
+                    .font(theme.font(size: 12))
                     .foregroundColor(theme.textSecondary)
             }
             if vm.requestType == .correction {
@@ -302,10 +304,10 @@ public struct DSRFormScreen: View {
     private var purposeSection: some View {
         let isErasure = vm.requestType == .erasure
         Text(isErasure ? PCStrings.whatDataToDelete : PCStrings.whatDataToAccess)
-            .font(.system(size: 12))
+            .font(theme.font(size: 12))
             .foregroundColor(theme.textSecondary)
         Text(PCStrings.revocationNotDeletionNote)
-            .font(.system(size: 12))
+            .font(theme.font(size: 12))
             .foregroundColor(theme.textSecondary)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.leading, 8)
@@ -336,7 +338,7 @@ public struct DSRFormScreen: View {
                     if isOpen { expandedPurposes.remove(purpose.uuid) } else { expandedPurposes.insert(purpose.uuid) }
                 }) {
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(theme.font(size: 14, weight: .semibold))
                         .foregroundColor(theme.textSecondary)
                         .rotationEffect(.degrees(isOpen ? 180 : 0))
                 }
@@ -345,17 +347,17 @@ public struct DSRFormScreen: View {
             if isOpen {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(PCStrings.dataCollected)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(theme.font(size: 13, weight: .medium))
                         .foregroundColor(theme.text)
                     if purpose.dataElements.isEmpty {
                         Text(PCStrings.noDataElementsAvailable)
-                            .font(.system(size: 13))
+                            .font(theme.font(size: 13))
                             .foregroundColor(theme.textSecondary)
                     }
                     ForEach(purpose.dataElements) { element in
                         if isErasure {
                             Text(element.name.pcCapitalized)
-                                .font(.system(size: 13))
+                                .font(theme.font(size: 13))
                                 .foregroundColor(theme.text)
                         } else {
                             PCCheckbox(
@@ -381,7 +383,7 @@ public struct DSRFormScreen: View {
     @ViewBuilder
     private var correctionSection: some View {
         Text(PCStrings.selectFieldsToUpdate)
-            .font(.system(size: 12))
+            .font(theme.font(size: 12))
             .foregroundColor(theme.textSecondary)
         VStack(alignment: .leading, spacing: 10) {
             PCCheckbox(
@@ -405,11 +407,11 @@ public struct DSRFormScreen: View {
         if !vm.selectedCorrectionNames.isEmpty {
             Divider()
             (Text("* ").foregroundColor(theme.error) + Text(PCStrings.enterCorrectValue).foregroundColor(theme.text))
-                .font(.system(size: 13, weight: .medium))
+                .font(theme.font(size: 13, weight: .medium))
             ForEach(vm.selectedCorrectionNames, id: \.self) { name in
                 VStack(alignment: .leading, spacing: 6) {
                     Text(name)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(theme.font(size: 13, weight: .medium))
                         .foregroundColor(theme.text)
                     PCInput(
                         text: Binding(get: { vm.correctionValues[name]?.current ?? "" }, set: { vm.updateCorrection(name: name, current: $0) }),
@@ -432,7 +434,7 @@ public struct DSRFormScreen: View {
     @ViewBuilder
     private var grievanceSection: some View {
         Text(PCStrings.selectGrievance)
-            .font(.system(size: 12))
+            .font(theme.font(size: 12))
             .foregroundColor(theme.textSecondary)
         VStack(alignment: .leading, spacing: 8) {
             PCCheckbox(
@@ -455,7 +457,7 @@ public struct DSRFormScreen: View {
     @ViewBuilder
     private var nominationSection: some View {
         Text(PCStrings.enterNomineeDetails)
-            .font(.system(size: 12))
+            .font(theme.font(size: 12))
             .foregroundColor(theme.textSecondary)
         PCInput(
             text: $vm.nominationData.nomineeEmail,
@@ -479,7 +481,7 @@ public struct DSRFormScreen: View {
     private var supportingDocs: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(PCStrings.supportingDocumentation)
-                .font(.system(size: 14, weight: .semibold))
+                .font(theme.font(size: 14, weight: .semibold))
                 .foregroundColor(theme.text)
             VStack(alignment: .leading, spacing: 8) {
                 if !vm.uploadedDocs.isEmpty {
@@ -487,16 +489,16 @@ public struct DSRFormScreen: View {
                         ForEach(vm.uploadedDocs) { doc in
                             HStack(spacing: 6) {
                                 Image(systemName: "paperclip")
-                                    .font(.system(size: 12))
+                                    .font(theme.font(size: 12))
                                     .foregroundColor(theme.textSecondary)
                                 Text(doc.fileName)
-                                    .font(.system(size: 13, weight: .medium))
+                                    .font(theme.font(size: 13, weight: .medium))
                                     .foregroundColor(theme.text)
                                     .lineLimit(1)
                                     .truncationMode(.middle)
                                 Button(action: { vm.removeDocument(doc.id) }) {
                                     Image(systemName: "xmark.circle.fill")
-                                        .font(.system(size: 13))
+                                        .font(theme.font(size: 13))
                                         .foregroundColor(theme.error)
                                 }
                                 .buttonStyle(.plain)
@@ -515,14 +517,14 @@ public struct DSRFormScreen: View {
                             ProgressView().scaleEffect(0.8).tint(theme.primary)
                             Text(PCStrings.uploading)
                         } else if vm.uploadedDocs.isEmpty {
-                            Image(systemName: "arrow.up.doc").font(.system(size: 26)).foregroundColor(theme.primary)
+                            Image(systemName: "arrow.up.doc").font(theme.font(size: 26)).foregroundColor(theme.primary)
                             Text(PCStrings.uploadFile).foregroundColor(theme.textSecondary)
                         } else {
-                            Image(systemName: "square.and.arrow.up").font(.system(size: 14))
+                            Image(systemName: "square.and.arrow.up").font(theme.font(size: 14))
                             Text(PCStrings.uploadFileButton)
                         }
                     }
-                    .font(.system(size: 13, weight: .medium))
+                    .font(theme.font(size: 13, weight: .medium))
                     .foregroundColor(theme.text)
                     .frame(maxWidth: vm.uploadedDocs.isEmpty ? .infinity : nil, minHeight: vm.uploadedDocs.isEmpty ? 76 : 0)
                     .padding(vm.uploadedDocs.isEmpty ? 0 : 8)
@@ -549,31 +551,31 @@ public struct DSRFormScreen: View {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(spacing: 8) {
                     Image(systemName: "exclamationmark.circle")
-                        .font(.system(size: 24))
+                        .font(theme.font(size: 24))
                         .foregroundColor(theme.warning)
                     Text(PCStrings.revokeConsentModalTitle)
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(theme.font(size: 17, weight: .semibold))
                         .foregroundColor(theme.text)
                         .multilineTextAlignment(.center)
                     Text(PCStrings.revokeConsentModalQuestion)
-                        .font(.system(size: 14))
+                        .font(theme.font(size: 14))
                         .foregroundColor(theme.textSecondary)
                         .multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity)
                 VStack(alignment: .leading, spacing: 6) {
                     Text(PCStrings.revokeConsentModalPurposesLabel)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(theme.font(size: 12, weight: .semibold))
                         .foregroundColor(theme.textSecondary)
                     let names = vm.selectedErasurePurposeNames
                     if names.isEmpty {
                         Text(PCStrings.revokeConsentModalYourPurposes)
-                            .font(.system(size: 13))
+                            .font(theme.font(size: 13))
                             .foregroundColor(theme.textSecondary)
                     } else {
                         ForEach(names.prefix(DSRFormViewModel.maxErasurePurposeNames), id: \.self) { name in
                             Text(name)
-                                .font(.system(size: 14, weight: .medium))
+                                .font(theme.font(size: 14, weight: .medium))
                                 .foregroundColor(theme.text)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 6)
@@ -583,13 +585,13 @@ public struct DSRFormScreen: View {
                         }
                         if names.count > DSRFormViewModel.maxErasurePurposeNames {
                             Text(PCStrings.revokeConsentModalAndMore(names.count - DSRFormViewModel.maxErasurePurposeNames))
-                                .font(.system(size: 13))
+                                .font(theme.font(size: 13))
                                 .foregroundColor(theme.textSecondary)
                         }
                     }
                 }
                 (Text(PCStrings.revokeConsentModalIfYesLabel).fontWeight(.semibold) + Text(" \(PCStrings.revokeConsentModalIfYesBody)"))
-                    .font(.system(size: 13))
+                    .font(theme.font(size: 13))
                     .foregroundColor(theme.badgeWarningText)
                     .padding(12)
                     .background(theme.badgeWarningBg)
@@ -616,13 +618,13 @@ public struct DSRFormScreen: View {
                 Circle()
                     .fill(theme.success.opacity(0.2))
                     .frame(width: 40, height: 40)
-                    .overlay(Image(systemName: "checkmark").font(.system(size: 18, weight: .bold)).foregroundColor(theme.success))
+                    .overlay(Image(systemName: "checkmark").font(theme.font(size: 18, weight: .bold)).foregroundColor(theme.success))
                 VStack(alignment: .leading, spacing: 6) {
                     Text(PCStrings.requestSubmittedSuccessfully)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(theme.font(size: 16, weight: .semibold))
                         .foregroundColor(theme.text)
                     Text("\(PCStrings.thankYouForSubmittingYourRequest).")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(theme.font(size: 14, weight: .medium))
                         .foregroundColor(theme.textSecondary)
                 }
             }
@@ -630,15 +632,15 @@ public struct DSRFormScreen: View {
                 VStack(alignment: .leading, spacing: 4) {
                     if !submitted.productName.isEmpty {
                         Text(submitted.productName)
-                            .font(.system(size: 14, weight: .medium))
+                            .font(theme.font(size: 14, weight: .medium))
                             .foregroundColor(theme.text)
                     }
                     Text("\(PCStrings.caseID): \(submitted.caseId)")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(theme.font(size: 16, weight: .bold))
                         .foregroundColor(theme.primary)
                         .textSelection(.enabled)
                     Text("\(PCStrings.saveThisID).")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(theme.font(size: 12, weight: .medium))
                         .foregroundColor(theme.textSecondary)
                 }
                 .padding(10)
@@ -648,9 +650,9 @@ public struct DSRFormScreen: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8))
             }
             HStack(alignment: .top, spacing: 8) {
-                Image(systemName: "envelope").font(.system(size: 14)).foregroundColor(theme.textSecondary)
+                Image(systemName: "envelope").font(theme.font(size: 14)).foregroundColor(theme.textSecondary)
                 Text("\(PCStrings.confirmationSentTo): \(vm.contact)")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(theme.font(size: 12, weight: .medium))
                     .foregroundColor(theme.textSecondary)
             }
             .padding(10)
@@ -658,11 +660,11 @@ public struct DSRFormScreen: View {
             .background(theme.surface)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             Text("\(PCStrings.processRequest).")
-                .font(.system(size: 12, weight: .medium))
+                .font(theme.font(size: 12, weight: .medium))
                 .foregroundColor(theme.textSecondary)
             if vm.revokeConsentOnFulfilment {
                 Text(PCStrings.erasureConsentRevokeNotice(vm.erasurePurposeSummary))
-                    .font(.system(size: 12, weight: .medium))
+                    .font(theme.font(size: 12, weight: .medium))
                     .foregroundColor(theme.badgeInfoText)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -674,7 +676,7 @@ public struct DSRFormScreen: View {
                 onBack?()
             }
             Text("\(PCStrings.yourDataIsSafeWithUs).")
-                .font(.system(size: 12, weight: .medium))
+                .font(theme.font(size: 12, weight: .medium))
                 .foregroundColor(theme.textTertiary)
                 .frame(maxWidth: .infinity)
         }
@@ -687,21 +689,24 @@ public struct DSRFormScreen: View {
 
     private func requiredLabel(_ text: String) -> some View {
         (Text(text).foregroundColor(theme.text) + Text("*").foregroundColor(theme.error))
-            .font(.system(size: 14, weight: .semibold))
+            .font(theme.font(size: 14, weight: .semibold))
     }
 }
 
-/// Simple wrap-content layout (for uploaded-doc pills and product chips).
+/// Simple wrap-content layout (for uploaded-doc pills, product chips and the
+/// footer links, whose rows are centred).
 struct FlowLayoutCompat<Content: View>: View {
     let spacing: CGFloat
+    var centered = false
     @ViewBuilder var content: () -> Content
     var body: some View {
-        FlowLayout(spacing: spacing) { content() }
+        FlowLayout(spacing: spacing, centered: centered) { content() }
     }
 }
 
 struct FlowLayout: Layout {
     let spacing: CGFloat
+    var centered = false
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let maxWidth = proposal.width ?? .infinity
@@ -722,20 +727,35 @@ struct FlowLayout: Layout {
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        var x: CGFloat = bounds.minX
-        var y: CGFloat = bounds.minY
-        var rowHeight: CGFloat = 0
-        let maxX = bounds.maxX
-        for view in subviews {
-            let size = view.sizeThatFits(.unspecified)
-            if x + size.width > maxX, x > bounds.minX {
-                x = bounds.minX
-                y += rowHeight + spacing
-                rowHeight = 0
+        let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+        // The same rows `sizeThatFits` measured: a view moves down once the
+        // row it would join runs past the width.
+        var rows: [Range<Int>] = []
+        var rowStart = 0
+        var advance: CGFloat = 0
+        for (index, size) in sizes.enumerated() {
+            if advance + size.width > bounds.width, advance > 0 {
+                rows.append(rowStart..<index)
+                rowStart = index
+                advance = 0
             }
-            view.place(at: CGPoint(x: x, y: y), anchor: .topLeading, proposal: ProposedViewSize(size))
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
+            advance += size.width + spacing
+        }
+        if rowStart < sizes.count {
+            rows.append(rowStart..<sizes.count)
+        }
+        var y = bounds.minY
+        for row in rows {
+            let rowWidth = sizes[row].reduce(CGFloat(0)) { $0 + $1.width } + spacing * CGFloat(row.count - 1)
+            var x = bounds.minX + (centered ? max(0, (bounds.width - rowWidth) / 2) : 0)
+            var rowHeight: CGFloat = 0
+            for index in row {
+                let size = sizes[index]
+                subviews[index].place(at: CGPoint(x: x, y: y), anchor: .topLeading, proposal: ProposedViewSize(size))
+                x += size.width + spacing
+                rowHeight = max(rowHeight, size.height)
+            }
+            y += rowHeight + spacing
         }
     }
 }

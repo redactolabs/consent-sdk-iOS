@@ -79,8 +79,8 @@ public struct CaseHistoryScreen: View {
             }
         } label: {
             HStack(spacing: 6) {
-                Text(PCStrings.filter).font(.system(size: 13, weight: .semibold))
-                Image(systemName: "line.3.horizontal.decrease").font(.system(size: 13, weight: .semibold))
+                Text(PCStrings.filter).font(theme.font(size: 13, weight: .semibold))
+                Image(systemName: "line.3.horizontal.decrease").font(theme.font(size: 13, weight: .semibold))
             }
             .foregroundColor(theme.text)
             .padding(.horizontal, 14)
@@ -95,8 +95,8 @@ public struct CaseHistoryScreen: View {
             PCLoader().frame(minHeight: 240)
         } else if let error = vm.errorMessage {
             VStack(spacing: 8) {
-                Text(error).font(.system(size: 15)).foregroundColor(theme.error)
-                Text(PCStrings.unknownError).font(.system(size: 13)).foregroundColor(theme.textSecondary)
+                Text(error).font(theme.font(size: 15)).foregroundColor(theme.error)
+                Text(PCStrings.unknownError).font(theme.font(size: 13)).foregroundColor(theme.textSecondary)
             }
             .frame(maxWidth: .infinity, minHeight: 240)
         } else if vm.pagedCases.isEmpty {
@@ -114,10 +114,10 @@ public struct CaseHistoryScreen: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(caseRequest.caseId)
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(theme.font(size: 14, weight: .semibold))
                             .foregroundColor(theme.text)
                         Text(PrivacyCenterDateFormatters.formatDateShort(caseRequest.createdAt))
-                            .font(.system(size: 12))
+                            .font(theme.font(size: 12))
                             .foregroundColor(theme.textSecondary)
                     }
                     Spacer(minLength: 8)
@@ -125,13 +125,13 @@ public struct CaseHistoryScreen: View {
                 }
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(PCStrings.requestType).font(.system(size: 11)).foregroundColor(theme.textTertiary)
-                        Text(caseRequest.displayRequestType).font(.system(size: 13)).foregroundColor(theme.text)
+                        Text(PCStrings.requestType).font(theme.font(size: 11)).foregroundColor(theme.textTertiary)
+                        Text(caseRequest.displayRequestType).font(theme.font(size: 13)).foregroundColor(theme.text)
                     }
                     Spacer()
                     VStack(alignment: .trailing, spacing: 2) {
-                        Text(PCStrings.submittedOn).font(.system(size: 11)).foregroundColor(theme.textTertiary)
-                        Text(PrivacyCenterDateFormatters.formatDateShort(caseRequest.createdAt)).font(.system(size: 13)).foregroundColor(theme.textSecondary)
+                        Text(PCStrings.submittedOn).font(theme.font(size: 11)).foregroundColor(theme.textTertiary)
+                        Text(PrivacyCenterDateFormatters.formatDateShort(caseRequest.createdAt)).font(theme.font(size: 13)).foregroundColor(theme.textSecondary)
                     }
                 }
             }

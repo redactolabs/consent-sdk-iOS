@@ -32,6 +32,13 @@ public struct RedactoNoticeConsent: View {
     @State private var presented = false
     @State private var hasStarted = false
 
+    /// - Parameters:
+    ///   - baseUrl: the API host, e.g. `https://api.redacto.io` (recommended):
+    ///     the notice is read from the consent server or the ledger under it.
+    ///     The consent server URL (`…/consent`) still works but is deprecated.
+    ///   - ledgerBaseUrl: deprecated. Read only when `baseUrl` is the consent
+    ///     server URL (`…/consent`) or omitted, as in earlier releases. Ignored
+    ///     when `baseUrl` is the API host.
     public init(
         noticeId: String,
         accessToken: String = "",
@@ -164,8 +171,10 @@ public struct RedactoNoticeConsent: View {
         .environment(\.noticeFontFamily, viewModel.noticeFontFamily)
         .environment(\.noticeTheme, theme)
         .environment(\.noticeTextScale, theme.appearance.textScaleFactor)
+        .environment(\.noticeChromeCopy, viewModel.chromeCopy)
         .noticeConfirmDialog(
             action: viewModel.pendingConfirmAction,
+            copy: viewModel.chromeCopy,
             onConfirm: viewModel.confirmPendingAction,
             onCancel: viewModel.dismissConfirm
         )
@@ -546,7 +555,7 @@ public struct RedactoNoticeConsent: View {
                     ProductPolicyLineView(
                         label: viewModel.getTranslatedText(
                             ProductPolicyCopy.translationKey,
-                            defaultText: ProductPolicyCopy.label
+                            defaultText: viewModel.chromeCopy.productPoliciesLabel
                         ),
                         links: viewModel.productPolicyLinks,
                         linkColor: theme.link

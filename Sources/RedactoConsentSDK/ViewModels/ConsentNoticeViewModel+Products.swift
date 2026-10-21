@@ -39,7 +39,7 @@ extension ConsentNoticeViewModel {
 
     var confirmHintText: String? {
         guard !isSubmitting else { return nil }
-        return ProductConsent.confirmHint(confirmVerdict, products: noticeProducts) { self.productName($0) }
+        return ProductConsent.confirmHint(confirmVerdict, products: noticeProducts, copy: chromeCopy) { self.productName($0) }
     }
 
     var soleProductLocked: Bool {

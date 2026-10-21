@@ -40,27 +40,30 @@ struct ProductSectionView<Rows: View>: View {
         }
     }
 
+    /// The whole row opens the section, the gap beside a short name included;
+    /// only the control answers for the purposes.
     private var header: some View {
         HStack(alignment: .center, spacing: 12) {
             Button(action: onToggleCollapse) {
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(theme.heading)
-                    .rotationEffect(.degrees(collapsed ? 0 : 90))
-                    .frame(width: 17, height: 28)
-                    .contentShape(Rectangle())
+                HStack(alignment: .center, spacing: 12) {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(theme.heading)
+                        .rotationEffect(.degrees(collapsed ? 0 : 90))
+                        .frame(width: 17, height: 28)
+
+                    (Text(name) + (isRequired ? Text(" *").foregroundColor(.red) : Text("")))
+                        .noticeFont(size: theme.size(.optionTitle), weight: theme.sectionTitleWeight)
+                        .foregroundColor(theme.heading)
+                        .multilineTextAlignment(.leading)
+
+                    Spacer(minLength: 0)
+                }
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel(collapsed ? ProductSectionCopy.expand(name) : ProductSectionCopy.collapse(name))
-
-            (Text(name) + (isRequired ? Text(" *").foregroundColor(.red) : Text("")))
-                .noticeFont(size: theme.size(.optionTitle), weight: theme.sectionTitleWeight)
-                .foregroundColor(theme.heading)
-                .multilineTextAlignment(.leading)
-                .accessibilityAddTraits(.isHeader)
-                .onTapGesture(perform: onToggleCollapse)
-
-            Spacer(minLength: 0)
+            .accessibilityAddTraits(.isHeader)
 
             SelectionControlView(
                 control: selectionControl,

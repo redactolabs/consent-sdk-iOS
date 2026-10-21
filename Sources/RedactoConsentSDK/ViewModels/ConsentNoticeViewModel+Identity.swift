@@ -84,6 +84,7 @@ extension ConsentNoticeViewModel {
         content = nil
         categorizedPurposes = nil
         pendingConfirmAction = nil
+        preGateSelection = nil
         selectedPurposes = [:]
         selectedDataElements = [:]
         initialDataElementSelections = [:]

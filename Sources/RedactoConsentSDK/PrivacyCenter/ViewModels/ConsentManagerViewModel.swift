@@ -368,6 +368,11 @@ public final class ConsentManagerViewModel: ObservableObject {
         )
     }
 
+    /// The organisation's withdraw warning from the published settings.
+    public var organisationWithdrawWarning: String? {
+        store.organisationWithdrawWarning
+    }
+
     static func successMessage(_ action: ConsentAction) -> String {
         switch action {
         case .revoke: return PCStrings.consentRevokedSuccess
@@ -417,6 +422,13 @@ public final class ConsentManagerViewModel: ObservableObject {
             ))
             actionMessage = Self.successMessage(action)
             store.showToast(Self.successMessage(action), kind: .success)
+            store.events.consentChanged(PrivacyCenterConsentChange(
+                action: action,
+                purposeUuid: purposeId,
+                productUuid: productUuid,
+                dataElementUuids: dataElementUuids ?? [],
+                nominatorUuid: nominatorUuid
+            ))
             await refresh()
         } catch {
             if isCancellationError(error) { return }

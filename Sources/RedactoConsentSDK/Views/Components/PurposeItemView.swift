@@ -153,6 +153,17 @@ struct PurposeItemView: View {
                         .frame(width: 16, height: 16)
                         .accessibilityLabel("Not consented to \(name)")
                 }
+            } else if selectionControl != .checkbox {
+                // The notice's radio or dropdown answers every row, so a
+                // purpose and its data elements never ask in two vocabularies.
+                SelectionControlView(
+                    control: selectionControl,
+                    checked: selectedDataElements["\(stateKey)-\(dataElement.uuid)"] ?? false,
+                    label: "Select \(name)\(dataElement.required ? " (required)" : "")",
+                    lockedLabel: SelectionControlCopy.settled(name),
+                    accentColor: accentColor,
+                    onSelect: { _ in onDataElementToggle(dataElement.uuid, purpose.uuid) }
+                )
             } else if theme.layout.switchControl && environmentTheme != nil {
                 NoticeRoundCheckView(
                     checked: selectedDataElements["\(stateKey)-\(dataElement.uuid)"] ?? false,

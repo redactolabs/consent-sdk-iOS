@@ -7,10 +7,23 @@ public struct RedactoPrivacyCenter: View {
     @StateObject private var store: PrivacyCenterStore
     private let accessToken: String
     private let refreshToken: String
+    private let eventHandlers: PrivacyCenterEventHandlers
+    @Environment(\.scenePhase) private var scenePhase
 
+    /// - Parameters:
+    ///   - baseUrl: the API host, e.g. `https://api.redacto.io` (recommended):
+    ///     the Privacy Center reaches the consent server, the ledger and the
+    ///     user service under it. The consent server URL (`…/consent`) still
+    ///     works but is deprecated.
+    ///   - ledgerBaseUrl: deprecated. Read only when `baseUrl` is the consent
+    ///     server URL (`…/consent`) or omitted, as in earlier releases. Ignored
+    ///     when `baseUrl` is the API host.
+    ///   - slug: deprecated and ignored; passing it logs a one-time warning.
+    ///     The organisation comes from the access token, or from
+    ///     `organisationUuid` and `workspaceUuid`. Remove it.
     public init(
         baseUrl: String,
-        slug: String,
+        slug: String? = nil,
         accessToken: String = "",
         refreshToken: String = "",
         theme: PrivacyCenterThemeMode = .light,
@@ -35,7 +48,19 @@ public struct RedactoPrivacyCenter: View {
         settings: PrivacyCenterSettings? = nil,
         // Told of every token the Privacy Center refreshes, so the host can
         // persist the rotated pair (the old refresh token is spent).
-        onTokensRefreshed: (@Sendable (String, String?) -> Void)? = nil
+        onTokensRefreshed: (@Sendable (String, String?) -> Void)? = nil,
+        // With no access token, show the built-in OTP sign-in instead of the
+        // loading state. Off by default, so a token that arrives a moment late
+        // never flashes a sign-in screen.
+        builtInSignIn: Bool = false,
+        // Called once, when the first screen (sign-in or the centre) is on show.
+        onReady: ((PrivacyCenterReadyEvent) -> Void)? = nil,
+        // Called after the visitor withdrew, re-granted or renewed a consent.
+        onConsentChange: ((PrivacyCenterConsentChange) -> Void)? = nil,
+        // Called after the visitor submitted a data request.
+        onRequestSubmit: ((PrivacyCenterRequestSubmission) -> Void)? = nil,
+        // Called when the visitor is signed out, with the reason.
+        onSignOut: ((PrivacyCenterSignOutEvent) -> Void)? = nil
     ) {
         // Resolve the sandbox config here but never call `onError` synchronously
         // during view construction: capture any resolve failure and let the store
@@ -58,12 +83,19 @@ public struct RedactoPrivacyCenter: View {
         }
         self.accessToken = accessToken
         self.refreshToken = refreshToken
+        let handlers = PrivacyCenterEventHandlers(
+            onReady: onReady,
+            onConsentChange: onConsentChange,
+            onRequestSubmit: onRequestSubmit,
+            onSignOut: onSignOut
+        )
+        self.eventHandlers = handlers
         // Built inside the autoclosure: SwiftUI evaluates it once per view
         // identity. Built outside, every host re-render constructed a throwaway
         // store, and its init reset the shared UI language the user had picked.
         _store = StateObject(wrappedValue: PrivacyCenterStore(
             baseUrl: baseUrl,
-            slug: slug,
+            slug: slug ?? "",
             accessToken: accessToken,
             refreshToken: refreshToken,
             themeMode: theme,
@@ -77,12 +109,19 @@ public struct RedactoPrivacyCenter: View {
             sandboxConfigError: sandboxConfigError,
             ledgerBaseUrl: ledgerBaseUrl,
             settings: settings,
-            onTokensRefreshed: onTokensRefreshed
+            onTokensRefreshed: onTokensRefreshed,
+            builtInSignIn: builtInSignIn,
+            organisationUuid: organisationUuid,
+            workspaceUuid: workspaceUuid,
+            events: handlers
         ))
     }
 
     public var body: some View {
+        // Handlers always see the latest props: swapped in on every render.
+        let _ = syncEventHandlers()
         PrivacyCenterContent()
+            .modifier(PCLayoutDirection(rightToLeft: store.isRightToLeft))
             .environmentObject(store)
             .environment(\.privacyCenterTheme, store.theme)
             // A host that prefers the other scheme would otherwise win for the
@@ -96,6 +135,14 @@ public struct RedactoPrivacyCenter: View {
             // handed to it (React AuthContext re-syncs from props).
             .onChange(of: accessToken) { _ in syncTokens() }
             .onChange(of: refreshToken) { _ in syncTokens() }
+            .onChange(of: scenePhase) { phase in
+                if phase == .active { store.resumeFromBackground() }
+            }
+    }
+
+    private func syncEventHandlers() -> Bool {
+        store.events.handlers = eventHandlers
+        return true
     }
 
     private func syncTokens() {
@@ -111,12 +158,25 @@ struct PrivacyCenterContent: View {
     @StateObject private var notifications: NotificationsViewModelHolder = NotificationsViewModelHolder()
 
     private var showsNav: Bool {
-        !store.isSessionExpired && store.profilePhase == .resolved && store.dataStatus == .hasData
+        !store.showsSignIn && !store.isSessionExpired && store.profilePhase == .resolved && store.dataStatus == .hasData
     }
 
     var body: some View {
+        if store.showsSignIn {
+            PCSignInScreen(store: store)
+                .background(theme.background.ignoresSafeArea())
+                .task { await store.start() }
+        } else {
+            centre
+        }
+    }
+
+    private var centre: some View {
         VStack(spacing: 0) {
-            PCTopBar(showsNotifications: showsNav, notifications: notifications.vm(for: store))
+            PCTopBar(
+                showsNotifications: showsNav && store.isSectionEnabled(.notifications),
+                notifications: notifications.vm(for: store)
+            )
             ZStack {
                 theme.background.ignoresSafeArea()
                 // Gate on data availability so the tab bar never flashes before
@@ -154,23 +214,29 @@ struct PrivacyCenterContent: View {
             }
             .animation(.easeInOut(duration: 0.2), value: store.toast)
 
-            if showsNav && store.currentPage != .caseDetails && !store.isNotificationsOpen {
-                PCBottomTabBar(selectedPage: Binding(
-                    get: { store.currentPage },
-                    set: { store.navigate(to: $0) }
-                ))
+            if showsNav && store.visiblePage != .caseDetails && !store.isNotificationsOpen {
+                PCBottomTabBar(
+                    selectedPage: Binding(
+                        get: { store.visiblePage },
+                        set: { store.navigate(to: $0) }
+                    ),
+                    tabs: store.tabSections.compactMap { section in
+                        PrivacyCenterStore.InternalPage(rawValue: section.key.rawValue).map {
+                            PCBottomTabBar.Tab(page: $0, label: store.sectionLabel(section.key))
+                        }
+                    }
+                )
             }
-            if store.branding?.hidePlatformBranding != true {
-                PCFooter()
-            }
+            PCSettingsFooter()
         }
         .background(theme.background.ignoresSafeArea())
+        .background(PCActivityTracker { store.recordActivity() })
         .task { await store.start() }
     }
 
     @ViewBuilder
     private var screenForCurrentPage: some View {
-        switch store.currentPage {
+        switch store.visiblePage {
         case .consentManager:
             ConsentManagerScreen(store: store)
         case .form:
@@ -185,7 +251,7 @@ struct PrivacyCenterContent: View {
                     .id(caseRequest.uuid)
             } else {
                 PCLoader()
-                    .onAppear { store.navigate(to: .form) }
+                    .onAppear { store.navigate(to: store.isPageAllowed(.form) ? .form : store.homePage) }
             }
         }
     }
@@ -240,16 +306,16 @@ struct PCSessionExpiredView: View {
                     .frame(width: 140, height: 140)
                     .overlay(
                         Image(systemName: "clock")
-                            .font(.system(size: 56, weight: .light))
+                            .font(theme.font(size: 56, weight: .light))
                             .foregroundColor(theme.primary)
                     )
                 VStack(spacing: 8) {
                     Text(PCStrings.sessionExpiredTitle)
-                        .font(.system(size: 20, weight: .bold))
+                        .font(theme.font(size: 20, weight: .bold))
                         .foregroundColor(theme.text)
                         .multilineTextAlignment(.center)
                     Text(PCStrings.sessionExpiredDescription)
-                        .font(.system(size: 15))
+                        .font(theme.font(size: 15))
                         .foregroundColor(theme.textSecondary)
                         .multilineTextAlignment(.center)
                 }
@@ -260,6 +326,11 @@ struct PCSessionExpiredView: View {
                         leadingIcon: onBack == .back ? "arrow.left" : "rectangle.portrait.and.arrow.right"
                     ) {
                         store.performExitAction()
+                    }
+                } else if store.canSignInAgain {
+                    // With no host exit to go back to, the built-in sign-in.
+                    PCButton(PCStrings.signInAgain, fullWidth: false, leadingIcon: "person.crop.circle.badge.checkmark") {
+                        store.restartSignIn()
                     }
                 }
             }
@@ -284,16 +355,16 @@ struct PCNoDataView: View {
                     .frame(width: 140, height: 140)
                     .overlay(
                         Image(systemName: "tray")
-                            .font(.system(size: 52, weight: .light))
+                            .font(theme.font(size: 52, weight: .light))
                             .foregroundColor(theme.primary)
                     )
                 VStack(spacing: 8) {
                     Text(PCStrings.noDataTitle)
-                        .font(.system(size: 20, weight: .bold))
+                        .font(theme.font(size: 20, weight: .bold))
                         .foregroundColor(theme.text)
                         .multilineTextAlignment(.center)
                     Text(PCStrings.noDataDescription)
-                        .font(.system(size: 15))
+                        .font(theme.font(size: 15))
                         .foregroundColor(theme.textSecondary)
                         .multilineTextAlignment(.center)
                 }
@@ -303,5 +374,17 @@ struct PCNoDataView: View {
             .padding(.horizontal, 24)
             .padding(.vertical, 48)
         }
+    }
+}
+
+/// Urdu, Sindhi and Kashmiri read right to left once settings are customised;
+/// otherwise the direction is inherited, exactly as before. The modifier is
+/// always applied, so switching direction keeps the tree (and its state).
+struct PCLayoutDirection: ViewModifier {
+    let rightToLeft: Bool
+    @Environment(\.layoutDirection) private var inherited
+
+    func body(content: Content) -> some View {
+        content.environment(\.layoutDirection, rightToLeft ? .rightToLeft : inherited)
     }
 }

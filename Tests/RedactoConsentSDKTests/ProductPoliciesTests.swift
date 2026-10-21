@@ -211,6 +211,17 @@ final class ProductPoliciesTests: XCTestCase {
     }
 
     @MainActor
+    func testNamesEachLinkByItsTranslatedProductName() {
+        let translations: [String: Any] = ["Hindi": ["products": [savings: "बचत खाता"]]]
+        let vm = notice(policies: [savings: savingsPolicy], config: ["supported_languages_and_translations": translations])
+
+        XCTAssertEqual(vm.productPolicyLinks.map(\.name), ["Savings Account"])
+        vm.selectedLanguage = "Hindi"
+        XCTAssertEqual(vm.productPolicyLinks.map(\.name), ["बचत खाता"])
+        XCTAssertEqual(vm.chromeCopy.productPoliciesLabel, "गोपनीयता नीतियाँ:")
+    }
+
+    @MainActor
     func testTranslatesTheLabelAndFallsBackToEnglish() {
         let translations: [String: Any] = ["Hindi": ["product_privacy_policies_label": "गोपनीयता नीतियाँ:"]]
         let vm = notice(policies: [savings: savingsPolicy], config: ["supported_languages_and_translations": translations])

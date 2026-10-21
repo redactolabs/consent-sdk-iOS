@@ -68,19 +68,19 @@ public struct ReceiptListScreen: View {
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 6) {
                         Image(systemName: "line.3.horizontal.decrease")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(theme.font(size: 13, weight: .medium))
                         Text(PCStrings.filterReceipts)
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(theme.font(size: 13, weight: .semibold))
                     }
                     .foregroundColor(theme.text)
                     Text(PCStrings.receiptFiltersHint)
-                        .font(.system(size: 12))
+                        .font(theme.font(size: 12))
                         .foregroundColor(theme.textSecondary)
                 }
                 Spacer()
                 Button(action: { vm.clearFilters() }) {
                     Text(PCStrings.clearFilters)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(theme.font(size: 12, weight: .medium))
                         .foregroundColor(theme.primary)
                 }
                 .buttonStyle(.plain)
@@ -106,7 +106,7 @@ public struct ReceiptListScreen: View {
             }
             HStack(alignment: .top) {
                 Text(PCStrings.totalRecords(vm.pagination.totalCount))
-                    .font(.system(size: 12))
+                    .font(theme.font(size: 12))
                     .foregroundColor(theme.textSecondary)
                 Spacer()
             }
@@ -115,7 +115,7 @@ public struct ReceiptListScreen: View {
                 FlowLayoutCompat(spacing: 6) {
                     ForEach(Array(chips.enumerated()), id: \.offset) { _, chip in
                         (Text("\(chip.label): ").fontWeight(.semibold) + Text(chip.value))
-                            .font(.system(size: 11))
+                            .font(theme.font(size: 11))
                             .foregroundColor(theme.text)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
@@ -138,7 +138,7 @@ public struct ReceiptListScreen: View {
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(PCStrings.from)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(theme.font(size: 12, weight: .medium))
                         .foregroundColor(theme.textSecondary)
                     DatePicker(
                         "",
@@ -153,7 +153,7 @@ public struct ReceiptListScreen: View {
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     Text(PCStrings.to)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(theme.font(size: 12, weight: .medium))
                         .foregroundColor(theme.textSecondary)
                     DatePicker(
                         "",
@@ -170,7 +170,7 @@ public struct ReceiptListScreen: View {
             }
             if vm.isCustomRangeInvalid {
                 Text(PCStrings.receiptDateRangeInvalid)
-                    .font(.system(size: 11))
+                    .font(theme.font(size: 11))
                     .foregroundColor(theme.error)
             }
         }
@@ -210,7 +210,7 @@ public struct ReceiptListScreen: View {
                 PCAvatar(initial: productInitials(receipt), size: 32)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(productName(receipt))
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(theme.font(size: 14, weight: .semibold))
                         .foregroundColor(theme.text)
                         .lineLimit(1)
                     HStack(spacing: 6) {
@@ -218,7 +218,7 @@ public struct ReceiptListScreen: View {
                         Text("•")
                         Text(PrivacyCenterDateFormatters.formatTime(receipt.createdAt))
                     }
-                    .font(.system(size: 11))
+                    .font(theme.font(size: 11))
                     .foregroundColor(theme.textTertiary)
                 }
                 Spacer()

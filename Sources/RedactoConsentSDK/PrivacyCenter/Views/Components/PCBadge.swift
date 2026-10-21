@@ -21,10 +21,10 @@ public struct PCBadge: View {
         HStack(spacing: 4) {
             if let icon {
                 Image(systemName: icon)
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(theme.font(size: 10, weight: .semibold))
             }
             Text(label)
-                .font(.system(size: 11, weight: .semibold))
+                .font(theme.font(size: 11, weight: .semibold))
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .fixedSize(horizontal: true, vertical: false)

@@ -15,6 +15,14 @@ public struct RedactoNoticeConsentInline: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// - Parameters:
+    ///   - baseUrl: the API host, e.g. `https://api.redacto.io` (recommended):
+    ///     the notice, the consent check and the consent write each go to the
+    ///     consent server or the ledger under it. The consent server URL
+    ///     (`…/consent`) still works but is deprecated.
+    ///   - ledgerBaseUrl: deprecated. Read only when `baseUrl` is the consent
+    ///     server URL (`…/consent`) or omitted, as in earlier releases. Ignored
+    ///     when `baseUrl` is the API host.
     public init(
         orgUuid: String,
         workspaceUuid: String,
@@ -69,6 +77,20 @@ public struct RedactoNoticeConsentInline: View {
             }
         }
         .environment(\.noticeFontFamily, viewModel.noticeFontFamily)
+        // The notice's "confirm before submitting" step. The inline notice has
+        // no accept button, so it gates the automatic submission; the cancelling
+        // answer comes first, as on the web.
+        .alert(
+            confirmCopy.confirmTitle(.acceptSelected),
+            isPresented: Binding(get: { viewModel.awaitingConfirm }, set: { _ in }),
+            actions: {
+                Button(confirmCopy.no, role: .cancel) { viewModel.refuseSubmission() }
+                Button(confirmCopy.yes) { viewModel.confirmSubmission() }
+            },
+            message: {
+                Text(confirmCopy.confirmDetail(.acceptSelected))
+            }
+        )
         .onAppear {
             viewModel.fetchNoticeIfNeeded()
         }
@@ -83,6 +105,9 @@ public struct RedactoNoticeConsentInline: View {
     private var isMobile: Bool {
         horizontalSizeClass == .compact
     }
+
+    /// English, as React's inline notice draws its confirm dialog.
+    private var confirmCopy: NoticeChromeCopy { .english }
 
     private func headingColor(_ appearance: ResolvedNoticeAppearance) -> Color {
         appearance.color(.heading) ?? Color(hex: "#101828")

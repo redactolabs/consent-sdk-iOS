@@ -17,11 +17,12 @@ public struct ConsentManagerScreen: View {
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
+                PCWelcomeBanner()
                 PCPageHeader(title: PCStrings.manageConsent, description: PCStrings.manageConsentSubtitle, status: headerStatus)
                 tabsRow
                 if vm.activeTab == .nominated, !vm.nominatorLabels.isEmpty {
                     (Text("\(PCStrings.managingConsentsFor) ") + Text(vm.nominatorLabels.joined(separator: ", ")).fontWeight(.semibold).foregroundColor(theme.text))
-                        .font(.system(size: 13))
+                        .font(theme.font(size: 13))
                         .foregroundColor(theme.textSecondary)
                 }
                 filters
@@ -82,7 +83,7 @@ public struct ConsentManagerScreen: View {
             .overlay(Rectangle().fill(theme.border).frame(height: 1), alignment: .bottom)
             HStack(spacing: 8) {
                 Text(PCStrings.consentVisibility)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(theme.font(size: 12, weight: .medium))
                     .foregroundColor(theme.textSecondary)
                 HStack(spacing: 0) {
                     viewToggle(.product, PCStrings.product)
@@ -99,10 +100,10 @@ public struct ConsentManagerScreen: View {
         let isActive = vm.activeTab == tab
         return Button(action: { vm.setActiveTab(tab) }) {
             HStack(spacing: 6) {
-                Text(label).font(.system(size: 12, weight: .semibold))
+                Text(label).font(theme.font(size: 12, weight: .semibold))
                 if let badge {
                     Text("\(badge)")
-                        .font(.system(size: 11))
+                        .font(theme.font(size: 11))
                         .foregroundColor(theme.textSecondary)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 1)
@@ -122,7 +123,7 @@ public struct ConsentManagerScreen: View {
         let isActive = vm.viewMode == mode
         return Button(action: { vm.setViewMode(mode) }) {
             Text(label)
-                .font(.system(size: 11, weight: .semibold))
+                .font(theme.font(size: 11, weight: .semibold))
                 .foregroundColor(isActive ? theme.primaryText : theme.textSecondary)
                 .frame(minWidth: 72)
                 .padding(.vertical, 6)
@@ -153,7 +154,7 @@ public struct ConsentManagerScreen: View {
             )
             HStack {
                 Text(vm.summaryText)
-                    .font(.system(size: 13))
+                    .font(theme.font(size: 13))
                     .foregroundColor(theme.textSecondary)
                 Spacer()
                 PCButton(PCStrings.export, variant: .outline, size: .compact, fullWidth: false, leadingIcon: "square.and.arrow.up") {
@@ -221,20 +222,20 @@ public struct ConsentManagerScreen: View {
                 PCInitialsAvatar(text: PCInitialsAvatar.initials(name), seed: group.productUuid.isEmpty ? name : group.productUuid)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(name)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(theme.font(size: 14, weight: .semibold))
                         .foregroundColor(theme.text)
                     if let desc = group.productDescription, !desc.isEmpty {
-                        Text(desc).font(.system(size: 13)).foregroundColor(theme.textSecondary)
+                        Text(desc).font(theme.font(size: 13)).foregroundColor(theme.textSecondary)
                     }
                     if let nominator = display.nominator {
                         (Text("\(PCStrings.nominatedBy) ") + Text(nominator.displayLabel).fontWeight(.semibold))
-                            .font(.system(size: 13))
+                            .font(theme.font(size: 13))
                             .foregroundColor(theme.textSecondary)
                     }
                 }
                 Spacer(minLength: 4)
                 (Text("\(group.totalPurposes)").foregroundColor(theme.primary).fontWeight(.bold) + Text(" \(PCStrings.consent)"))
-                    .font(.system(size: 11))
+                    .font(theme.font(size: 11))
                     .foregroundColor(theme.textSecondary)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
@@ -246,7 +247,7 @@ public struct ConsentManagerScreen: View {
                     ForEach(Array(chips.enumerated()), id: \.offset) { _, chip in
                         let (label, color) = chip
                         Text(label)
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(theme.font(size: 11, weight: .semibold))
                             .foregroundColor(color)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
@@ -257,29 +258,29 @@ public struct ConsentManagerScreen: View {
             }
             HStack(alignment: .top) {
                 Text(PCStrings.activity)
-                    .font(.system(size: 12))
+                    .font(theme.font(size: 12))
                     .foregroundColor(theme.textSecondary)
                 Spacer()
                 if let latest = display.latestGivenDate {
                     VStack(alignment: .trailing, spacing: 1) {
                         Text(PrivacyCenterDateFormatters.formatDateBulletTime(latest))
-                            .font(.system(size: 13, weight: .medium))
+                            .font(theme.font(size: 13, weight: .medium))
                             .foregroundColor(theme.text)
                         Text(PrivacyCenterDateFormatters.relativeTime(latest))
-                            .font(.system(size: 12))
+                            .font(theme.font(size: 12))
                             .foregroundColor(theme.textSecondary)
                     }
                 } else {
-                    Text("-").font(.system(size: 13)).foregroundColor(theme.textSecondary)
+                    Text("-").font(theme.font(size: 13)).foregroundColor(theme.textSecondary)
                 }
             }
             Button(action: { withAnimation { vm.toggleCard(display.key) } }) {
                 HStack {
                     Text("\(purposes.count) \(PCStrings.purpose)")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(theme.font(size: 13, weight: .semibold))
                     Spacer()
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(theme.font(size: 12, weight: .semibold))
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
                 }
                 .foregroundColor(theme.text)
@@ -338,11 +339,11 @@ public struct ConsentManagerScreen: View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(consent.purpose)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(theme.font(size: 14, weight: .semibold))
                     .foregroundColor(theme.text)
                 if !consent.purposeDescription.isEmpty {
                     Text(consent.purposeDescription)
-                        .font(.system(size: 13))
+                        .font(theme.font(size: 13))
                         .foregroundColor(theme.textSecondary)
                 }
             }
@@ -353,9 +354,9 @@ public struct ConsentManagerScreen: View {
 
     private func metaRow(_ label: String, _ value: String) -> some View {
         HStack {
-            Text(label).font(.system(size: 12)).foregroundColor(theme.textSecondary)
+            Text(label).font(theme.font(size: 12)).foregroundColor(theme.textSecondary)
             Spacer()
-            Text(value).font(.system(size: 13, weight: .medium)).foregroundColor(theme.text)
+            Text(value).font(theme.font(size: 13, weight: .medium)).foregroundColor(theme.text)
         }
     }
 
@@ -364,25 +365,25 @@ public struct ConsentManagerScreen: View {
             meta(PCStrings.givenDate) {
                 VStack(alignment: .leading, spacing: 1) {
                     Text(PrivacyCenterDateFormatters.formatDateTime(consent.givenDate))
-                        .font(.system(size: 13, weight: .medium))
+                        .font(theme.font(size: 13, weight: .medium))
                         .foregroundColor(theme.text)
                     if !consent.givenDate.isEmpty {
                         Text(PrivacyCenterDateFormatters.relativeTime(consent.givenDate))
-                            .font(.system(size: 11))
+                            .font(theme.font(size: 11))
                             .foregroundColor(theme.textSecondary)
                     }
                 }
             }
             meta(PCStrings.validTill) {
                 Text(ConsentManagerViewModel.validTillLabel(consent))
-                    .font(.system(size: 13))
+                    .font(theme.font(size: 13))
                     .foregroundColor(theme.text)
             }
             meta(PCStrings.method) {
                 HStack(spacing: 4) {
-                    if consent.method == "MOBILE" { Image(systemName: "iphone").font(.system(size: 10)) }
-                    if consent.method == "WEB" { Image(systemName: "laptopcomputer").font(.system(size: 10)) }
-                    Text(consent.method).font(.system(size: 11, weight: .semibold))
+                    if consent.method == "MOBILE" { Image(systemName: "iphone").font(theme.font(size: 10)) }
+                    if consent.method == "WEB" { Image(systemName: "laptopcomputer").font(theme.font(size: 10)) }
+                    Text(consent.method).font(theme.font(size: 11, weight: .semibold))
                 }
                 .foregroundColor(theme.textSecondary)
                 .padding(.horizontal, 6)
@@ -392,7 +393,7 @@ public struct ConsentManagerScreen: View {
             meta(PCStrings.action) {
                 let disabled = consent.status == .declined
                 Button(PCStrings.modifyButton) { modifyTarget = consent }
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(theme.font(size: 13, weight: .semibold))
                     .foregroundColor(disabled ? Color(hex: "#9ca3af") : theme.primary)
                     .disabled(disabled)
             }
@@ -401,7 +402,7 @@ public struct ConsentManagerScreen: View {
 
     private func meta<Content: View>(_ label: String, @ViewBuilder _ content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(label).font(.system(size: 12)).foregroundColor(theme.textSecondary)
+            Text(label).font(theme.font(size: 12)).foregroundColor(theme.textSecondary)
             content()
         }
     }

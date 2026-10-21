@@ -53,13 +53,13 @@ public struct PCButton: View {
                         .scaleEffect(0.8)
                 } else if let leadingIcon {
                     Image(systemName: leadingIcon)
-                        .font(.system(size: size == .compact ? 12 : 14, weight: .semibold))
+                        .font(theme.font(size: size == .compact ? 12 : 14, weight: .semibold))
                 }
                 Text(title)
-                    .font(.system(size: size == .compact ? 13 : 15, weight: .semibold))
+                    .font(theme.font(size: size == .compact ? 13 : 15, weight: .semibold))
                 if let trailingIcon, !isLoading {
                     Image(systemName: trailingIcon)
-                        .font(.system(size: size == .compact ? 12 : 14, weight: .semibold))
+                        .font(theme.font(size: size == .compact ? 12 : 14, weight: .semibold))
                 }
             }
             .foregroundColor(foregroundColor)

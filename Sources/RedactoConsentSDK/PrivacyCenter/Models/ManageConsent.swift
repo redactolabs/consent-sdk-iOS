@@ -98,4 +98,9 @@ extension Optional where Wrapped == String {
         guard let value = self, !value.isEmpty else { return nil }
         return value
     }
+
+    var pcTrimmedNonEmpty: String? {
+        guard let value = self?.trimmingCharacters(in: .whitespacesAndNewlines), !value.isEmpty else { return nil }
+        return value
+    }
 }

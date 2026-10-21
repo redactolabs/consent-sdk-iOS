@@ -18,10 +18,13 @@ public final class ModifyConsentViewModel: ObservableObject {
 
     public let consent: UserConsent
     public let nominatorContact: String?
+    /// The organisation's withdraw warning from the published settings.
+    public let organisationWarning: String?
 
-    public init(consent: UserConsent, nominatorContact: String? = nil) {
+    public init(consent: UserConsent, nominatorContact: String? = nil, organisationWarning: String? = nil) {
         self.consent = consent
         self.nominatorContact = nominatorContact
+        self.organisationWarning = organisationWarning
         let action = Self.action(for: consent.status)
         self.isAccordionOpen = action == .regrant
         if action == .regrant {
@@ -82,12 +85,16 @@ public final class ModifyConsentViewModel: ObservableObject {
         }
     }
 
-    /// The per-purpose revoke warning when the admin set one, else the default.
+    /// A purpose's own revoke warning wins, then the organisation's, then the
+    /// built-in one.
     public var warningText: String {
         switch action {
         case .revoke:
             if let custom = consent.revokeWarningMessage, !custom.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 return custom
+            }
+            if let organisation = organisationWarning, !organisation.isEmpty {
+                return organisation
             }
             return PCStrings.revokeConsentWarning
         case .regrant: return PCStrings.regrantConsentWarning

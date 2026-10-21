@@ -6,12 +6,24 @@ public actor PrivacyCenterAPI {
     let tokenStore: TokenStore
     let http: PrivacyCenterHTTPClient
 
+    /// - Parameters:
+    ///   - baseUrl: the API host, e.g. `https://api.redacto.io` (recommended).
+    ///     The consent server URL (`…/consent`) still works but is deprecated.
+    ///   - ledgerBaseUrl: deprecated. Read only when `baseUrl` is the consent
+    ///     server URL (`…/consent`) or omitted, as in earlier releases. Ignored
+    ///     when `baseUrl` is the API host.
     public init(baseUrl: String, ledgerBaseUrl: String? = nil, tokenStore: TokenStore, urlSession: URLSession = .shared) {
-        let ledger = Self.normalizedLedgerBaseUrl(ledgerBaseUrl)
-        self.baseUrl = baseUrl
-        self.ledgerBaseUrl = ledger
+        let endpoints = NoticeBaseUrl.endpoints(baseUrl: baseUrl, ledgerBaseUrl: ledgerBaseUrl)
+        self.baseUrl = endpoints.baseUrl ?? baseUrl
+        self.ledgerBaseUrl = Self.normalizedLedgerBaseUrl(endpoints.ledgerBaseUrl)
         self.tokenStore = tokenStore
-        self.http = PrivacyCenterHTTPClient(baseUrl: baseUrl, ledgerBaseUrl: ledger, tokenStore: tokenStore, urlSession: urlSession)
+        // The client resolves the values as passed, not this actor's own.
+        self.http = PrivacyCenterHTTPClient(
+            baseUrl: baseUrl,
+            ledgerBaseUrl: Self.normalizedLedgerBaseUrl(ledgerBaseUrl),
+            tokenStore: tokenStore,
+            urlSession: urlSession
+        )
     }
 
     static func normalizedLedgerBaseUrl(_ raw: String?) -> String? {
@@ -463,16 +475,62 @@ public actor PrivacyCenterAPI {
     }
 }
 
+/// The user service, mounted on the same origin as the consent API (React
+/// `userServiceBaseUrl`).
+enum PrivacyCenterUserService {
+    static let path = "/user/api/0"
+    /// The production consent API, the fallback for a base URL with no
+    /// recognisable origin: a wrong host is a bug either way, but only staging
+    /// would write somewhere real.
+    static let defaultConsentBaseUrl = "https://api.redacto.io/consent"
+
+    /// http(s) and a valid authority, up to the first `/`, `?` or `#`. The port
+    /// must be numeric and the authority must end the origin, so a typo such as
+    /// `https://host:abc/consent` is rejected rather than passed through.
+    private static let originPattern = try! NSRegularExpression(
+        pattern: #"^https?://(?:\[[0-9a-f:.]+\]|[^\s/?#@:\[\]]+)(?::\d+)?(?=[/?#]|$)"#,
+        options: [.caseInsensitive]
+    )
+
+    static func origin(of url: String) -> String? {
+        let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        let range = NSRange(trimmed.startIndex..., in: trimmed)
+        guard let match = originPattern.firstMatch(in: trimmed, range: range),
+              let matched = Range(match.range, in: trimmed) else { return nil }
+        return String(trimmed[matched])
+    }
+
+    /// The user service on the same origin the caller gave for consent. It used
+    /// to be chosen by testing the consent URL for ".io", which sent a custom
+    /// domain, a proxy or localhost to Redacto staging.
+    static func baseUrl(for consentBaseUrl: String) -> String {
+        (origin(of: consentBaseUrl) ?? origin(of: defaultConsentBaseUrl) ?? "") + path
+    }
+}
+
 /// Public workspace branding, served by the user server rather than the
 /// consent server (React api/orgBranding.ts). No auth.
 enum PrivacyCenterBrandingAPI {
     static func userServerBaseUrl(for consentBaseUrl: String) -> String {
-        consentBaseUrl.contains(".io") ? "https://api.redacto.io/user/api/0" : "https://api.redacto.tech/user/api/0"
+        PrivacyCenterUserService.baseUrl(for: consentBaseUrl)
     }
 
-    static func fetch(slug: String, consentBaseUrl: String, urlSession: URLSession = .shared) async throws -> OrgBrandingDetail {
-        let encoded = slug.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? slug
-        guard let url = URL(string: "\(userServerBaseUrl(for: consentBaseUrl))/public/org-branding/by-slug/\(encoded)") else {
+    /// `{host}/user/api/0` under the API host; in legacy mode, the one on the
+    /// consent server URL's origin.
+    static func userServerBaseUrl(for endpoints: NoticeEndpoints) -> String {
+        if endpoints.mode == .host, let host = endpoints.host {
+            return host + NoticeBaseUrl.userServicePath
+        }
+        return userServerBaseUrl(for: endpoints.baseUrl ?? "")
+    }
+
+    static func fetch(organisationUuid: String, userServerBaseUrl: String, urlSession: URLSession = .shared) async throws -> OrgBrandingDetail {
+        let encoded = organisationUuid.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? organisationUuid
+        return try await fetch(from: "\(userServerBaseUrl)/public/org-branding/\(encoded)", urlSession: urlSession)
+    }
+
+    private static func fetch(from address: String, urlSession: URLSession) async throws -> OrgBrandingDetail {
+        guard let url = URL(string: address) else {
             throw PrivacyCenterAPIError.networkError("Invalid branding URL")
         }
         var request = URLRequest(url: url)

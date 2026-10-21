@@ -15,7 +15,7 @@ public struct PCLoader: View {
                 .tint(theme.primary)
             if let label {
                 Text(label)
-                    .font(.system(size: 13))
+                    .font(theme.font(size: 13))
                     .foregroundColor(theme.textSecondary)
             }
         }

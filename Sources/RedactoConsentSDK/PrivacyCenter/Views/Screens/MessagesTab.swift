@@ -19,14 +19,14 @@ struct MessagesTab: View {
                             PCLoader()
                         } else if vm.messagesFailed {
                             Text(PCStrings.errorLoadingMessages)
-                                .font(.system(size: 13))
+                                .font(theme.font(size: 13))
                                 .foregroundColor(theme.textSecondary)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 24)
                         } else if vm.messages.isEmpty {
                             VStack(spacing: 8) {
-                                Image(systemName: "doc.text").font(.system(size: 36)).foregroundColor(theme.textTertiary)
-                                Text(PCStrings.noMessagesYet).font(.system(size: 13)).foregroundColor(theme.textSecondary)
+                                Image(systemName: "doc.text").font(theme.font(size: 36)).foregroundColor(theme.textTertiary)
+                                Text(PCStrings.noMessagesYet).font(theme.font(size: 13)).foregroundColor(theme.textSecondary)
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 32)
@@ -91,10 +91,10 @@ struct MessagesTab: View {
         HStack(spacing: 8) {
             Text("🔒")
             Text(vm.isCaseFinalized ? PCStrings.caseFinalizedMessagesTooltip : PCStrings.secureMessagesNotice)
-                .font(.system(size: 12))
+                .font(theme.font(size: 12))
             Spacer()
             Button(action: { Task { await vm.fetchMessages(initial: false) } }) {
-                Image(systemName: "arrow.clockwise").font(.system(size: 13, weight: .semibold))
+                Image(systemName: "arrow.clockwise").font(theme.font(size: 13, weight: .semibold))
             }
             .buttonStyle(.plain)
             .disabled(vm.isFetchingMessages)
@@ -111,11 +111,11 @@ struct MessagesTab: View {
         VStack(spacing: 8) {
             if let pending = vm.pendingUpload {
                 HStack(spacing: 6) {
-                    Image(systemName: "doc.text").font(.system(size: 13))
-                    Text(pending.fileName).font(.system(size: 12)).lineLimit(1)
-                    Text(PCFileSize.format(pending.fileSize)).font(.system(size: 11)).foregroundColor(theme.textSecondary)
+                    Image(systemName: "doc.text").font(theme.font(size: 13))
+                    Text(pending.fileName).font(theme.font(size: 12)).lineLimit(1)
+                    Text(PCFileSize.format(pending.fileSize)).font(theme.font(size: 11)).foregroundColor(theme.textSecondary)
                     Button(action: { vm.clearPendingUpload() }) {
-                        Text("×").font(.system(size: 15, weight: .bold))
+                        Text("×").font(theme.font(size: 15, weight: .bold))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(PCStrings.removeAttachment)
@@ -153,7 +153,7 @@ struct MessagesTab: View {
                 ) { Task { await vm.sendMessage() } }
             }
             Text(PCStrings.messagesSecureFooter)
-                .font(.system(size: 11))
+                .font(theme.font(size: 11))
                 .foregroundColor(theme.textTertiary)
         }
         .padding(12)
@@ -223,10 +223,10 @@ struct MessageItemView: View {
     private func bubble<Content: View>(sent: Bool, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: sent ? .trailing : .leading, spacing: 4) {
             Text(header)
-                .font(.system(size: 11))
+                .font(theme.font(size: 11))
                 .foregroundColor(theme.textTertiary)
             content()
-                .font(.system(size: 14))
+                .font(theme.font(size: 14))
                 .foregroundColor(sent ? theme.primaryText : theme.text)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
@@ -246,12 +246,12 @@ struct MessageItemView: View {
                 if vm.openingDocument == doc.uuid {
                     ProgressView().scaleEffect(0.7)
                 } else {
-                    Image(systemName: "doc.text").font(.system(size: 18)).foregroundColor(theme.primary)
+                    Image(systemName: "doc.text").font(theme.font(size: 18)).foregroundColor(theme.primary)
                 }
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(name).font(.system(size: 13, weight: .medium)).foregroundColor(theme.text).lineLimit(1)
+                    Text(name).font(theme.font(size: 13, weight: .medium)).foregroundColor(theme.text).lineLimit(1)
                     if let size = doc.fileSize, size > 0 {
-                        Text(PCFileSize.format(size)).font(.system(size: 11)).foregroundColor(theme.textSecondary)
+                        Text(PCFileSize.format(size)).font(theme.font(size: 11)).foregroundColor(theme.textSecondary)
                     }
                 }
             }
@@ -269,20 +269,20 @@ struct MessageItemView: View {
         let status = Self.statusInfo(meta.documentRequestStatus)
         return VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top, spacing: 8) {
-                Image(systemName: "paperclip").font(.system(size: 14)).foregroundColor(Color(hex: "#2563eb"))
+                Image(systemName: "paperclip").font(theme.font(size: 14)).foregroundColor(Color(hex: "#2563eb"))
                 VStack(alignment: .leading, spacing: 2) {
                     Text(PCStrings.documentRequestedLabel(meta.title))
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(theme.font(size: 13, weight: .semibold))
                         .foregroundColor(Color(hex: "#1d4ed8"))
                     if !meta.acceptedDocument.isEmpty {
                         Text(PCStrings.acceptedLabel(meta.acceptedDocument))
-                            .font(.system(size: 12))
+                            .font(theme.font(size: 12))
                             .foregroundColor(Color(hex: "#2563eb"))
                     }
                 }
                 Spacer(minLength: 4)
                 Text(status.label)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(theme.font(size: 11, weight: .semibold))
                     .foregroundColor(Color(hex: status.hex))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
@@ -301,7 +301,7 @@ struct MessageItemView: View {
             }
             if meta.documentRequestStatus == .rejected, !meta.rejectionReason.isEmpty {
                 Text(PCStrings.rejectionReasonLabel(meta.rejectionReason))
-                    .font(.system(size: 12))
+                    .font(theme.font(size: 12))
                     .foregroundColor(Color(hex: "#dc2626"))
                     .padding(8)
                     .background(Color(hex: "#fef2f2"))
@@ -328,8 +328,8 @@ struct MessageItemView: View {
     private func statusEvent(icon: String, hex: (String, String, String), text: String, sub: String?) -> some View {
         VStack(spacing: 4) {
             HStack(spacing: 6) {
-                Image(systemName: icon).font(.system(size: 15))
-                Text(text).font(.system(size: 13, weight: .medium))
+                Image(systemName: icon).font(theme.font(size: 15))
+                Text(text).font(theme.font(size: 13, weight: .medium))
             }
             .foregroundColor(Color(hex: hex.0))
             .padding(.horizontal, 12)
@@ -338,9 +338,9 @@ struct MessageItemView: View {
             .overlay(Capsule().stroke(Color(hex: hex.2), lineWidth: 1))
             .clipShape(Capsule())
             if let sub {
-                Text(sub).font(.system(size: 12)).foregroundColor(Color(hex: hex.0))
+                Text(sub).font(theme.font(size: 12)).foregroundColor(Color(hex: hex.0))
             }
-            Text(timestamp).font(.system(size: 11)).foregroundColor(theme.textTertiary)
+            Text(timestamp).font(theme.font(size: 11)).foregroundColor(theme.textTertiary)
         }
         .frame(maxWidth: .infinity)
     }

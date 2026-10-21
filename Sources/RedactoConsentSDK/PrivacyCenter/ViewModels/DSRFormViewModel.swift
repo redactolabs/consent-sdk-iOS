@@ -87,6 +87,9 @@ public final class DSRFormViewModel: ObservableObject {
 
     /// English form data, kept to send correction field names untranslated.
     private var englishFormData: PrivacyFormData?
+    /// The server's own list of allowed request types, nil on servers that
+    /// predate the published settings.
+    @Published public private(set) var serverRequestTypes: [String]?
     private let store: PrivacyCenterStore
 
     public init(store: PrivacyCenterStore) {
@@ -95,7 +98,32 @@ public final class DSRFormViewModel: ObservableObject {
 
     public var contact: String { formData?.contact.nonEmpty ?? store.contact ?? "" }
 
-    public var grievanceOptions: [GrievanceOption] { formData?.grievanceOptions ?? [] }
+    /// The grievance categories the server offers, narrowed to those the
+    /// published settings allow.
+    public var grievanceOptions: [GrievanceOption] {
+        PrivacyCenterRequestOptions.grievanceOptions(
+            formData?.grievanceOptions ?? [],
+            allowed: store.settings.portal.grievanceCategories
+        )
+    }
+
+    /// The request types the form offers: those the settings enable, in their
+    /// order and with their labels, narrowed to the server's own list. Until
+    /// anything is published the built-in order is kept.
+    public var requestTypeOptions: [(type: RequestType, label: String)] {
+        PrivacyCenterRequestOptions.requestTypes(
+            store.settings.portal.requestTypes,
+            serverEnabled: serverRequestTypes,
+            keepLegacyOrder: !store.isSettingsCustomised
+        ).map { ($0.type, $0.label ?? $0.type.label) }
+    }
+
+    /// Drops a chosen request type the server or the settings stop offering.
+    public func dropUnofferedRequestType() {
+        if let requestType, !requestTypeOptions.contains(where: { $0.type == requestType }) {
+            self.requestType = nil
+        }
+    }
 
     public var isProductScoped: Bool {
         guard let requestType else { return false }
@@ -170,6 +198,7 @@ public final class DSRFormViewModel: ObservableObject {
         do {
             let english = try await store.api.getFormData(contact: storedContact)
             englishFormData = english
+            serverRequestTypes = english.enabledRequestTypes
             var display = english
             if let lang = store.langParam {
                 display = (try? await store.api.getFormData(contact: storedContact, language: lang)) ?? english
@@ -379,7 +408,7 @@ public final class DSRFormViewModel: ObservableObject {
             return purposes.contains(where: isPurposeSelected)
         }
         switch requestType {
-        case .grievance: return !selectedGrievances.isEmpty
+        case .grievance: return grievanceOptions.contains { selectedGrievances.contains($0.value) }
         case .nomination: return Self.isNominationValid(nominationData)
         default: return false
         }
@@ -413,6 +442,12 @@ public final class DSRFormViewModel: ObservableObject {
     public func submitTapped() async {
         guard canSubmit else { return }
         if requestType == .erasure {
+            // The organisation decided for the data principal: no question to ask.
+            if let decided = store.settings.portal.revokeConsentsOnErasure {
+                revokeConsentOnFulfilment = decided
+                await submit(revokeConsent: decided)
+                return
+            }
             isErasureModalOpen = true
             return
         }
@@ -516,6 +551,12 @@ public final class DSRFormViewModel: ObservableObject {
                 productUuid: anchor?.productUuid ?? ""
             )
             store.showToast(PCStrings.requestSubmittedSuccess, kind: .success)
+            store.events.requestSubmitted(PrivacyCenterRequestSubmission(
+                caseId: caseId,
+                caseUuid: result.uuid ?? caseId,
+                requestType: PrivacyCenterRequestTypeKey(payload.requestType),
+                productUuid: payload.productUuid
+            ))
             NotificationCenter.default.post(name: .privacyCenterCasesChanged, object: nil)
         } catch {
             if isCancellationError(error) { return }

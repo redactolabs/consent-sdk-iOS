@@ -11,16 +11,19 @@ struct PCTopBar: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Button(action: { store.navigate(to: .consentManager) }) {
+            Button(action: { store.navigate(to: store.homePage) }) {
                 brandMark
             }
             .buttonStyle(.plain)
             .accessibilityLabel(store.displayOrgName)
             Spacer(minLength: 4)
-            PCLanguagePickerButton(
-                selectedCode: Binding(get: { store.language }, set: { _ in }),
-                onSelect: { code in store.setLanguage(code) }
-            )
+            if store.showsLanguageSwitcher {
+                PCLanguagePickerButton(
+                    selectedCode: Binding(get: { store.language }, set: { _ in }),
+                    options: store.languageOptions,
+                    onSelect: { code in store.chooseLanguage(code) }
+                )
+            }
             if showsNotifications {
                 bell
             }
@@ -48,17 +51,22 @@ struct PCTopBar: View {
         }
     }
 
+    /// The published logo height, capped at what the 56pt bar can hold.
+    private var logoHeight: CGFloat {
+        store.settings.branding.logoHeight.map { CGFloat(min($0, 40)) } ?? 32
+    }
+
     @ViewBuilder
     private var brandMark: some View {
         let name = store.displayOrgName
-        if let logo = store.branding?.logoUrl.pcNonEmpty.flatMap(URL.init(string:)) {
+        if let logo = store.logoUrl.flatMap(URL.init(string:)) {
             AsyncImage(url: logo) { image in
                 image.resizable().scaledToFit()
             } placeholder: {
                 PCInitialsAvatar(text: PCInitialsAvatar.initials(name), seed: name, size: 32)
             }
-            .frame(maxWidth: 160, maxHeight: 32, alignment: .leading)
-        } else if let icon = store.branding?.iconUrl.pcNonEmpty.flatMap(URL.init(string:)) {
+            .frame(maxWidth: 160, maxHeight: logoHeight, alignment: .leading)
+        } else if let icon = store.iconUrl.flatMap(URL.init(string:)) {
             AsyncImage(url: icon) { image in
                 image.resizable().scaledToFill()
             } placeholder: {
@@ -72,7 +80,7 @@ struct PCTopBar: View {
                 .frame(width: 32, height: 32)
                 .overlay(
                     Text(String(name.prefix(1)).uppercased())
-                        .font(.system(size: 14, weight: .bold))
+                        .font(theme.font(size: 14, weight: .bold))
                         .foregroundColor(theme.primary)
                 )
         }
@@ -84,7 +92,7 @@ struct PCTopBar: View {
             Task { await notifications.loadRecent() }
         }) {
             Image(systemName: "bell")
-                .font(.system(size: 15, weight: .semibold))
+                .font(theme.font(size: 15, weight: .semibold))
                 .foregroundColor(theme.text)
                 .frame(width: 34, height: 34)
                 .background(theme.surface)
@@ -93,7 +101,7 @@ struct PCTopBar: View {
                 .overlay(alignment: .topTrailing) {
                     if notifications.unreadCount > 0 {
                         Text("\(notifications.unreadCount)")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(theme.font(size: 10, weight: .bold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 5)
                             .frame(minWidth: 17, minHeight: 17)

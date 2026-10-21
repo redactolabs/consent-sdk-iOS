@@ -169,12 +169,16 @@ public struct PrivacyFormData: Codable, Sendable, Equatable {
     public let purposes: [RawPurposeWrapper]
     public var directGroups: [FormProductGroup]? = nil
     public var nominatedGroups: [FormProductGroup]? = nil
+    /// The request types the published Privacy Center settings allow, as
+    /// lower-case keys. Absent on servers that predate the settings: all are allowed.
+    public var enabledRequestTypes: [String]? = nil
 
     enum CodingKeys: String, CodingKey {
         case uuid, name, contact, purposes
         case grievanceOptions = "grievance_options"
         case directGroups = "direct_groups"
         case nominatedGroups = "nominated_groups"
+        case enabledRequestTypes = "enabled_request_types"
     }
 
     public init(
@@ -184,7 +188,8 @@ public struct PrivacyFormData: Codable, Sendable, Equatable {
         grievanceOptions: [GrievanceOption] = [],
         purposes: [RawPurposeWrapper] = [],
         directGroups: [FormProductGroup]? = nil,
-        nominatedGroups: [FormProductGroup]? = nil
+        nominatedGroups: [FormProductGroup]? = nil,
+        enabledRequestTypes: [String]? = nil
     ) {
         self.uuid = uuid
         self.name = name
@@ -193,6 +198,7 @@ public struct PrivacyFormData: Codable, Sendable, Equatable {
         self.purposes = purposes
         self.directGroups = directGroups
         self.nominatedGroups = nominatedGroups
+        self.enabledRequestTypes = enabledRequestTypes
     }
 
     /// An option or purpose this SDK cannot read is dropped rather than failing
@@ -206,6 +212,7 @@ public struct PrivacyFormData: Codable, Sendable, Equatable {
         purposes = c.lenient([LenientElement<RawPurposeWrapper>].self, forKey: .purposes).compactMap(\.value)
         directGroups = c.optional([FormProductGroup].self, forKey: .directGroups)
         nominatedGroups = c.optional([FormProductGroup].self, forKey: .nominatedGroups)
+        enabledRequestTypes = c.optional([String].self, forKey: .enabledRequestTypes)
     }
 }
 

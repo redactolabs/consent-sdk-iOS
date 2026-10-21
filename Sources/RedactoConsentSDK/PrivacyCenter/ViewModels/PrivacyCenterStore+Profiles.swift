@@ -6,11 +6,31 @@ extension PrivacyCenterStore {
     }
 
     public func start() async {
+        if showsSignIn {
+            // The built-in sign-in is the first screen; the centre loads once
+            // it issues tokens.
+            events.ready(signedIn: false)
+            loadSettings()
+            await loadBranding()
+            await awaitSettings()
+            return
+        }
         await resolveProfiles()
+        // With no token yet the host is still fetching one: the centre reports
+        // ready once `syncHostTokens` hands it over.
+        if hasSession {
+            events.ready(signedIn: true)
+        }
+        restartInactivityTimerIfNeeded()
+        // The published settings never hold the centre up: they arrive
+        // alongside its data and swap in when they land. They go through the
+        // one settings task, so a later fetch always replaces this one.
+        loadSettings()
         if profilePhase == .resolved {
             await checkDataAvailability()
         }
         await loadBranding()
+        await awaitSettings()
     }
 
     public func resolveProfiles() async {

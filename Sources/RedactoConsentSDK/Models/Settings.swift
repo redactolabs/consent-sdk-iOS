@@ -54,8 +54,8 @@ public struct ConsentSettings {
     var selectionControlOverride: SelectionControlType?
     var confirmBeforeSubmitOverride: Bool?
 
-    /// Defaults to `.checkbox`. Applies to the purpose rows and the product
-    /// section headings, not to individual data elements.
+    /// Defaults to `.checkbox`. Applies to the purpose rows, the product
+    /// section headings and the data element rows of the modal notice.
     public var selectionControl: SelectionControlType {
         get { selectionControlOverride ?? NoticeAppearanceDefaults.selectionControl }
         set { selectionControlOverride = newValue }
