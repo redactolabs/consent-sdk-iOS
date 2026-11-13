@@ -214,6 +214,11 @@ public final class ReceiptListViewModel: ObservableObject {
     }
 
     // MARK: - Download
+    /// Deletes a file `downloadReceipt` wrote, once sharing is over.
+    public func discardDownloadedReceipt(_ url: URL) {
+        try? FileManager.default.removeItem(at: url)
+    }
+
     /// Fetch the receipt PDF bytes and write them to a temporary file for sharing.
     /// Returns the on-disk URL on success, or nil on failure.
     public func downloadReceipt(_ receipt: Receipt) async -> URL? {
@@ -223,9 +228,18 @@ public final class ReceiptListViewModel: ObservableObject {
         defer { downloadingUuid = nil }
         do {
             let data = try await store.api.getReceiptPdf(receiptUuid: receipt.uuid)
-            let dir = FileManager.default.temporaryDirectory
+            let tmp = FileManager.default.temporaryDirectory
+            // Earlier releases left receipt-<uuid>.pdf at the top of tmp for good.
+            for leftover in (try? FileManager.default.contentsOfDirectory(at: tmp, includingPropertiesForKeys: nil)) ?? []
+            where leftover.lastPathComponent.hasPrefix("receipt-") && leftover.pathExtension == "pdf" {
+                try? FileManager.default.removeItem(at: leftover)
+            }
+            let dir = tmp.appendingPathComponent("redacto-receipts", isDirectory: true)
+            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
             let url = dir.appendingPathComponent("receipt-\(receipt.uuid).pdf")
-            try data.write(to: url, options: .atomic)
+            // Unreadable while the device is locked; the screen removes it once
+            // the share sheet closes.
+            try data.write(to: url, options: [.atomic, .completeFileProtection])
             return url
         } catch {
             if !isCancellationError(error) {

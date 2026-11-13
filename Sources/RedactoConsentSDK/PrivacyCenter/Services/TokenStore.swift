@@ -230,6 +230,9 @@ public actor TokenStore {
             throw expireSession(PrivacyCenterAPIError.refreshFailed("No refresh token available"), deadToken: nil)
         }
         let path = "\(baseUrl)/public/organisations/\(orgId)/workspaces/\(wsId)/otp/refresh"
+        if SafeLink.isPlaintextRemote(path) {
+            throw PrivacyCenterAPIError.networkError(NoticeBaseUrl.insecureBaseUrlMessage)
+        }
         guard let url = URL(string: path) else {
             throw noteTransientFailure(PrivacyCenterAPIError.networkError("Invalid refresh URL"))
         }

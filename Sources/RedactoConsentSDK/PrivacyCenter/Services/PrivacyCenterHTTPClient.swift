@@ -103,6 +103,9 @@ public actor PrivacyCenterHTTPClient {
 
     private func buildRequest(method: String, host: PCHost = .consent, path: String, queryItems: [URLQueryItem], body: Data?, contentType: String?, accept: String = "application/json", headers: [String: String] = [:]) async throws -> URLRequest {
         let urlString = absoluteUrl(path, host: host)
+        if SafeLink.isPlaintextRemote(urlString) {
+            throw PrivacyCenterAPIError.networkError(NoticeBaseUrl.insecureBaseUrlMessage)
+        }
         guard var components = URLComponents(string: urlString) else {
             throw PrivacyCenterAPIError.networkError("Invalid URL: \(urlString)")
         }
@@ -137,9 +140,9 @@ public actor PrivacyCenterHTTPClient {
         do {
             return try EnvelopeDecoder.decode(T.self, from: data, decoder: decoder)
         } catch {
-            // Kept for `debugDescription` only; people see a generic message.
-            let raw = String(data: data, encoding: .utf8)?.prefix(500) ?? ""
-            throw PrivacyCenterAPIError.decodingError("\(error). Response: \(raw)")
+            // The decoding error names the field; the body itself (a consent
+            // record, a case) stays out of what a host's onError may log.
+            throw PrivacyCenterAPIError.decodingError("\(error)")
         }
     }
 

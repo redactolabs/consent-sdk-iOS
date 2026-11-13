@@ -255,7 +255,7 @@ public final class NotificationsViewModel: ObservableObject {
             } else {
                 result = .notFound
             }
-        } else if let parsed = URL(string: url), ["http", "https"].contains(parsed.scheme?.lowercased() ?? "") {
+        } else if let parsed = SafeLink.web(url) {
             result = .opened(parsed)
         } else {
             return nil

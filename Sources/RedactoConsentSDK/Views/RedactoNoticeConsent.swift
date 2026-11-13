@@ -512,7 +512,7 @@ public struct RedactoNoticeConsent: View {
             defaultText: ac.privacyPolicyAnchorText.nonEmpty ?? NoticeCopy.privacyPolicyAnchor
         ))
         anchor.foregroundColor = theme.link
-        if !ac.privacyPolicyUrl.isEmpty, let url = URL(string: ac.privacyPolicyUrl) {
+        if let url = SafeLink.web(ac.privacyPolicyUrl) {
             anchor.link = url
         }
         line.append(anchor)
@@ -530,7 +530,7 @@ public struct RedactoNoticeConsent: View {
                 "privacy_center_anchor_text",
                 defaultText: ac.privacyCenterAnchorText.flatMap { $0.isEmpty ? nil : $0 } ?? NoticeCopy.privacyCenterAnchor
             ))
-            if let url = URL(string: ac.privacyCenterUrl) {
+            if let url = SafeLink.web(ac.privacyCenterUrl) {
                 anchor.link = url
             }
             result.append(anchor)

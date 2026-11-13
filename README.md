@@ -123,7 +123,7 @@ Put the services behind one local gateway, the way production does, and pass its
 
 Then pass `baseUrl: "http://localhost:8080"`. Both services serve their own path prefix (`/consent/…`, `/consent-ledger/…`), so the gateway forwards paths unchanged. Any reverse proxy works the same way (nginx, Traefik, your docker-compose gateway).
 
-The iOS Simulator reaches the Mac at `http://localhost:8080`. A physical device needs the Mac's LAN IP, and plain `http` may need an App Transport Security exception in your debug build.
+The iOS Simulator reaches the Mac at `http://localhost:8080`. Plain `http` is accepted for `localhost` and `127.0.0.1` only; any other host must be `https`, so a physical device needs the gateway behind a TLS certificate (a dev certificate or an https tunnel), not the Mac's LAN IP over `http`.
 
 ## Notice behaviour set in the console
 

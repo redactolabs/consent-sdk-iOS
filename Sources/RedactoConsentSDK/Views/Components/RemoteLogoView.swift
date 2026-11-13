@@ -79,7 +79,10 @@ private struct SVGWebView: UIViewRepresentable {
         // and lays the page out ~980pt wide: the SVG then draws outside its box.
         let configuration = WKWebViewConfiguration()
         configuration.defaultWebpagePreferences.preferredContentMode = .mobile
+        // The logo is a tenant-supplied SVG: it may draw, never run script.
+        configuration.defaultWebpagePreferences.allowsContentJavaScript = false
         let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.navigationDelegate = context.coordinator
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.backgroundColor = .clear
@@ -93,11 +96,24 @@ private struct SVGWebView: UIViewRepresentable {
         loadSVG(in: webView)
     }
 
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    /// The web view shows the one document the SDK loaded; a link inside the
+    /// SVG cannot take it anywhere else.
+    @MainActor final class Coordinator: NSObject, WKNavigationDelegate {
+        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
+            let isOwnDocument = navigationAction.navigationType == .other
+                && navigationAction.request.url?.absoluteString == "about:blank"
+            return isOwnDocument ? .allow : .cancel
+        }
+    }
+
     private func loadSVG(in webView: WKWebView) {
         guard let svgString = String(data: svgData, encoding: .utf8) else { return }
         let html = """
         <!DOCTYPE html>
         <html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">
         <style>
         * { margin: 0; padding: 0; }
         html, body { width: 100%; height: 100%; background: transparent; overflow: hidden; }

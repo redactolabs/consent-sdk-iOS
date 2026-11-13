@@ -783,6 +783,7 @@ public enum ConsentAPI {
 
     public static func fetchNoticeConsentStatus(_ params: NoticeConsentStatusParams) async -> NoticeConsentStatus? {
         guard let ledger = NoticeBaseUrl.configured(params.ledgerBaseUrl),
+              !SafeLink.isPlaintextRemote(ledger),
               !params.accessToken.isEmpty,
               !params.organisationUuid.isEmpty,
               !params.workspaceUuid.isEmpty,

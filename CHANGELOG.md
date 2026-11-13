@@ -4,6 +4,16 @@ All notable changes to `RedactoConsentSDK` are documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [Unreleased]
+
+### Security
+
+- Links from a notice config or an API response (privacy policy, privacy centre, DPO, product policy, Privacy Center footer, case documents, notifications, the DigiLocker redirect) open only when they are `http(s)` URLs with a host; any other scheme renders no link.
+- The SVG logo web view runs no script, loads no subresources and cannot navigate.
+- A `baseUrl` or `ledgerBaseUrl` using plain `http` to any host other than `localhost`, `127.0.0.1` or `::1` is refused before a token or OTP leaves the device.
+- The receipt PDF is written with complete file protection and deleted when the share sheet closes (`ReceiptListViewModel.discardDownloadedReceipt`).
+- Upload filenames are reduced to a name a `Content-Disposition` header can carry; decoding errors no longer embed the response body.
+
 ## [2.1.0] - 2026-10-21
 
 Brings the SDK to parity with the React SDK on staging (`10.4.0-beta.1`).

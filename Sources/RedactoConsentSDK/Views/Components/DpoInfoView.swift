@@ -116,7 +116,7 @@ struct DpoInfoView: View {
 
         result.append(AttributedString(" "))
         var anchorText = AttributedString(anchor)
-        if let url = URL(string: urlString), !urlString.isEmpty {
+        if let url = SafeLink.web(urlString) {
             anchorText.link = url
         }
         result.append(anchorText)

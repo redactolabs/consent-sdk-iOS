@@ -27,7 +27,7 @@ enum ProductPolicies {
         for (index, link) in links.enumerated() {
             result.append(AttributedString(index == 0 ? " " : ", "))
             var anchor = AttributedString(link.name)
-            anchor.link = URL(string: link.url)
+            anchor.link = SafeLink.web(link.url)
             result.append(anchor)
         }
         return result

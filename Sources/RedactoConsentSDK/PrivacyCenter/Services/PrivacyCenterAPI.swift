@@ -530,6 +530,7 @@ enum PrivacyCenterBrandingAPI {
     }
 
     private static func fetch(from address: String, urlSession: URLSession) async throws -> OrgBrandingDetail {
+        if SafeLink.isPlaintextRemote(address) { throw PrivacyCenterAPIError.networkError(NoticeBaseUrl.insecureBaseUrlMessage) }
         guard let url = URL(string: address) else {
             throw PrivacyCenterAPIError.networkError("Invalid branding URL")
         }
