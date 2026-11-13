@@ -74,7 +74,7 @@ struct PCSettingsFooter: View {
     private func links(_ links: [PrivacyCenterFooterLink]) -> some View {
         FlowLayoutCompat(spacing: 12, centered: true) {
             ForEach(links, id: \.pcFooterKey) { link in
-                if let url = URL(string: link.url) {
+                if let url = SafeLink.web(link.url) {
                     Button(link.label) { openURL(url) }
                         .font(theme.font(size: 12, weight: .medium))
                         .foregroundColor(theme.link)
@@ -101,14 +101,14 @@ struct PCSettingsFooter: View {
                     if content.grievanceEmail != nil, content.grievanceUrl != nil {
                         Text("·").foregroundColor(theme.textSecondary)
                     }
-                    if let form = content.grievanceUrl.flatMap(URL.init(string:)) {
+                    if let form = content.grievanceUrl.flatMap({ SafeLink.web($0) }) {
                         Button(PCStrings.footerGrievanceForm) { openURL(form) }
                             .foregroundColor(theme.link)
                             .buttonStyle(.plain)
                     }
                 }
             }
-            if let board = content.dpBoardUrl.flatMap(URL.init(string:)) {
+            if let board = content.dpBoardUrl.flatMap({ SafeLink.web($0) }) {
                 Button(PCStrings.footerDataProtectionBoard) { openURL(board) }
                     .foregroundColor(theme.link)
                     .buttonStyle(.plain)

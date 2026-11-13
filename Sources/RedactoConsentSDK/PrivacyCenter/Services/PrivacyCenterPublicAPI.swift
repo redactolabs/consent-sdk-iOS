@@ -149,6 +149,8 @@ enum PrivacyCenterPublicAPI {
     }
 
     private static func post(_ url: String, body: [String: String], urlSession: URLSession) async throws -> [String: PCJSONValue] {
+        // The OTP code and the issued tokens must not travel in cleartext.
+        if SafeLink.isPlaintextRemote(url) { throw PrivacyCenterAPIError.networkError(NoticeBaseUrl.insecureBaseUrlMessage) }
         guard let requestUrl = URL(string: url) else { throw PrivacyCenterSignInError(status: nil, code: nil) }
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "POST"

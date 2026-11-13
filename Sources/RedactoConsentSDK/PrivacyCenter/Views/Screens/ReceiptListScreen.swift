@@ -28,7 +28,10 @@ public struct ReceiptListScreen: View {
         .onReceive(NotificationCenter.default.publisher(for: .privacyCenterLanguageChanged)) { _ in
             Task { await vm.refresh() }
         }
-        .sheet(isPresented: $showShareSheet) {
+        .sheet(isPresented: $showShareSheet, onDismiss: {
+            if let shareURL { vm.discardDownloadedReceipt(shareURL) }
+            shareURL = nil
+        }) {
             if let shareURL {
                 ShareSheet(items: [shareURL])
             }

@@ -47,7 +47,7 @@ public struct MessageDocument: Codable, Sendable, Identifiable, Equatable {
     /// React `getDownloadUrl`: `url || download_url`.
     public var downloadURL: URL? {
         guard let raw = fileUrl?.url.pcNonEmpty ?? fileUrl?.downloadUrl.pcNonEmpty else { return nil }
-        return URL(string: raw)
+        return SafeLink.web(raw)
     }
 }
 

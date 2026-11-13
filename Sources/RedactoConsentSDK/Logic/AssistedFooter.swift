@@ -155,8 +155,6 @@ enum AssistedFooter {
     }
 
     private static func url(_ raw: String) -> URL? {
-        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return nil }
-        return URL(string: trimmed)
+        SafeLink.web(raw)
     }
 }

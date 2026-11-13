@@ -98,7 +98,7 @@ extension ConsentNoticeViewModel {
                 self.isInitiatingVerification = true
 
                 let opened: Bool
-                if let url = URL(string: redirect) {
+                if let url = SafeLink.web(redirect) {
                     opened = await self.openURL(url)
                 } else {
                     opened = false

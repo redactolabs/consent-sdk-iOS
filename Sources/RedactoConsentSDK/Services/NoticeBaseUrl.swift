@@ -24,18 +24,18 @@ struct NoticeEndpoints: Equatable, Sendable {
 
     func consentServer() throws -> String {
         guard let server = NoticeBaseUrl.configured(baseUrl) else { throw NoticeBaseUrl.missingBaseUrl }
-        return server
+        return try NoticeBaseUrl.requireSecure(server)
     }
 
     func read(specificUuid: String?, isSandbox: Bool) throws -> String {
         if let ledger = NoticeBaseUrl.configured(ledgerBaseUrl), NoticeBaseUrl.configured(specificUuid) == nil, !isSandbox {
-            return ledger
+            return try NoticeBaseUrl.requireSecure(ledger)
         }
         return try consentServer()
     }
 
     func write() throws -> String {
-        if let ledger = NoticeBaseUrl.configured(ledgerBaseUrl) { return ledger }
+        if let ledger = NoticeBaseUrl.configured(ledgerBaseUrl) { return try NoticeBaseUrl.requireSecure(ledger) }
         return try consentServer()
     }
 
@@ -64,6 +64,15 @@ enum NoticeBaseUrl {
     }
 
     static let missingBaseUrl = RedactoAPIError.invalidRequest("baseUrl is required")
+    static let insecureBaseUrlMessage = "baseUrl and ledgerBaseUrl must use https (http is allowed for localhost only)"
+    static let insecureBaseUrl = RedactoAPIError.invalidRequest(insecureBaseUrlMessage)
+
+    /// `url` unless it is plain http to a host other than loopback, which would
+    /// send the data principal's tokens in cleartext.
+    static func requireSecure(_ url: String) throws -> String {
+        if SafeLink.isPlaintextRemote(url) { throw insecureBaseUrl }
+        return url
+    }
 
     /// An absolute http(s) URL: scheme and authority, then an optional path.
     private static let absoluteHttpUrl = #"^https?://(?:\[[0-9a-f:.]+\]|[^\s/?#@:\[\]]+)(?::\d+)?(?:/[^\s?#]*)?$"#
