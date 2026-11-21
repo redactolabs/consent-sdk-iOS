@@ -165,7 +165,8 @@ final class PrivacyCenterManageConsentTests: XCTestCase {
         XCTAssertEqual(retry["language"] as? String, "hi")
         XCTAssertEqual(retry["product_uuid"] as? String, F.productB)
         XCTAssertEqual(submits[1].header("Authorization"), "Bearer \(F.refreshedToken)")
-        XCTAssertEqual(submits[1].header(IdempotencyKeys.header), submits[0].header(IdempotencyKeys.header))
+        XCTAssertNotNil(submits[1].idempotencyKey)
+        XCTAssertEqual(submits[1].idempotencyKey, submits[0].idempotencyKey)
     }
 
     func testThePythonRetryAfterA401KeepsLanguageAndProduct() async throws {

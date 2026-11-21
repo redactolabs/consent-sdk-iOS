@@ -293,6 +293,41 @@ final class NoticeMultiProductTests: XCTestCase {
             ]
         )
     }
+
+    // MARK: - show_required_hint
+
+    func testHidingTheRequiredHintAlsoHidesTheProductNamingOne() throws {
+        let viewModel = N.viewModel(try twoProductNotice(config: ["appearance": ["show_required_hint": false]]))
+
+        XCTAssertEqual(viewModel.drawnConfirmHintText, nothingChosen)
+
+        viewModel.handlePurposeToggle("purpose-only-a", productUuid: "prod-a")
+        XCTAssertTrue(viewModel.acceptDisabled)
+        XCTAssertNil(viewModel.drawnConfirmHintText)
+        XCTAssertEqual(viewModel.unseenConfirmHintText, owes("Product A"))
+    }
+
+    // MARK: - show_data_element_controls
+
+    func testAProductTickTakesEveryLiveDataElementOnceTheyHaveNoTickOfTheirOwn() throws {
+        let viewModel = N.viewModel(try twoProductNotice(config: ["appearance": ["show_data_element_controls": false]]))
+
+        viewModel.handleProductCheckboxChange("prod-a")
+        XCTAssertEqual(viewModel.selectedDataElements["prod-a:purpose-shared-purpose-shared-id"], true)
+        XCTAssertEqual(viewModel.selectedDataElements["prod-a:purpose-shared-purpose-shared-extra"], true)
+        XCTAssertEqual(viewModel.selectedDataElements["prod-b:purpose-shared-purpose-shared-extra"], false)
+
+        viewModel.handleProductCheckboxChange("prod-a")
+        XCTAssertFalse(viewModel.selectedDataElements.values.contains(true))
+    }
+
+    func testAProductTickTakesOnlyTheMandatoryDataElementsWhileTheyKeepTheirTicks() throws {
+        let viewModel = N.viewModel(try twoProductNotice())
+
+        viewModel.handleProductCheckboxChange("prod-a")
+        XCTAssertEqual(viewModel.selectedDataElements["prod-a:purpose-shared-purpose-shared-id"], true)
+        XCTAssertEqual(viewModel.selectedDataElements["prod-a:purpose-shared-purpose-shared-extra"], false)
+    }
 }
 
 @MainActor
@@ -402,5 +437,83 @@ final class NoticeSingleProductTests: XCTestCase {
         byPurpose.handlePurposeToggle("purpose-mixed", productUuid: "prod-a")
         XCTAssertEqual(byPurpose.selectedDataElements["prod-a:purpose-mixed-element-old"], false)
         XCTAssertEqual(byPurpose.selectedDataElements["prod-a:purpose-mixed-element-nick"], true)
+    }
+
+    // MARK: - show_required_hint
+
+    private let hidesRequiredHint: [String: Any] = ["appearance": ["show_required_hint": false]]
+
+    func testHidingTheRequiredHintKeepsItForVoiceOverAndConfirmStillHeld() throws {
+        let viewModel = N.viewModel(try N.notice(products: nil, purposes: [orders, marketing], config: hidesRequiredHint))
+
+        XCTAssertTrue(viewModel.acceptDisabled)
+        XCTAssertNil(viewModel.drawnConfirmHintText)
+        XCTAssertEqual(viewModel.unseenConfirmHintText, "Accept the required purposes to confirm.")
+
+        viewModel.handlePurposeToggle("purpose-orders")
+        XCTAssertFalse(viewModel.acceptDisabled)
+        XCTAssertNil(viewModel.confirmHintText)
+        XCTAssertNil(viewModel.unseenConfirmHintText)
+    }
+
+    func testTheRequiredHintIsDrawnWhenTheSwitchIsAbsent() throws {
+        let viewModel = N.viewModel(try N.notice(products: nil, purposes: [orders, marketing]))
+
+        XCTAssertEqual(viewModel.drawnConfirmHintText, "Accept the required purposes to confirm.")
+        XCTAssertNil(viewModel.unseenConfirmHintText)
+    }
+
+    // MARK: - show_data_element_controls
+
+    private let listsDataElementsOnly: [String: Any] = ["appearance": ["show_data_element_controls": false]]
+
+    // With nothing to choose between, taking the purpose takes all of them.
+    func testAPurposeTickTakesEveryLiveDataElementOnceTheyHaveNoTickOfTheirOwn() throws {
+        let viewModel = N.viewModel(try N.notice(products: nil, purposes: [orders, marketing], config: listsDataElementsOnly))
+
+        viewModel.handlePurposeToggle("purpose-orders")
+        XCTAssertEqual(viewModel.selectedDataElements["purpose-orders-purpose-orders-id"], true)
+        XCTAssertEqual(viewModel.selectedDataElements["purpose-orders-purpose-orders-extra"], true)
+        XCTAssertEqual(viewModel.selectedDataElements["purpose-marketing-purpose-marketing-extra"], false)
+
+        viewModel.handlePurposeToggle("purpose-orders")
+        XCTAssertFalse(viewModel.selectedDataElements.values.contains(true))
+    }
+
+    // The optional element stays the visitor's own choice while it has a tick.
+    func testAPurposeTickTakesOnlyTheMandatoryDataElementsWhileTheyKeepTheirTicks() throws {
+        let kept: [[String: Any]] = [[:], ["appearance": ["show_data_element_controls": true]], ["appearance": ["show_data_element_controls": "off"]]]
+        for config in kept {
+            let viewModel = N.viewModel(try N.notice(products: nil, purposes: [orders, marketing], config: config))
+
+            viewModel.handlePurposeToggle("purpose-orders")
+            XCTAssertEqual(viewModel.selectedDataElements["purpose-orders-purpose-orders-id"], true)
+            XCTAssertEqual(viewModel.selectedDataElements["purpose-orders-purpose-orders-extra"], false)
+        }
+    }
+
+    func testTheSoleProductTickTakesEveryLiveDataElementOnceTheyHaveNoTickOfTheirOwn() throws {
+        let viewModel = N.viewModel(try N.notice(
+            products: [N.product("prod-a", "Product A", mandatory: false)],
+            purposes: [orders, marketing],
+            config: listsDataElementsOnly
+        ))
+
+        viewModel.handleSoleProductCheckboxChange()
+        XCTAssertEqual(viewModel.selectedPurposes, ["purpose-orders": true, "purpose-marketing": false])
+        XCTAssertEqual(viewModel.selectedDataElements["purpose-orders-purpose-orders-id"], true)
+        XCTAssertEqual(viewModel.selectedDataElements["purpose-orders-purpose-orders-extra"], true)
+        XCTAssertEqual(viewModel.selectedDataElements["purpose-marketing-purpose-marketing-extra"], false)
+    }
+
+    func testAMandatoryPurposeOpensHoldingEveryLiveDataElementOnceTheyHaveNoTickOfTheirOwn() throws {
+        var config = listsDataElementsOnly
+        config["purpose_preselection"] = "MANDATORY"
+        let viewModel = N.viewModel(try N.notice(products: nil, purposes: [orders, marketing], config: config))
+
+        XCTAssertEqual(viewModel.selectedPurposes, ["purpose-orders": true, "purpose-marketing": false])
+        XCTAssertEqual(viewModel.selectedDataElements["purpose-orders-purpose-orders-id"], true)
+        XCTAssertEqual(viewModel.selectedDataElements["purpose-orders-purpose-orders-extra"], true)
+        XCTAssertEqual(viewModel.selectedDataElements["purpose-marketing-purpose-marketing-extra"], false)
     }
 }

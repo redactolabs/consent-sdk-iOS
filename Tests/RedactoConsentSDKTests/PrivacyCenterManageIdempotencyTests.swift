@@ -24,7 +24,13 @@ final class PrivacyCenterManageIdempotencyTests: XCTestCase {
     private func key(_ index: Int) -> String? {
         let requests = PCMockURLProtocol.requests
         guard index < requests.count else { return nil }
-        return requests[index].header(IdempotencyKeys.header)
+        return requests[index].idempotencyKey
+    }
+
+    private func header(_ index: Int) -> String? {
+        let requests = PCMockURLProtocol.requests
+        guard index < requests.count else { return nil }
+        return requests[index].header("Idempotency-Key")
     }
 
     func testTheLedgerRevokeReusesItsKeyAfterA5xx() async throws {
@@ -36,6 +42,8 @@ final class PrivacyCenterManageIdempotencyTests: XCTestCase {
         try await revoke(F.ledger)
         XCTAssertNotNil(key(0))
         XCTAssertEqual(key(1), key(0))
+        XCTAssertNil(header(0))
+        XCTAssertNil(header(1))
     }
 
     func testTheLedgerRevokeReusesItsKeyAfterADroppedConnection() async throws {
@@ -76,8 +84,8 @@ final class PrivacyCenterManageIdempotencyTests: XCTestCase {
         let keys = IdempotencyKeys()
         var seen: [String] = []
         for _ in 0..<2 {
-            _ = try? await keys.withKey(url: F.ledger, body: Data("{}".utf8)) { headers -> (Data, URLResponse) in
-                seen.append(headers[IdempotencyKeys.header] ?? "")
+            _ = try? await keys.withKey(url: F.ledger, body: Data("{}".utf8)) { key -> (Data, URLResponse) in
+                seen.append(key)
                 throw PrivacyCenterAPIError.validationError(nil)
             }
         }
@@ -89,8 +97,8 @@ final class PrivacyCenterManageIdempotencyTests: XCTestCase {
         let keys = IdempotencyKeys()
         var seen: [String] = []
         for _ in 0..<2 {
-            _ = try? await keys.withKey(url: F.ledger, body: Data("{}".utf8)) { headers -> (Data, URLResponse) in
-                seen.append(headers[IdempotencyKeys.header] ?? "")
+            _ = try? await keys.withKey(url: F.ledger, body: Data("{}".utf8)) { key -> (Data, URLResponse) in
+                seen.append(key)
                 throw PrivacyCenterAPIError.serverError(503, nil)
             }
         }

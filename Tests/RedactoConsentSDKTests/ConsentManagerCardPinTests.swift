@@ -16,7 +16,7 @@ final class ConsentManagerCardPinTests: XCTestCase {
     }
 
     @MainActor
-    private func makeViewModel(ledger: String?) -> ConsentManagerViewModel {
+    private func makeViewModel(ledger: String?, language: String = "hi") -> ConsentManagerViewModel {
         let store = PrivacyCenterStore(
             baseUrl: F.base,
             slug: "acme",
@@ -26,7 +26,7 @@ final class ConsentManagerCardPinTests: XCTestCase {
             initialPage: .consentManager,
             onBack: nil,
             onError: { _ in false },
-            language: "hi",
+            language: language,
             urlSession: F.session(),
             ledgerBaseUrl: ledger
         )
@@ -65,6 +65,31 @@ final class ConsentManagerCardPinTests: XCTestCase {
         XCTAssertEqual(submit.json["language"] as? String, "hi")
         XCTAssertNil(submit.json["nominator_uuid"])
         XCTAssertNil(vm.errorMessage)
+    }
+
+    /// React cec0260: the centre leaves English off its reads, and the write
+    /// used to reuse that, so an English revoke was recorded in the notice's
+    /// default language.
+    @MainActor
+    func testARevokeMadeInEnglishIsRecordedInEnglishOnTheLedger() async throws {
+        let vm = makeViewModel(ledger: F.ledger, language: "en")
+        vm.detail = try twoCardDetail()
+
+        await vm.performAction(on: vm.directGroups[0].purposes[0], action: .revoke)
+
+        let submit = try XCTUnwrap(PCMockURLProtocol.requests(pathSuffix: "/submit-consent").first)
+        XCTAssertEqual(submit.json["language"] as? String, "en")
+    }
+
+    @MainActor
+    func testARevokeMadeInEnglishIsRecordedInEnglishOnPython() async throws {
+        let vm = makeViewModel(ledger: nil, language: "en")
+        vm.detail = try twoCardDetail()
+
+        await vm.performAction(on: vm.directGroups[0].purposes[0], action: .revoke)
+
+        let submit = try XCTUnwrap(PCMockURLProtocol.requests(pathSuffix: "/manage-consent").first)
+        XCTAssertEqual(submit.json["language"] as? String, "en")
     }
 
     @MainActor

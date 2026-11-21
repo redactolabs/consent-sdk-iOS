@@ -58,7 +58,11 @@ final class NoticeSubmitTransportTests: XCTestCase {
     }
 
     private var keysSent: [String?] {
-        TransportStubProtocol.requests(pathSuffix: "/submit-consent").map { $0.header(IdempotencyKeys.header) }
+        TransportStubProtocol.requests(pathSuffix: "/submit-consent").map(\.idempotencyKey)
+    }
+
+    private var headersSent: [String?] {
+        TransportStubProtocol.requests(pathSuffix: "/submit-consent").map { $0.header("Idempotency-Key") }
     }
 
     func testRetriesA5xxSubmissionUnderTheSameKey() async throws {
@@ -69,6 +73,7 @@ final class NoticeSubmitTransportTests: XCTestCase {
         XCTAssertEqual(keysSent.count, 2)
         XCTAssertNotNil(keysSent[0])
         XCTAssertEqual(keysSent[1], keysSent[0])
+        XCTAssertEqual(headersSent, [nil, nil])
     }
 
     func testRetriesADroppedConnectionUnderTheSameKey() async throws {

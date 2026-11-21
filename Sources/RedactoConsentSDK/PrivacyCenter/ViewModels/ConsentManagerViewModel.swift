@@ -418,7 +418,10 @@ public final class ConsentManagerViewModel: ObservableObject {
                 dataElementUuids: dataElementUuids,
                 nominatorContact: nominatorContact,
                 nominatorUuid: nominatorUuid,
-                language: store.langParam
+                // The language the visitor acted in, English included. Reads
+                // leave English off (`langParam`), but a change sent without a
+                // language is recorded in the notice's default one instead.
+                language: store.language
             ))
             actionMessage = Self.successMessage(action)
             store.showToast(Self.successMessage(action), kind: .success)

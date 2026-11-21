@@ -143,19 +143,34 @@ public struct RedactoNoticeConsent: View {
     public var body: some View {
         let theme = theme
         Group {
-            if viewModel.hasAlreadyConsented {
-                EmptyView()
-            } else {
+            switch viewModel.paintStage {
+            case .nothing:
+                // Not `EmptyView`: with `blockUI` off this is the first thing
+                // drawn, and the `onAppear` below that starts the read needs a
+                // real view to fire on. It draws nothing and takes no touches.
+                Color.clear
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            case .blockingBackdrop:
+                loadingBackdrop
+            case .dialog:
                 chrome(theme)
+                    .onAppear {
+                        // The dim and the entrance play when the notice
+                        // arrives, not when the read starts.
+                        withAnimation(NoticeMotion.animation(theme.layout.isDocked(isPhone: isPhone) ? NoticeMotion.sheet : NoticeMotion.dim, enabled: motionEnabled)) {
+                            presented = true
+                        }
+                    }
+                    .onDisappear {
+                        presented = false
+                    }
             }
         }
         .onAppear {
             if !hasStarted {
                 hasStarted = true
                 viewModel.fetchContent()
-            }
-            withAnimation(NoticeMotion.animation(theme.layout.isDocked(isPhone: isPhone) ? NoticeMotion.sheet : NoticeMotion.dim, enabled: motionEnabled)) {
-                presented = true
             }
         }
         .onChange(of: viewModel.selectedLanguage) { _ in
@@ -182,6 +197,15 @@ public struct RedactoNoticeConsent: View {
 
     // MARK: - Chrome
 
+    /// Holds the host's screen for the round trip the dialog waits on, drawing
+    /// nothing: no dim, no card, no spinner.
+    private var loadingBackdrop: some View {
+        Color.clear
+            .contentShape(Rectangle())
+            .ignoresSafeArea()
+            .accessibilityHidden(true)
+    }
+
     private func chrome(_ theme: NoticeTheme) -> some View {
         GeometryReader { geo in
             let placement = NoticePlacement.resolve(
@@ -199,16 +223,10 @@ public struct RedactoNoticeConsent: View {
                         .opacity(presented ? 1 : 0)
                         .accessibilityHidden(true)
                 }
-                if viewModel.isLoading && theme.appearance.style.layout.loaderPill && theme.isGlass {
-                    NoticeLoaderPill(theme: theme)
-                        .padding(.bottom, isPhone ? 28 : 0)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: isPhone ? .bottom : .center)
-                } else {
-                    card(theme, placement: placement, maxHeight: geo.size.height * placement.maxHeightFraction)
-                        .padding(placement.edgeInset)
-                        .offset(y: placement.docked && !presented ? geo.size.height : 0)
-                        .opacity(placement.docked || presented ? 1 : 0)
-                }
+                card(theme, placement: placement, maxHeight: geo.size.height * placement.maxHeightFraction)
+                    .padding(placement.edgeInset)
+                    .offset(y: placement.docked && !presented ? geo.size.height : 0)
+                    .opacity(placement.docked || presented ? 1 : 0)
             }
             .frame(width: geo.size.width, height: geo.size.height, alignment: placement.alignment)
         }
@@ -218,7 +236,7 @@ public struct RedactoNoticeConsent: View {
         let shape = NoticeCardShape(radius: theme.modalRadius, docked: placement.docked)
         return NoticeHeightCap(cap: maxHeight) {
             VStack(spacing: 0) {
-                if placement.docked && isPhone && !viewModel.isLoading {
+                if placement.docked && isPhone {
                     Capsule()
                         .fill(theme.grabber)
                         .frame(width: 38, height: 5)
@@ -237,6 +255,14 @@ public struct RedactoNoticeConsent: View {
         .noticeShadow(theme.cardShadow(docked: placement.docked))
         .accessibilityElement(children: .contain)
         .accessibilityAddTraits(.isModal)
+        .modifier(NoticeDialogName(name: hiddenDialogName))
+    }
+
+    /// A title taken out of sight still names the dialog, so VoiceOver reaches
+    /// it the way it reaches a visible one.
+    private var hiddenDialogName: String? {
+        guard viewModel.activeConfig != nil, !viewModel.chromeOptions.showsTitle else { return nil }
+        return noticeTitle
     }
 
     private func gutter(_ theme: NoticeTheme) -> CGFloat {
@@ -250,19 +276,6 @@ public struct RedactoNoticeConsent: View {
         if let configurationError = viewModel.configurationErrorMessage {
             NoticeConfigurationErrorView(message: configurationError)
                 .padding(gutter)
-        } else if viewModel.isLoading {
-            VStack(spacing: 16) {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: Color(hex: "#3498db")))
-                    .scaleEffect(1.4)
-                Text(NoticeCopy.loading)
-                    .noticeFont(size: theme.size(.privacyText))
-                    .foregroundColor(theme.text)
-            }
-            .frame(maxWidth: .infinity, minHeight: 200)
-            .padding(gutter)
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("Loading consent notice")
         } else if let fetchError = viewModel.fetchErrorMessage {
             NoticeErrorDialogView(
                 message: fetchError,
@@ -324,10 +337,12 @@ public struct RedactoNoticeConsent: View {
                 .padding(.top, isPhone ? 12 : 16)
             }
 
+            let controlsOnlyHeader = viewModel.chromeOptions
+                .headerHoldsOnlyControls(hasLogo: viewModel.logoUrl != nil)
             header(theme)
                 .padding(.horizontal, gutter)
                 .padding(.top, theme.isGlass ? (isPhone ? 12 : 22) : gutter)
-                .padding(.bottom, theme.isGlass ? (isPhone ? 12 : 14) : 15)
+                .padding(.bottom, controlsOnlyHeader ? 0 : (theme.isGlass ? (isPhone ? 12 : 14) : 15))
 
             ScrollViewReader { proxy in
                 ScrollView(showsIndicators: false) {
@@ -355,9 +370,17 @@ public struct RedactoNoticeConsent: View {
 
     // MARK: - Header
 
+    private var noticeTitle: String {
+        viewModel.getTranslatedText(
+            "notice_banner_heading",
+            defaultText: viewModel.activeConfig?.noticeBannerHeading.nonEmpty ?? NoticeCopy.bannerHeading
+        )
+    }
+
     private func header(_ theme: NoticeTheme) -> some View {
-        VStack(spacing: theme.isGlass ? 12 : (isPhone ? 12 : 10)) {
-            if let logoUrl = viewModel.logoUrl {
+        let options = viewModel.chromeOptions
+        return VStack(spacing: theme.isGlass ? 12 : (isPhone ? 12 : 10)) {
+            if options.showsLogo, let logoUrl = viewModel.logoUrl {
                 NoticeLogoRow(
                     url: logoUrl,
                     position: viewModel.logoPosition,
@@ -365,39 +388,46 @@ public struct RedactoNoticeConsent: View {
                     maxWidth: theme.appearance.logoMaxWidth(isPhone: isPhone)
                 )
             }
+            // Centred, the title owns its row: the controls would otherwise sit
+            // beside it and pull it off centre, so they move below the text.
             HStack(alignment: .center, spacing: 10) {
                 let titleHighlighted = isHighlighted("notice_banner_heading")
-                Text(viewModel.getTranslatedText(
-                    "notice_banner_heading",
-                    defaultText: viewModel.activeConfig?.noticeBannerHeading.nonEmpty ?? NoticeCopy.bannerHeading
-                ))
-                .noticeFont(size: theme.size(.title), weight: theme.weight(.title))
-                .foregroundColor(theme.ttsColor(theme.heading, highlighted: titleHighlighted))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .fixedSize(horizontal: false, vertical: true)
-                .ttsSegmentHighlighted(titleHighlighted)
-                .id("notice_banner_heading")
-                .accessibilityAddTraits(.isHeader)
+                Text(noticeTitle)
+                    .noticeFont(size: theme.size(.title), weight: theme.weight(.title))
+                    .foregroundColor(theme.ttsColor(theme.heading, highlighted: titleHighlighted))
+                    .multilineTextAlignment(options.centresHeader ? .center : .leading)
+                    .frame(maxWidth: .infinity, alignment: options.centresHeader ? .center : .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .ttsSegmentHighlighted(titleHighlighted)
+                    .id("notice_banner_heading")
+                    .accessibilityAddTraits(.isHeader)
+                    .modifier(NoticeTitleOutOfSight(hidden: !options.showsTitle))
 
-                HStack(spacing: 8) {
-                    if viewModel.isTTSAvailable {
-                        talkbackButton(theme)
-                    }
-                    if !viewModel.supportedLanguages.isEmpty {
-                        LanguageSelectorView(
-                            languages: viewModel.supportedLanguages,
-                            selectedLanguage: $viewModel.selectedLanguage,
-                            isDropdownOpen: $viewModel.isLanguageDropdownOpen,
-                            settings: viewModel.settings,
-                            label: NoticeLanguageCodes.nativeLabel,
-                            chip: theme.chip,
-                            fontSize: theme.size(.chip)
-                        )
-                    }
+                if !options.centresHeader {
+                    headerControls(theme)
                 }
-                .fixedSize()
             }
         }
+    }
+
+    private func headerControls(_ theme: NoticeTheme) -> some View {
+        HStack(spacing: 8) {
+            if viewModel.isTTSAvailable && viewModel.chromeOptions.showsAudioButton {
+                talkbackButton(theme)
+            }
+            if !viewModel.supportedLanguages.isEmpty {
+                LanguageSelectorView(
+                    languages: viewModel.supportedLanguages,
+                    selectedLanguage: $viewModel.selectedLanguage,
+                    isDropdownOpen: $viewModel.isLanguageDropdownOpen,
+                    settings: viewModel.settings,
+                    label: NoticeLanguageCodes.nativeLabel,
+                    chip: theme.chip,
+                    fontSize: theme.size(.chip)
+                )
+            }
+        }
+        .fixedSize()
     }
 
     private func talkbackButton(_ theme: NoticeTheme) -> some View {
@@ -423,23 +453,31 @@ public struct RedactoNoticeConsent: View {
 
     private func noticeBody(_ theme: NoticeTheme) -> some View {
         let grouped = theme.isGlass || theme.layout.collapsibleSections
+        let options = viewModel.chromeOptions
         return VStack(alignment: .leading, spacing: grouped ? 10 : 12) {
             section(.about, theme: theme, icon: "info.circle") {
                 aboutParagraph(theme)
             }
 
-            let headingHighlighted = isHighlighted("purpose_section_heading")
-            Text(viewModel.getTranslatedText(
-                "purpose_section_heading",
-                defaultText: viewModel.activeConfig?.purposeSectionHeading.nonEmpty ?? NoticeCopy.purposeSectionHeading
-            ))
-            .noticeFont(size: theme.size(.subTitle), weight: theme.weight(.subTitle))
-            .foregroundColor(theme.ttsColor(theme.heading, highlighted: headingHighlighted))
-            .padding(.top, theme.isGlass ? 6 : 0)
-            .padding(.horizontal, theme.isGlass ? 4 : 0)
-            .ttsSegmentHighlighted(headingHighlighted)
-            .id("purpose_section_heading")
-            .accessibilityAddTraits(.isHeader)
+            if options.centresHeader {
+                headerControls(theme)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+
+            if options.showsPurposeSectionHeading {
+                let headingHighlighted = isHighlighted("purpose_section_heading")
+                Text(viewModel.getTranslatedText(
+                    "purpose_section_heading",
+                    defaultText: viewModel.activeConfig?.purposeSectionHeading.nonEmpty ?? NoticeCopy.purposeSectionHeading
+                ))
+                .noticeFont(size: theme.size(.subTitle), weight: theme.weight(.subTitle))
+                .foregroundColor(theme.ttsColor(theme.heading, highlighted: headingHighlighted))
+                .padding(.top, theme.isGlass ? 6 : 0)
+                .padding(.horizontal, theme.isGlass ? 4 : 0)
+                .ttsSegmentHighlighted(headingHighlighted)
+                .id("purpose_section_heading")
+                .accessibilityAddTraits(.isHeader)
+            }
 
             VStack(alignment: .leading, spacing: grouped ? 10 : 12) {
                 NoticePurposeListView(viewModel: viewModel, selectionControl: theme.appearance.effectiveSelectionControl)
@@ -483,26 +521,56 @@ public struct RedactoNoticeConsent: View {
     }
 
     private func aboutParagraph(_ theme: NoticeTheme) -> some View {
-        VStack(alignment: .leading, spacing: noticeLineGap(theme.size(.privacyText))) {
+        let centred = viewModel.chromeOptions.centresHeader
+        let policyConfig = viewModel.showsNoticePolicyLink ? viewModel.activeConfig : nil
+        // Only with notice text to run on from; a bare link keeps its own line.
+        let policyLineRunsOn = viewModel.chromeOptions.inlinesPolicyLink
+            && policyConfig != nil
+            && !viewModel.translatedNoticeText.isEmpty
+        return VStack(alignment: centred ? .center : .leading, spacing: noticeLineGap(theme.size(.privacyText))) {
             let textHighlighted = isHighlighted("notice_text")
-            Text(viewModel.translatedNoticeText)
-                .noticeFont(size: theme.size(.privacyText))
-                .foregroundColor(theme.ttsColor(theme.text, highlighted: textHighlighted))
-                .fixedSize(horizontal: false, vertical: true)
-                .ttsSegmentHighlighted(textHighlighted)
-                .id("notice_text")
+            let policyHighlighted = isHighlighted("privacy_policy_prefix_text") || isHighlighted("privacy_policy_anchor_text")
+            if let ac = policyConfig, policyLineRunsOn {
+                Text(noticeLine(ac))
+                    .noticeFont(size: theme.size(.privacyText))
+                    .foregroundColor(theme.ttsColor(theme.text, highlighted: textHighlighted || policyHighlighted))
+                    .tint(theme.link)
+                    .multilineTextAlignment(centred ? .center : .leading)
+                    .frame(maxWidth: .infinity, alignment: centred ? .center : .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .ttsSegmentHighlighted(textHighlighted || policyHighlighted)
+                    .id("notice_text")
+            } else {
+                Text(viewModel.translatedNoticeText)
+                    .noticeFont(size: theme.size(.privacyText))
+                    .foregroundColor(theme.ttsColor(theme.text, highlighted: textHighlighted))
+                    .multilineTextAlignment(centred ? .center : .leading)
+                    .frame(maxWidth: .infinity, alignment: centred ? .center : .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .ttsSegmentHighlighted(textHighlighted)
+                    .id("notice_text")
+            }
 
-            if let ac = viewModel.activeConfig, viewModel.showsNoticePolicyLink {
-                let highlighted = isHighlighted("privacy_policy_prefix_text") || isHighlighted("privacy_policy_anchor_text")
+            if let ac = policyConfig, !policyLineRunsOn {
+                let highlighted = policyHighlighted
                 Text(policyLine(ac))
                     .noticeFont(size: theme.size(.privacyText))
                     .foregroundColor(theme.ttsColor(theme.text, highlighted: highlighted))
                     .tint(theme.link)
+                    .multilineTextAlignment(centred ? .center : .leading)
+                    .frame(maxWidth: .infinity, alignment: centred ? .center : .leading)
                     .fixedSize(horizontal: false, vertical: true)
                     .ttsSegmentHighlighted(highlighted)
                     .id("privacy_policy_anchor_text")
             }
         }
+    }
+
+    /// The notice text with the policy line run on from it, one space apart.
+    private func noticeLine(_ ac: ActiveConfig) -> AttributedString {
+        var line = AttributedString(viewModel.translatedNoticeText + " ")
+        line.append(policyLine(ac))
+        return line
     }
 
     private func policyLine(_ ac: ActiveConfig) -> AttributedString {
@@ -524,13 +592,13 @@ public struct RedactoNoticeConsent: View {
         if !ac.additionalText.isEmpty {
             result.append(AttributedString(viewModel.translatedAdditionalText))
         }
-        if !ac.privacyCenterUrl.isEmpty {
+        if ac.showsPrivacyCenterEntry {
             result.append(AttributedString(" "))
             var anchor = AttributedString(viewModel.getTranslatedText(
                 "privacy_center_anchor_text",
                 defaultText: ac.privacyCenterAnchorText.flatMap { $0.isEmpty ? nil : $0 } ?? NoticeCopy.privacyCenterAnchor
             ))
-            if let url = URL(string: ac.privacyCenterUrl) {
+            if !ac.privacyCenterAsText, let url = URL(string: ac.privacyCenterUrl) {
                 anchor.link = url
             }
             result.append(anchor)
@@ -597,7 +665,7 @@ public struct RedactoNoticeConsent: View {
     /// band pinned under the scrolling body.
     private func footerBand(_ theme: NoticeTheme, gutter: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            if !viewModel.isReviewMode, let hint = viewModel.confirmHintText {
+            if !viewModel.isReviewMode, let hint = viewModel.drawnConfirmHintText {
                 ConfirmHintView(text: hint, color: theme.confirmHint, size: theme.size(.confirmHint))
                     .padding(.top, theme.isGlass ? 0 : 12)
                     .padding(.bottom, theme.isGlass ? 10 : 0)
@@ -629,7 +697,8 @@ public struct RedactoNoticeConsent: View {
                             defaultText: viewModel.activeConfig?.declineButtonText.nonEmpty ?? NoticeButtonDefaults.decline
                         ),
                         acceptSelectedDisabled: viewModel.acceptDisabled,
-                        acceptSelectedHint: viewModel.confirmHintText,
+                        acceptSelectedHint: viewModel.drawnConfirmHintText,
+                        acceptSelectedValue: viewModel.unseenConfirmHintText,
                         isSubmittingAccept: viewModel.isSubmittingAccept,
                         isSubmitting: viewModel.isSubmitting,
                         theme: theme,
@@ -686,4 +755,37 @@ public struct RedactoNoticeConsent: View {
 public enum ValidateAgainst: String {
     case all
     case required
+}
+
+/// A title taken out of sight keeps its place in the view tree: talkback
+/// scrolls to and highlights it by id, and the card borrows it for the
+/// dialog's name. VoiceOver reads it there, not as a blank row of its own.
+private struct NoticeTitleOutOfSight: ViewModifier {
+    let hidden: Bool
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if hidden {
+            content
+                .frame(height: 0)
+                .opacity(0)
+                .clipped()
+                .accessibilityHidden(true)
+        } else {
+            content
+        }
+    }
+}
+
+private struct NoticeDialogName: ViewModifier {
+    let name: String?
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if let name {
+            content.accessibilityLabel(name)
+        } else {
+            content
+        }
+    }
 }

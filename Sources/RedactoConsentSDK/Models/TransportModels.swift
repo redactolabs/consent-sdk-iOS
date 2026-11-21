@@ -10,6 +10,21 @@ final class PendingIdempotencyKey {
     }
 }
 
+struct IdempotentBody: Encodable {
+    let base: any Encodable
+    let key: String
+
+    private enum CodingKeys: String, CodingKey {
+        case key = "idempotency_key"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        try base.encode(to: encoder)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(key, forKey: .key)
+    }
+}
+
 enum APIErrorFallback {
     static let noticeRead = "Could not load the consent notice. Please try again."
     static let submitConsent = "Could not submit your consent. Please try again."

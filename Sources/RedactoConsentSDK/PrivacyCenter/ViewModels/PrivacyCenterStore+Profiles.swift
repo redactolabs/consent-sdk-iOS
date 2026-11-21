@@ -74,7 +74,7 @@ extension PrivacyCenterStore {
                 throw PrivacyCenterAPIError.invalidToken("select-principal")
             }
             let payload = JWTDecoder.decode(tokens.token)
-            let scopedContact = PCProfileGate.contact(for: candidate, tokenContact: payload?.resolvedContact, orgUserId: picked)
+            let scopedContact = PCProfileGate.contact(for: candidate, tokenContact: PCJwt.contact(fromToken: tokens.token, orElseOrgUserId: false), orgUserId: picked)
             await tokenStore.adopt(accessToken: tokens.token, refreshToken: tokens.refreshToken, contact: scopedContact)
             pickedOrgUserId = picked
             currentOrgUserId = picked

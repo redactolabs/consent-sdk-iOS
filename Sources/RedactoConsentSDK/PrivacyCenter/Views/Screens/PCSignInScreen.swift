@@ -168,7 +168,8 @@ struct PCSignInScreen: View {
         let name = store.placeholderContext.brand
         return VStack(alignment: alignment, spacing: isWide ? 20 : 12) {
             if signIn.showLogo {
-                if let logo = store.logoUrl.flatMap(URL.init(string:)) {
+                switch PCBrandMark.resolve(logoUrl: store.logoUrl, iconUrl: store.iconUrl) {
+                case .logo(let logo):
                     AsyncImage(url: logo) { image in
                         image.resizable().scaledToFit()
                     } placeholder: {
@@ -176,7 +177,10 @@ struct PCSignInScreen: View {
                     }
                     .frame(maxWidth: 240, maxHeight: logoHeight)
                     .accessibilityLabel(name)
-                } else {
+                case .icon(let icon):
+                    PCLogoAvatar(url: icon, name: name, size: 48)
+                        .accessibilityLabel(name)
+                case .initials:
                     PCInitialsAvatar(text: PCInitialsAvatar.initials(name), seed: name, size: 48)
                 }
             }

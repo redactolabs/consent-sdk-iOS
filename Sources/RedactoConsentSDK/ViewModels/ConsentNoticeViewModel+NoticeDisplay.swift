@@ -13,6 +13,23 @@ extension ConsentNoticeViewModel {
         NoticeAppearance.resolve(console: servedAppearance, settings: settings, colorScheme: colorScheme)
     }
 
+    /// What the modal paints. Nothing is drawn before the notice read lands:
+    /// the read answers "already consented" with a 409, so a loader painted
+    /// first would flash at a principal who never sees the notice. While it
+    /// is in flight only an invisible backdrop blocks the host's screen, and
+    /// with `blockUI` off nothing is drawn at all.
+    var paintStage: NoticePaintStage {
+        if hasAlreadyConsented { return .nothing }
+        if isLoading { return blockUI ? .blockingBackdrop : .nothing }
+        return .dialog
+    }
+
+    /// Chrome the served appearance switches on, read off it directly: these
+    /// keys are not part of the shared resolver vectors.
+    var chromeOptions: NoticeChromeOptions {
+        NoticeChromeOptions(served: servedAppearance)
+    }
+
     /// Host override, then the console, then checkboxes.
     var selectionControl: SelectionControlType {
         appearance().effectiveSelectionControl
@@ -58,7 +75,7 @@ extension ConsentNoticeViewModel {
     /// link; the link follows it only when the notice has one.
     var hasPrivacyCenterLine: Bool {
         guard let activeConfig else { return false }
-        return !activeConfig.privacyCenterUrl.isEmpty || !activeConfig.additionalText.isEmpty
+        return activeConfig.showsPrivacyCenterEntry || !activeConfig.additionalText.isEmpty
     }
 
     var showsNoticeFooter: Bool {
@@ -104,7 +121,7 @@ extension ConsentNoticeViewModel {
                 ? ""
                 : getTranslatedText("privacy_policy_anchor_text", defaultText: ac.privacyPolicyAnchorText)
         case .dpo:
-            guard !ac.privacyCenterUrl.isEmpty, let anchor = ac.privacyCenterAnchorText, !anchor.isEmpty else { return "" }
+            guard ac.showsPrivacyCenterEntry, let anchor = ac.privacyCenterAnchorText, !anchor.isEmpty else { return "" }
             return getTranslatedText("privacy_center_anchor_text", defaultText: anchor)
         }
     }
@@ -151,4 +168,16 @@ extension ConsentNoticeViewModel {
             handleDecline()
         }
     }
+}
+
+/// What `RedactoNoticeConsent` draws at each point of its life.
+enum NoticePaintStage: Equatable {
+    /// Nothing at all: an already-consented principal, or a read in flight
+    /// with `blockUI` off.
+    case nothing
+    /// A transparent backdrop that holds the host's screen while the notice
+    /// read is in flight. No card, no dim, no spinner.
+    case blockingBackdrop
+    /// The dialog with its dim and entrance, arriving together.
+    case dialog
 }

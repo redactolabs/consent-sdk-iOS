@@ -100,6 +100,35 @@ final class PurposePreselectionTests: XCTestCase {
         XCTAssertEqual(built.selectedPurposes[first], false)
     }
 
+    // The grant of a notice whose data elements carry no tick of their own.
+    func testMandatoryTicksEveryLiveElementOfAMandatoryPurposeWhenATickGrantsThemAll() {
+        let listed = [
+            ActiveConfigPurpose(uuid: first, name: "First", description: "", industries: nil, dataElements: [
+                element(requiredElement, required: true),
+                element(optionalElement, required: false),
+                element(disabledElement, required: false, enabled: false),
+            ]),
+            purposes[1],
+        ]
+        let built = PurposePreselectionLogic.build(purposes: listed, mode: .mandatory, grants: ProductConsent.liveDataElements)
+
+        XCTAssertEqual(built.selectedPurposes, [first: true, second: false])
+        XCTAssertEqual(built.selectedDataElements[key(first, requiredElement)], true)
+        XCTAssertEqual(built.selectedDataElements[key(first, optionalElement)], true)
+        XCTAssertEqual(built.selectedDataElements[key(first, disabledElement)], false)
+        XCTAssertEqual(built.selectedDataElements[key(second, optionalElement)], false)
+    }
+
+    func testNoneAndAllTickTheSameWhateverATickGrants() {
+        for mode in [PurposePreselection.none, .all] {
+            let byDefault = PurposePreselectionLogic.build(purposes: purposes, mode: mode)
+            let grantingAll = PurposePreselectionLogic.build(purposes: purposes, mode: mode, grants: ProductConsent.liveDataElements)
+
+            XCTAssertEqual(grantingAll.selectedPurposes, byDefault.selectedPurposes)
+            XCTAssertEqual(grantingAll.selectedDataElements, byDefault.selectedDataElements)
+        }
+    }
+
     func testAllMatchesWhatAcceptAllSubmits() {
         let built = PurposePreselectionLogic.build(purposes: purposes, mode: .all)
         let acceptAll = buildSelection(
@@ -160,10 +189,17 @@ final class PurposePreselectionTests: XCTestCase {
     }
 
     @MainActor
-    private func loadedNotice(preselection: String?, selections: [String: Any]? = nil) async -> ConsentNoticeViewModel {
+    private func loadedNotice(
+        preselection: String?,
+        selections: [String: Any]? = nil,
+        appearance: [String: Any]? = nil
+    ) async -> ConsentNoticeViewModel {
         var config: [String: Any] = [:]
         if let preselection {
             config["purpose_preselection"] = preselection
+        }
+        if let appearance {
+            config["appearance"] = appearance
         }
         SubmitRecorder.start()
         SubmitRecorder.serveNotice(NoticeFixtures.contentData(config: config, purposeSelections: selections))
@@ -184,6 +220,18 @@ final class PurposePreselectionTests: XCTestCase {
         XCTAssertEqual(vm.selectedDataElements["\(NoticeFixtures.orders)-\(NoticeFixtures.email)"], true)
         XCTAssertEqual(vm.selectedDataElements["\(NoticeFixtures.orders)-\(NoticeFixtures.phone)"], false)
         XCTAssertNil(vm.initialDataElementSelections["\(NoticeFixtures.orders)-\(NoticeFixtures.email)"])
+    }
+
+    @MainActor
+    func testTheModalNoticeOpensAMandatoryPurposeHoldingEveryLiveElementOnceTheyHaveNoTick() async {
+        let vm = await loadedNotice(preselection: "MANDATORY", appearance: ["show_data_element_controls": false])
+        // The read caches the appearance it was served; later tests start without it.
+        NoticeAppearanceCache.write(noticeId: "notice-1", appearance: nil)
+
+        XCTAssertEqual(vm.selectedPurposes, [NoticeFixtures.orders: true, NoticeFixtures.marketing: false])
+        XCTAssertEqual(vm.selectedDataElements["\(NoticeFixtures.orders)-\(NoticeFixtures.email)"], true)
+        XCTAssertEqual(vm.selectedDataElements["\(NoticeFixtures.orders)-\(NoticeFixtures.phone)"], true)
+        XCTAssertEqual(vm.selectedDataElements["\(NoticeFixtures.marketing)-\(NoticeFixtures.email)"], false)
     }
 
     @MainActor

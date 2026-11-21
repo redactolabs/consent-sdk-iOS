@@ -10,9 +10,9 @@ final class IdempotencyKeysTests: XCTestCase {
         private let lock = NSLock()
         private var keys: [String] = []
 
-        func record(_ headers: [String: String]) {
+        func record(_ key: String) {
             lock.lock()
-            keys.append(headers[IdempotencyKeys.header] ?? "")
+            keys.append(key)
             lock.unlock()
         }
 
@@ -62,27 +62,26 @@ final class IdempotencyKeysTests: XCTestCase {
         url: String? = nil,
         body: Data? = nil
     ) async throws {
-        _ = try await keys.withKey(url: url ?? self.url, body: body ?? self.body) { headers in
-            log.record(headers)
+        _ = try await keys.withKey(url: url ?? self.url, body: body ?? self.body) { key in
+            log.record(key)
             return self.response(status)
         }
     }
 
     private func failingAttempt(_ keys: IdempotencyKeys, _ log: KeyLog, error: Error) async {
         do {
-            _ = try await keys.withKey(url: url, body: body) { headers in
-                log.record(headers)
+            _ = try await keys.withKey(url: url, body: body) { key in
+                log.record(key)
                 throw error
             }
             XCTFail("expected the attempt to throw")
         } catch {}
     }
 
-    func testSendsAKeyInTheIdempotencyHeader() async throws {
+    func testHandsTheSenderAKey() async throws {
         let keys = IdempotencyKeys()
         let log = KeyLog()
         try await attempt(keys, log, status: 201)
-        XCTAssertEqual(IdempotencyKeys.header, "Idempotency-Key")
         XCTAssertFalse(log.seen[0].isEmpty)
     }
 
@@ -199,16 +198,16 @@ final class IdempotencyKeysTests: XCTestCase {
         let body = self.body
 
         let first = Task {
-            _ = try await keys.withKey(url: url, body: body) { headers in
-                log.record(headers)
+            _ = try await keys.withKey(url: url, body: body) { key in
+                log.record(key)
                 await firstGate.wait()
                 return self.response(firstStatus)
             }
         }
         await waitForKeys(log, count: 1)
         let second = Task {
-            _ = try await keys.withKey(url: url, body: body) { headers in
-                log.record(headers)
+            _ = try await keys.withKey(url: url, body: body) { key in
+                log.record(key)
                 await secondGate.wait()
                 return self.response(secondStatus)
             }

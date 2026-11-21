@@ -1,7 +1,6 @@
 import Foundation
 
 final class IdempotencyKeys: @unchecked Sendable {
-    static let header = "Idempotency-Key"
     static let maxPending = 16
     static let shared = IdempotencyKeys()
 
@@ -12,12 +11,12 @@ final class IdempotencyKeys: @unchecked Sendable {
     func withKey(
         url: String,
         body: Data,
-        send: ([String: String]) async throws -> (Data, URLResponse)
+        send: (String) async throws -> (Data, URLResponse)
     ) async throws -> (Data, URLResponse) {
         let signature = "\(url)\n\(String(decoding: body, as: UTF8.self))"
         let entry = acquire(signature)
         do {
-            let result = try await send([Self.header: entry.key])
+            let result = try await send(entry.key)
             settle(entry, signature: signature, settled: Self.settledOnResolve(result.1))
             return result
         } catch {

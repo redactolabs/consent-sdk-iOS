@@ -17,6 +17,8 @@ struct NoticePurposeListView: View {
 
     private var control: SelectionControlType { selectionControl ?? viewModel.selectionControl }
 
+    private var options: NoticeChromeOptions { viewModel.chromeOptions }
+
     private var accentColor: String {
         viewModel.settings?.button?.accept?.backgroundColor ?? viewModel.activeConfig?.primaryColor ?? "#4f87ff"
     }
@@ -57,7 +59,7 @@ struct NoticePurposeListView: View {
                             }
                         }
                     }
-                } else if let product = viewModel.soleProduct {
+                } else if let product = viewModel.soleProduct, options.showsProductSection {
                     section(
                         product: product,
                         purposes: ac.purposes,
@@ -125,6 +127,7 @@ struct NoticePurposeListView: View {
             settings: viewModel.settings,
             accentColor: accentColor,
             selectionControl: control,
+            controlPosition: options.controlPosition,
             onToggleCollapse: { viewModel.toggleProductCollapse(product.uuid) },
             onSelect: onSelect,
             rows: rows
@@ -148,7 +151,11 @@ struct NoticePurposeListView: View {
             activeTTSSegmentKey: viewModel.activeTTSSegmentKey,
             productUuid: productUuid,
             selectionControl: control,
-            recordedAnswer: viewModel.recordedAnswer(forPurpose: purpose.uuid, productUuid: productUuid)
+            recordedAnswer: viewModel.recordedAnswer(forPurpose: purpose.uuid, productUuid: productUuid),
+            showsDataElements: options.showsDataElements,
+            showsDataElementControls: options.showsDataElementControls,
+            descriptionPlacement: options.descriptionPlacement,
+            controlPosition: options.controlPosition
         )
         .id("\(ProductMatrix.productPurposeKey(productUuid, purpose.uuid))-\(viewModel.selectedLanguage)")
     }

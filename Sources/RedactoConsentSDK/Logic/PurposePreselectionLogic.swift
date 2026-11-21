@@ -24,7 +24,14 @@ enum PurposePreselectionLogic {
         return !selection.dataElements.isEmpty
     }
 
-    static func build(purposes: [ActiveConfigPurpose], mode: PurposePreselection) -> SelectionState {
+    /// `MANDATORY` opens each mandatory purpose ticked, holding what its tick
+    /// grants: only the mandatory data elements by default, every live one
+    /// once the data elements carry no tick of their own.
+    static func build(
+        purposes: [ActiveConfigPurpose],
+        mode: PurposePreselection,
+        grants: ProductConsent.TickGrant = ProductConsent.seededDataElements
+    ) -> SelectionState {
         if mode == .all {
             return buildSelection(
                 purposes: purposes,
@@ -36,19 +43,23 @@ enum PurposePreselectionLogic {
         var selectedPurposes: [String: Bool] = [:]
         var selectedDataElements: [String: Bool] = [:]
         for purpose in purposes {
-            var hasPreselectedElement = false
+            let isPreselected = mode == .mandatory && ProductConsent.hasRequiredDataElement(purpose)
+            let granted = isPreselected ? grants(purpose) : []
             for element in purpose.dataElements {
-                let isPreselected = mode == .mandatory && element.required && element.enabled
-                selectedDataElements[dataElementKey(purposeUuid: purpose.uuid, elementUuid: element.uuid)] = isPreselected
-                hasPreselectedElement = hasPreselectedElement || isPreselected
+                selectedDataElements[dataElementKey(purposeUuid: purpose.uuid, elementUuid: element.uuid)] = granted.contains(element.uuid)
             }
-            selectedPurposes[purpose.uuid] = hasPreselectedElement
+            selectedPurposes[purpose.uuid] = isPreselected
         }
         return SelectionState(selectedPurposes: selectedPurposes, selectedDataElements: selectedDataElements)
     }
 
-    static func seed(rows: [NoticePurposeRow], recordedFor: RecordedLookup, mode: PurposePreselection) -> SelectionState {
-        let preselection = build(purposes: uniquePurposes(rows), mode: mode)
+    static func seed(
+        rows: [NoticePurposeRow],
+        recordedFor: RecordedLookup,
+        mode: PurposePreselection,
+        grants: ProductConsent.TickGrant = ProductConsent.seededDataElements
+    ) -> SelectionState {
+        let preselection = build(purposes: uniquePurposes(rows), mode: mode, grants: grants)
         var selectedPurposes: [String: Bool] = [:]
         var selectedDataElements: [String: Bool] = [:]
         for row in rows {

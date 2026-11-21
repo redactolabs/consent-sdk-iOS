@@ -372,16 +372,16 @@ public enum ConsentAPI {
             NoticeBaseUrl.publicUrl(host: apiBaseUrl, organisationUuid: org, workspaceUuid: ws, path: "/submit-consent")
         )
 
-        let body: Data
+        let body: any Encodable
         let headers: [String: String]
         if let sandbox = params.sandbox {
             // Sandbox: merge every supplied identifier into the body, mirroring a
             // live JWT's `user_data` (the server has no subject header; it keys the
             // principal by precedence and namespaces this identity `test::`).
-            body = try APIClient.encode(SandboxIdentityBody(base: payload, identity: sandbox.identityBodyFields))
+            body = SandboxIdentityBody(base: payload, identity: sandbox.identityBodyFields)
             headers = sandbox.authHeaders
         } else {
-            body = try APIClient.encode(payload)
+            body = payload
             headers = ["Authorization": "Bearer \(params.accessToken)"]
         }
         try await APIClient.postIdempotent(

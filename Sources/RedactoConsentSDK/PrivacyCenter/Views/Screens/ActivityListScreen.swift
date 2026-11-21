@@ -47,8 +47,8 @@ public struct ActivityListScreen: View {
                                 .foregroundColor(theme.textTertiary)
                         }
                         VStack(alignment: .leading, spacing: 0) {
-                            ForEach(group.items) { activity in
-                                TimelineRow(activity: activity, isLast: activity.id == group.items.last?.id)
+                            ForEach(group.rows) { row in
+                                TimelineRow(activity: row.activity, isLast: row.id == group.rows.last?.id)
                             }
                         }
                     }

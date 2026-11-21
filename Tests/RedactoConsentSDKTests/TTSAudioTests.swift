@@ -71,7 +71,7 @@ final class TTSAudioTests: XCTestCase {
             urls: urls,
             purposes: [purpose],
             hasAdditionalText: true,
-            hasPrivacyCenterUrl: true,
+            hasPrivacyCenterEntry: true,
             hasDpoInfo: true
         )
 
@@ -114,7 +114,7 @@ final class TTSAudioTests: XCTestCase {
             ],
             purposes: [],
             hasAdditionalText: false,
-            hasPrivacyCenterUrl: false,
+            hasPrivacyCenterEntry: false,
             hasDpoInfo: false
         )
 
@@ -137,7 +137,7 @@ final class TTSAudioTests: XCTestCase {
             ],
             purposes: [],
             hasAdditionalText: false,
-            hasPrivacyCenterUrl: false,
+            hasPrivacyCenterEntry: false,
             hasDpoInfo: false
         )
 

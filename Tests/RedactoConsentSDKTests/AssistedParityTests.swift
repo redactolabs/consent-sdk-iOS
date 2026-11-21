@@ -129,6 +129,48 @@ final class AssistedParityTests: XCTestCase {
         XCTAssertNil(notice[1].last?.link, "an unset policy URL still shows its anchor")
     }
 
+    /// React baff71a: the assisted notice reads `privacy_policy_inline` too.
+    func testRunsThePolicyLineOnFromTheNoticeTextWhenAskedFor() {
+        var config = F.config(products: nil, purposes: [])
+        config.appearance = NoticeAppearance(privacyPolicyInline: true)
+        let notice = AssistedFooter.noticeLines(config, showsPolicyLink: true, translate: { _, fallback in fallback })
+
+        XCTAssertEqual(notice.count, 1)
+        XCTAssertEqual(AssistedFooter.plainText(notice), "Notice Read Policy")
+        XCTAssertEqual(notice[0].first?.elementId, AssistedElementId.noticeText)
+        XCTAssertEqual(notice[0].last?.elementId, AssistedElementId.privacyPolicyLink)
+    }
+
+    func testKeepsThePolicyLineOnItsOwnLineUnlessAskedToRunItOn() {
+        var config = F.config(products: nil, purposes: [])
+        XCTAssertEqual(AssistedFooter.plainText(AssistedFooter.noticeLines(config, showsPolicyLink: true, translate: { _, fallback in fallback })), "Notice\nRead Policy")
+
+        config.appearance = NoticeAppearance(privacyPolicyInline: false)
+        XCTAssertEqual(AssistedFooter.plainText(AssistedFooter.noticeLines(config, showsPolicyLink: true, translate: { _, fallback in fallback })), "Notice\nRead Policy")
+    }
+
+    func testDrawsThePrivacyCenterAsPlainTextWhenAskedFor() {
+        let base = F.config(products: nil, purposes: [])
+        let config = ActiveConfig(
+            uuid: base.uuid, noticeUuid: base.noticeUuid, organisationUuid: base.organisationUuid,
+            workspaceUuid: base.workspaceUuid, version: 1, status: "active", noticeText: "Notice",
+            additionalText: "Manage your consent from", acceptAllButtonText: nil, confirmButtonText: "Accept",
+            declineButtonText: "Decline", logoUrl: "", privacyPolicyUrl: "", privacyCenterUrl: "",
+            primaryColor: "#000000", secondaryColor: "#ffffff", fontPreference: "", purposes: [], defaultLanguage: "en",
+            supportedLanguagesAndTranslations: [:], createdAt: "", updatedAt: "", deployedAt: "",
+            privacyPolicyPrefixText: "Read", privacyPolicyAnchorText: "",
+            privacyCenterAnchorText: "Account Centre > Privacy Centre",
+            purposeSectionHeading: "", noticeBannerHeading: "", dpoInfo: nil,
+            appearance: NoticeAppearance(privacyCenterAsText: true)
+        )
+        let lines = AssistedFooter.footerLines(config, policyLinks: [], translate: { _, fallback in fallback }, dpoText: { _, fallback in fallback })
+
+        XCTAssertEqual(AssistedFooter.plainText(lines), "Manage your consent from Account Centre > Privacy Centre.")
+        let entry = lines[0].first { $0.elementId == AssistedElementId.privacyCenterLink }
+        XCTAssertEqual(entry?.text, "Account Centre > Privacy Centre")
+        XCTAssertNil(entry?.link)
+    }
+
     // MARK: - Narration
 
     private let audioJSON = #"""

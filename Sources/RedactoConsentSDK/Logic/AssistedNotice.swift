@@ -98,7 +98,7 @@ enum AssistedNarration {
         if !config.additionalText.isEmpty {
             add(audio.additionalTextAudioUrl, AssistedElementId.additionalText)
         }
-        if !config.privacyCenterUrl.isEmpty {
+        if config.showsPrivacyCenterEntry {
             add(audio.privacyCenterAnchorTextAudioUrl, AssistedElementId.privacyCenterLink)
         }
         if config.dpoInfo != nil, let dpo = audio.dpoInfoAudio {

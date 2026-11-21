@@ -25,6 +25,22 @@ enum ProductConsent {
         return Set(granted.map(\.uuid))
     }
 
+    /// Every live data element: what a tick grants once the data elements
+    /// carry no tick of their own (`show_data_element_controls: false`). With
+    /// nothing left to choose between, taking the purpose takes all of them.
+    static func liveDataElements(_ purpose: ActiveConfigPurpose) -> Set<String> {
+        Set(purpose.dataElements.filter(\.enabled).map(\.uuid))
+    }
+
+    /// Which of a purpose's data elements a tick grants.
+    typealias TickGrant = (_ purpose: ActiveConfigPurpose) -> Set<String>
+
+    /// The grant a notice's ticks follow, by whether its data elements keep
+    /// their own.
+    static func tickGrant(showsDataElementControls: Bool) -> TickGrant {
+        showsDataElementControls ? seededDataElements : liveDataElements
+    }
+
     static func rowKey(_ row: NoticePurposeRow) -> String {
         ProductMatrix.productPurposeKey(row.productUuid, row.purpose.uuid)
     }
@@ -205,11 +221,12 @@ enum ProductConsent {
     static func purposeToggle(
         purpose: ActiveConfigPurpose,
         productUuid: String?,
-        selectedPurposes: [String: Bool]
+        selectedPurposes: [String: Bool],
+        grants: TickGrant = seededDataElements
     ) -> SelectionState {
         let key = ProductMatrix.productPurposeKey(productUuid, purpose.uuid)
         let nextState = !(selectedPurposes[key] ?? false)
-        let seeded = seededDataElements(purpose)
+        let seeded = grants(purpose)
         var selectedDataElements: [String: Bool] = [:]
         for element in purpose.dataElements {
             selectedDataElements["\(key)-\(element.uuid)"] = nextState && seeded.contains(element.uuid)
@@ -221,7 +238,8 @@ enum ProductConsent {
         sectionPurposes: [ActiveConfigPurpose],
         keyProductUuid: String?,
         selectedPurposes: [String: Bool],
-        target: Bool? = nil
+        target: Bool? = nil,
+        grants: TickGrant = seededDataElements
     ) -> SelectionState {
         let nextState = target ?? !sectionPurposes.allSatisfy {
             selectedPurposes[ProductMatrix.productPurposeKey(keyProductUuid, $0.uuid)] == true
@@ -231,7 +249,7 @@ enum ProductConsent {
         for purpose in sectionPurposes {
             let key = ProductMatrix.productPurposeKey(keyProductUuid, purpose.uuid)
             purposeOverrides[key] = nextState
-            let seeded = seededDataElements(purpose)
+            let seeded = grants(purpose)
             for element in purpose.dataElements {
                 elementOverrides["\(key)-\(element.uuid)"] = nextState && seeded.contains(element.uuid)
             }
@@ -338,6 +356,17 @@ enum ProductConsent {
             let byUuid = Dictionary((products ?? []).map { ($0.uuid, $0) }, uniquingKeysWith: { first, _ in first })
             let names = verdict.blocking.map { uuid in byUuid[uuid].map(productName) ?? uuid }
             return ConfirmHintCopy.productsIncomplete(names)
+        }
+    }
+
+    /// Whether the hint line is drawn. Only the hints naming required purposes
+    /// follow `show_required_hint`; the rest always draw.
+    static func drawsConfirmHint(_ verdict: ConfirmVerdict, showsRequiredHint: Bool) -> Bool {
+        switch verdict.reason {
+        case .requiredOutstanding, .productIncomplete:
+            return showsRequiredHint
+        case .ok, .nothingChosen, .nothingEngaged:
+            return true
         }
     }
 

@@ -56,7 +56,6 @@ enum NoticeCopy {
     static let privacyCenterAnchor = "Privacy Center"
     static let submitting = "Processing..."
     static let reviewContinue = "Continue"
-    static let loading = "Loading..."
     static let minorVerificationRequired = "Guardian verification is required before consent can be submitted."
     static let submitFailed = "Failed to submit consent. Please try again."
     static let startTalkback = "Start audio playback"

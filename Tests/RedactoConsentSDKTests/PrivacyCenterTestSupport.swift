@@ -32,6 +32,10 @@ struct PCCapturedRequest {
         (try? JSONSerialization.jsonObject(with: body)) as? [String: Any] ?? [:]
     }
 
+    var idempotencyKey: String? {
+        json["idempotency_key"] as? String
+    }
+
     var firstPurpose: [String: Any] {
         (json["purposes"] as? [[String: Any]])?.first ?? [:]
     }

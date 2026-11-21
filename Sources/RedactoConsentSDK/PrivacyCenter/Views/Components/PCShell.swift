@@ -226,6 +226,48 @@ struct PCInitialsAvatar: View {
     }
 }
 
+enum PCBrandMark: Equatable {
+    case logo(URL)
+    case icon(URL)
+    case initials
+
+    static func resolve(logoUrl: String?, iconUrl: String?) -> PCBrandMark {
+        if let logo = logoUrl.flatMap(URL.init(string:)) { return .logo(logo) }
+        if let icon = iconUrl.flatMap(URL.init(string:)) { return .icon(icon) }
+        return .initials
+    }
+}
+
+struct PCLogoAvatar: View {
+    @Environment(\.privacyCenterTheme) private var theme
+    let url: URL
+    let name: String
+    var size: CGFloat = 32
+
+    var body: some View {
+        AsyncImage(url: url) { phase in
+            if let image = phase.image {
+                ZStack {
+                    Circle().fill(theme.background)
+                    Circle().stroke(theme.border, lineWidth: 1)
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Self.imageSide(for: size), height: Self.imageSide(for: size))
+                }
+                .frame(width: size, height: size)
+            } else {
+                PCInitialsAvatar(text: PCInitialsAvatar.initials(name), seed: name, size: size)
+            }
+        }
+        .frame(width: size, height: size)
+    }
+
+    static func imageSide(for size: CGFloat) -> CGFloat {
+        max(0, size / CGFloat(2).squareRoot() - 2)
+    }
+}
+
 /// React's circular status pill with a leading dot (ConsentManagerCells).
 struct PCConsentStatusPill: View {
     @Environment(\.privacyCenterTheme) private var theme

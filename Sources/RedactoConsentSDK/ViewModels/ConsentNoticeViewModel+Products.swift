@@ -42,6 +42,21 @@ extension ConsentNoticeViewModel {
         return ProductConsent.confirmHint(confirmVerdict, products: noticeProducts, copy: chromeCopy) { self.productName($0) }
     }
 
+    /// The hint drawn above the actions, and Accept Selected's accessibility
+    /// hint while it is drawn.
+    var drawnConfirmHintText: String? {
+        guard ProductConsent.drawsConfirmHint(confirmVerdict, showsRequiredHint: chromeOptions.showsRequiredHint) else {
+            return nil
+        }
+        return confirmHintText
+    }
+
+    /// A hint the notice hides from sight. Accept Selected carries it as its
+    /// accessibility value, which VoiceOver reads even with Speak Hints off.
+    var unseenConfirmHintText: String? {
+        drawnConfirmHintText == nil ? confirmHintText : nil
+    }
+
     var soleProductLocked: Bool {
         guard let product = soleProduct else { return false }
         return consentedProducts[product.uuid] ?? isReviewMode
@@ -93,7 +108,8 @@ extension ConsentNoticeViewModel {
         let seeded = PurposePreselectionLogic.seed(
             rows: rows,
             recordedFor: recordedFor,
-            mode: PurposePreselectionLogic.resolve(ac.purposePreselection)
+            mode: PurposePreselectionLogic.resolve(ac.purposePreselection),
+            grants: tickGrant(ac.appearance)
         )
         let hasRecord = data.detail.purposeSelections != nil || data.detail.productPurposeSelections != nil
         let reconsentRequired = data.detail.reconsentRequired ?? false
@@ -149,7 +165,12 @@ extension ConsentNoticeViewModel {
     func handlePurposeToggle(_ purposeUuid: String, productUuid: String? = nil) {
         guard !otpLocked else { return }
         guard let purpose = activeConfig?.purposes.first(where: { $0.uuid == purposeUuid }) else { return }
-        apply(ProductConsent.purposeToggle(purpose: purpose, productUuid: productUuid, selectedPurposes: selectedPurposes))
+        apply(ProductConsent.purposeToggle(
+            purpose: purpose,
+            productUuid: productUuid,
+            selectedPurposes: selectedPurposes,
+            grants: tickGrant(activeConfig?.appearance)
+        ))
     }
 
     func handlePurposeCollapse(_ purposeUuid: String, productUuid: String? = nil) {
@@ -187,7 +208,8 @@ extension ConsentNoticeViewModel {
             sectionPurposes: ProductConsent.productBoxPurposes(purposes),
             keyProductUuid: nil,
             selectedPurposes: selectedPurposes,
-            target: target
+            target: target,
+            grants: tickGrant(activeConfig?.appearance)
         ))
     }
 
@@ -200,8 +222,17 @@ extension ConsentNoticeViewModel {
             sectionPurposes: editable,
             keyProductUuid: keyProductUuid,
             selectedPurposes: selectedPurposes,
-            target: target
+            target: target,
+            grants: tickGrant(activeConfig?.appearance)
         ))
+    }
+
+    /// What a tick grants on this notice: every live data element once they
+    /// carry no tick of their own.
+    private func tickGrant(_ appearance: NoticeAppearance?) -> ProductConsent.TickGrant {
+        ProductConsent.tickGrant(
+            showsDataElementControls: NoticeChromeOptions(served: appearance).showsDataElementControls
+        )
     }
 
     private func apply(_ overrides: SelectionState) {

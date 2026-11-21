@@ -235,16 +235,16 @@ public actor PrivacyCenterAPI {
         )
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
-        let body: Data
+        let payload: any Encodable
         if let sandbox = await sandbox() {
-            body = try encoder.encode(SandboxIdentityBody(base: envelope, identity: sandbox.identityBodyFields))
+            payload = SandboxIdentityBody(base: envelope, identity: sandbox.identityBodyFields)
         } else {
-            body = try encoder.encode(envelope)
+            payload = envelope
         }
         let url = ledgerBaseUrl + path
         let client = http
-        _ = try await IdempotencyKeys.shared.withKey(url: url, body: body) { headers in
-            try await client.postDataResponse(path, host: .ledger, body: body, headers: headers)
+        _ = try await IdempotencyKeys.shared.withKey(url: url, body: try encoder.encode(payload)) { key in
+            try await client.postDataResponse(path, host: .ledger, body: try encoder.encode(IdempotentBody(base: payload, key: key)))
         }
     }
 

@@ -103,7 +103,8 @@ final class NoticeTransportRoutingTests: XCTestCase {
 
     func testNoticeReadCarriesNoIdempotencyKey() async throws {
         let request = try await read(ledgerBaseUrl: F.ledger)
-        XCTAssertNil(request.header(IdempotencyKeys.header))
+        XCTAssertNil(request.idempotencyKey)
+        XCTAssertNil(request.header("Idempotency-Key"))
     }
 
     func testLiveSubmitGoesToTheLedgerWhenOneIsConfigured() async throws {
@@ -111,13 +112,14 @@ final class NoticeTransportRoutingTests: XCTestCase {
         XCTAssertEqual(request.url.absoluteString, "\(F.scope(F.ledger))/submit-consent")
         XCTAssertEqual(request.method, "POST")
         XCTAssertEqual(request.header("Authorization"), "Bearer \(F.token())")
-        XCTAssertNotNil(request.header(IdempotencyKeys.header))
+        XCTAssertNotNil(request.idempotencyKey)
+        XCTAssertNil(request.header("Idempotency-Key"))
     }
 
     func testLiveSubmitStaysOnTheConsentServerWithoutALedger() async throws {
         let request = try await submit(ledgerBaseUrl: nil)
         XCTAssertEqual(request.url.absoluteString, "\(F.scope(F.python))/submit-consent")
-        XCTAssertNotNil(request.header(IdempotencyKeys.header))
+        XCTAssertNotNil(request.idempotencyKey)
     }
 
     func testBlankLedgerIsTreatedAsUnsetForTheSubmit() async throws {
@@ -130,7 +132,7 @@ final class NoticeTransportRoutingTests: XCTestCase {
         XCTAssertEqual(request.url.absoluteString, "\(F.scope(F.ledger))/submit-consent")
         XCTAssertEqual(request.header(SandboxConfig.tokenHeader), "sandbox-token")
         XCTAssertNil(request.header("Authorization"))
-        XCTAssertNotNil(request.header(IdempotencyKeys.header))
+        XCTAssertNotNil(request.idempotencyKey)
         let body = try XCTUnwrap(request.jsonBody)
         XCTAssertEqual(body["org_user_id"] as? String, "ucic-1")
         XCTAssertEqual(body["primary_email"] as? String, "tester@example.test")
@@ -183,7 +185,8 @@ final class NoticeTransportRoutingTests: XCTestCase {
         let request = try await submit(ledgerBaseUrl: F.ledger)
         let raw = try XCTUnwrap(request.bodyString)
         XCTAssertFalse(raw.contains("product_uuid"))
-        let body = try XCTUnwrap(request.jsonBody)
+        var body = try XCTUnwrap(request.jsonBody)
+        XCTAssertNotNil(body.removeValue(forKey: "idempotency_key"))
         let expected: [String: Any] = [
             "notice_uuid": F.notice,
             "select_all_mandatory": false,

@@ -46,6 +46,8 @@ public struct PrivacyCenterSettings: Sendable, Equatable {
         public var logoUrl: String?
         /// `.some(nil)` asks for the built-in size.
         public var logoHeight: Int??
+        /// Where the top bar places the logo.
+        public var logoAlign: PrivacyCenterLogoAlign?
         public var inheritColors: Bool?
         public var primaryColor: String?
         public var accentColor: String?
@@ -67,9 +69,11 @@ public struct PrivacyCenterSettings: Sendable, Equatable {
             inheritFont: Bool? = nil,
             fontFamily: String? = nil,
             style: String? = nil,
-            cornerRadius: Int?? = nil
+            cornerRadius: Int?? = nil,
+            logoAlign: PrivacyCenterLogoAlign? = nil
         ) {
             self.inheritIdentity = inheritIdentity
+            self.logoAlign = logoAlign
             self.displayName = displayName
             self.logoUrl = logoUrl
             self.logoHeight = logoHeight

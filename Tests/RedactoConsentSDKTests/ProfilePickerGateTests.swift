@@ -249,6 +249,27 @@ final class ProfilePickerGateTests: XCTestCase {
     }
 
     @MainActor
+    func testChoosingAMobileOnlyProfileTakesTheMobileItsTokenNamesOverItsUserUuid() async {
+        let scoped = F.jwt([
+            "organisation_uuid": F.org,
+            "workspace_uuid": F.ws,
+            "user_uuid": "user-uuid-3",
+            "user_data": ["org_user_id": "U-3", "primary_mobile": "+913333333333"],
+        ])
+        let mobileOnly = IdentityCandidate(uuid: "p-3", orgUserId: "U-3", primaryEmail: nil, primaryMobile: nil)
+        PCMockURLProtocol.route(pathSuffix: "/identities", .json(200, Self.identitiesBody))
+        PCMockURLProtocol.route(pathSuffix: "/identities/select", .json(200, ["token": scoped, "refresh_token": "refresh-3"]))
+        let store = makeStore(accessToken: Self.token(orgUserId: "shared@example.test"))
+        await store.start()
+
+        await store.selectProfile(mobileOnly)
+
+        XCTAssertEqual(store.contact, "+913333333333")
+        let tokenContact = await store.tokenStore.currentEmail()
+        XCTAssertEqual(tokenContact, "+913333333333")
+    }
+
+    @MainActor
     func testChoosingAProfileKeepsTheContactItsTokenNames() async {
         PCMockURLProtocol.route(pathSuffix: "/identities", .json(200, Self.identitiesBody))
         PCMockURLProtocol.route(pathSuffix: "/identities/select", .json(200, ["token": Self.token(orgUserId: "U-2"), "refresh_token": "refresh-2"]))

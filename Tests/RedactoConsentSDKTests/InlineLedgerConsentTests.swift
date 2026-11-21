@@ -93,7 +93,8 @@ final class InlineLedgerConsentTests: XCTestCase {
         await waitUntil { accepted.value == 1 }
         XCTAssertEqual(submits.count, 1)
         XCTAssertEqual(submits.first?.url.host, "ledger.example.test")
-        XCTAssertNotNil(submits.first?.header(IdempotencyKeys.header))
+        XCTAssertNotNil(submits.first?.idempotencyKey)
+        XCTAssertNil(submits.first?.header("Idempotency-Key"))
     }
 
     func testAConsentedButMandatoryInactiveRecordStillSubmits() async {

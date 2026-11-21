@@ -149,17 +149,14 @@ enum APIClient {
     static func postIdempotent(
         url: URL,
         headers: [String: String] = [:],
-        body: Data,
+        body: any Encodable,
         fallbackMessage: String,
         keys: IdempotencyKeys = .shared
     ) async throws {
-        let request = makeRequest(url: url, method: "POST", headers: headers, body: body)
-        let (data, response) = try await keys.withKey(url: url.absoluteString, body: body) { keyHeaders in
-            var keyed = request
-            for (key, value) in keyHeaders {
-                keyed.setValue(value, forHTTPHeaderField: key)
-            }
-            return try await session.data(for: keyed, delegate: SameHostRedirect.shared)
+        let (data, response) = try await keys.withKey(url: url.absoluteString, body: try encode(body)) { key in
+            let keyed = try encode(IdempotentBody(base: body, key: key))
+            let request = makeRequest(url: url, method: "POST", headers: headers, body: keyed)
+            return try await session.data(for: request, delegate: SameHostRedirect.shared)
         }
         try validateResponse(response, data: data, fallbackMessage: fallbackMessage)
     }

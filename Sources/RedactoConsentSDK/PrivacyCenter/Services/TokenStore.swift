@@ -127,7 +127,7 @@ public actor TokenStore {
             organisationUuid = payload.organisationUuid
             workspaceUuid = payload.workspaceUuid
         }
-        email = contact ?? payload?.resolvedContact
+        email = contact ?? PCJwt.contact(fromToken: newAccessToken) ?? payload?.resolvedContact
         resetCircuit()
         isSessionExpired = false
         updateTokens?(newAccessToken, newRefreshToken)
@@ -312,10 +312,15 @@ enum PCJwt {
 
     /// `contact || primary_email || user_data.primary_email || user_data.primary_mobile
     /// || user_data.org_user_id`: a mobile-only login still resolves to its phone.
-    static func contact(fromToken token: String) -> String? {
+    static func contact(fromToken token: String, orElseOrgUserId: Bool = true) -> String? {
         guard let claims = claims(token) else { return nil }
         let userData = claims["user_data"] as? [String: Any] ?? [:]
-        for value in [claims["contact"], claims["primary_email"], userData["primary_email"], userData["primary_mobile"], userData["org_user_id"]] {
+        var candidates = [
+            claims["contact"], claims["primary_email"], claims["email"],
+            userData["primary_email"], userData["email"], userData["contact"], userData["primary_mobile"],
+        ]
+        if orElseOrgUserId { candidates.append(userData["org_user_id"]) }
+        for value in candidates {
             if let text = value as? String, !text.trimmingCharacters(in: .whitespaces).isEmpty { return text }
         }
         return nil

@@ -9,6 +9,7 @@ struct ProductSectionView<Rows: View>: View {
     let settings: ConsentSettings?
     let accentColor: String
     var selectionControl: SelectionControlType = .checkbox
+    var controlPosition: NoticeControlPosition = .right
     let onToggleCollapse: () -> Void
     let onSelect: (Bool) -> Void
     @ViewBuilder let rows: () -> Rows
@@ -43,19 +44,19 @@ struct ProductSectionView<Rows: View>: View {
     /// The whole row opens the section, the gap beside a short name included;
     /// only the control answers for the purposes.
     private var header: some View {
-        HStack(alignment: .center, spacing: 12) {
+        let leading = controlPosition == .left
+        return HStack(alignment: .center, spacing: 12) {
+            if leading { control }
             Button(action: onToggleCollapse) {
                 HStack(alignment: .center, spacing: 12) {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(theme.heading)
-                        .rotationEffect(.degrees(collapsed ? 0 : 90))
-                        .frame(width: 17, height: 28)
+                    if !leading { chevron }
 
                     (Text(name) + (isRequired ? Text(" *").foregroundColor(.red) : Text("")))
                         .noticeFont(size: theme.size(.optionTitle), weight: theme.sectionTitleWeight)
                         .foregroundColor(theme.heading)
                         .multilineTextAlignment(.leading)
+
+                    if leading { chevron }
 
                     Spacer(minLength: 0)
                 }
@@ -65,17 +66,29 @@ struct ProductSectionView<Rows: View>: View {
             .accessibilityLabel(collapsed ? ProductSectionCopy.expand(name) : ProductSectionCopy.collapse(name))
             .accessibilityAddTraits(.isHeader)
 
-            SelectionControlView(
-                control: selectionControl,
-                checked: summary.allSelected,
-                indeterminate: summary.mixed,
-                locked: locked,
-                level: .product,
-                label: selectLabel,
-                lockedLabel: ProductSectionCopy.settled(name),
-                accentColor: accentColor,
-                onSelect: onSelect
-            )
+            if !leading { control }
         }
+    }
+
+    private var chevron: some View {
+        Image(systemName: "chevron.right")
+            .font(.system(size: 12, weight: .bold))
+            .foregroundColor(theme.heading)
+            .rotationEffect(.degrees(collapsed ? 0 : 90))
+            .frame(width: 17, height: 28)
+    }
+
+    private var control: some View {
+        SelectionControlView(
+            control: selectionControl,
+            checked: summary.allSelected,
+            indeterminate: summary.mixed,
+            locked: locked,
+            level: .product,
+            label: selectLabel,
+            lockedLabel: ProductSectionCopy.settled(name),
+            accentColor: accentColor,
+            onSelect: onSelect
+        )
     }
 }

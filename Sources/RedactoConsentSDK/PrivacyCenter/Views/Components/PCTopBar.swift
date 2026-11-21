@@ -10,44 +10,77 @@ struct PCTopBar: View {
     @State private var showBellSheet = false
 
     var body: some View {
-        HStack(spacing: 8) {
-            Button(action: { store.navigate(to: store.homePage) }) {
-                brandMark
+        bar
+            .padding(.horizontal, 12)
+            .frame(height: 56)
+            .background(theme.isGlass ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(theme.background))
+            .overlay(Rectangle().fill(theme.border).frame(height: 1), alignment: .bottom)
+            .sheet(isPresented: $showBellSheet) {
+                NotificationDropdown(vm: notifications, onViewAll: {
+                    showBellSheet = false
+                    store.openNotifications()
+                })
+                .environmentObject(store)
+                .environment(\.privacyCenterTheme, store.theme)
+                .presentationDetents([.medium, .large])
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel(store.displayOrgName)
-            Spacer(minLength: 4)
-            if store.showsLanguageSwitcher {
-                PCLanguagePickerButton(
-                    selectedCode: Binding(get: { store.language }, set: { _ in }),
-                    options: store.languageOptions,
-                    onSelect: { code in store.chooseLanguage(code) }
-                )
+            .task(id: showsNotifications) {
+                if showsNotifications { notifications.startBellPolling() }
             }
-            if showsNotifications {
-                bell
+    }
+
+    /// Lays the logo out where the published `logo_align` puts it, as React's
+    /// TopAppBar does: leading by default, centred over the bar, or at the far
+    /// edge with the actions ahead of it.
+    @ViewBuilder
+    private var bar: some View {
+        switch store.settings.branding.logoAlign {
+        case .center:
+            PCCenteredLogoLayout(spacing: 8) {
+                brandButton
+                HStack(spacing: 8) {
+                    actions
+                }
             }
-            userMenu
-            if store.onDismiss != nil {
-                PCIconButton(systemName: "xmark") { store.handleBackOrSignout() }
-                    .accessibilityLabel(PCStrings.close)
+        case .right:
+            HStack(spacing: 8) {
+                actions
+                Spacer(minLength: 4)
+                brandButton
+            }
+        case .auto, .left:
+            HStack(spacing: 8) {
+                brandButton
+                Spacer(minLength: 4)
+                actions
             }
         }
-        .padding(.horizontal, 12)
-        .frame(height: 56)
-        .background(theme.isGlass ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(theme.background))
-        .overlay(Rectangle().fill(theme.border).frame(height: 1), alignment: .bottom)
-        .sheet(isPresented: $showBellSheet) {
-            NotificationDropdown(vm: notifications, onViewAll: {
-                showBellSheet = false
-                store.openNotifications()
-            })
-            .environmentObject(store)
-            .environment(\.privacyCenterTheme, store.theme)
-            .presentationDetents([.medium, .large])
+    }
+
+    private var brandButton: some View {
+        Button(action: { store.navigate(to: store.homePage) }) {
+            brandMark
         }
-        .task(id: showsNotifications) {
-            if showsNotifications { notifications.startBellPolling() }
+        .buttonStyle(.plain)
+        .accessibilityLabel(store.displayOrgName)
+    }
+
+    @ViewBuilder
+    private var actions: some View {
+        if store.showsLanguageSwitcher {
+            PCLanguagePickerButton(
+                selectedCode: Binding(get: { store.language }, set: { _ in }),
+                options: store.languageOptions,
+                onSelect: { code in store.chooseLanguage(code) }
+            )
+        }
+        if showsNotifications {
+            bell
+        }
+        userMenu
+        if store.onDismiss != nil {
+            PCIconButton(systemName: "xmark") { store.handleBackOrSignout() }
+                .accessibilityLabel(PCStrings.close)
         }
     }
 
@@ -56,25 +89,28 @@ struct PCTopBar: View {
         store.settings.branding.logoHeight.map { CGFloat(min($0, 40)) } ?? 32
     }
 
+    private var logoFrameAlignment: Alignment {
+        switch store.settings.branding.logoAlign {
+        case .center: return .center
+        case .right: return .trailing
+        case .auto, .left: return .leading
+        }
+    }
+
     @ViewBuilder
     private var brandMark: some View {
         let name = store.displayOrgName
-        if let logo = store.logoUrl.flatMap(URL.init(string:)) {
+        switch PCBrandMark.resolve(logoUrl: store.logoUrl, iconUrl: store.iconUrl) {
+        case .logo(let logo):
             AsyncImage(url: logo) { image in
                 image.resizable().scaledToFit()
             } placeholder: {
                 PCInitialsAvatar(text: PCInitialsAvatar.initials(name), seed: name, size: 32)
             }
-            .frame(maxWidth: 160, maxHeight: logoHeight, alignment: .leading)
-        } else if let icon = store.iconUrl.flatMap(URL.init(string:)) {
-            AsyncImage(url: icon) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
-                PCInitialsAvatar(text: PCInitialsAvatar.initials(name), seed: name, size: 32)
-            }
-            .frame(width: 32, height: 32)
-            .clipShape(Circle())
-        } else {
+            .frame(maxWidth: 160, maxHeight: logoHeight, alignment: logoFrameAlignment)
+        case .icon(let icon):
+            PCLogoAvatar(url: icon, name: name, size: 32)
+        case .initials:
             Circle()
                 .fill(theme.primarySoft)
                 .frame(width: 32, height: 32)
@@ -162,5 +198,54 @@ struct PCTopBar: View {
                 .overlay(Circle().stroke(theme.border, lineWidth: 1))
         }
         .accessibilityLabel(PCStrings.accountMenu)
+    }
+}
+
+struct PCTopBarLogoSlot: Equatable {
+    let x: CGFloat
+    let width: CGFloat
+    let centered: Bool
+
+    static func resolve(barWidth: CGFloat, actionsWidth: CGFloat, logoWidth: CGFloat, spacing: CGFloat) -> PCTopBarLogoSlot {
+        let room = barWidth - 2 * (actionsWidth + spacing)
+        if logoWidth <= room {
+            return PCTopBarLogoSlot(x: (barWidth - logoWidth) / 2, width: logoWidth, centered: true)
+        }
+        let leadingRoom = max(0, barWidth - actionsWidth - spacing)
+        return PCTopBarLogoSlot(x: 0, width: min(logoWidth, leadingRoom), centered: false)
+    }
+}
+
+struct PCCenteredLogoLayout: Layout {
+    var spacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+        let width = proposal.width ?? sizes.map(\.width).reduce(spacing, +)
+        let height = proposal.height ?? (sizes.map(\.height).max() ?? 0)
+        return CGSize(width: width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard subviews.count == 2 else { return }
+        let logo = subviews[0]
+        let actions = subviews[1]
+        let actionsSize = actions.sizeThatFits(.unspecified)
+        let slot = PCTopBarLogoSlot.resolve(
+            barWidth: bounds.width,
+            actionsWidth: actionsSize.width,
+            logoWidth: logo.sizeThatFits(.unspecified).width,
+            spacing: spacing
+        )
+        actions.place(
+            at: CGPoint(x: bounds.maxX, y: bounds.midY),
+            anchor: .trailing,
+            proposal: ProposedViewSize(actionsSize)
+        )
+        logo.place(
+            at: CGPoint(x: bounds.minX + slot.x, y: bounds.midY),
+            anchor: .leading,
+            proposal: ProposedViewSize(width: slot.width, height: bounds.height)
+        )
     }
 }

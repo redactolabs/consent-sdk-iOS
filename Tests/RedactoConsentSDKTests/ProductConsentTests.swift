@@ -275,6 +275,19 @@ final class ProductConsentHintTests: XCTestCase {
             "Accept the required purposes for translated Product B, gone to confirm."
         )
     }
+
+    func testTheRequiredPurposeHintsAloneFollowTheSwitch() {
+        let required = ConfirmVerdict(ok: false, reason: .requiredOutstanding)
+        let owing = ConfirmVerdict(ok: false, reason: .productIncomplete, blocking: [F.b])
+        XCTAssertFalse(ProductConsent.drawsConfirmHint(required, showsRequiredHint: false))
+        XCTAssertFalse(ProductConsent.drawsConfirmHint(owing, showsRequiredHint: false))
+        XCTAssertTrue(ProductConsent.drawsConfirmHint(required, showsRequiredHint: true))
+        XCTAssertTrue(ProductConsent.drawsConfirmHint(owing, showsRequiredHint: true))
+
+        for reason in [ConfirmReason.nothingChosen, .nothingEngaged] {
+            XCTAssertTrue(ProductConsent.drawsConfirmHint(ConfirmVerdict(ok: false, reason: reason), showsRequiredHint: false))
+        }
+    }
 }
 
 final class ProductConsentSelectionTests: XCTestCase {
@@ -496,6 +509,57 @@ final class ProductConsentToggleTests: XCTestCase {
     func testATickFallsBackWhenTheOnlyRequiredElementIsDisabled() {
         let purpose = F.purpose("p", [F.a], elements: [F.element("required-but-off", required: true, enabled: false), F.element("live", required: false)])
         XCTAssertEqual(ProductConsent.seededDataElements(purpose), ["live"])
+    }
+
+    // With nothing to choose between, taking the purpose takes all of them.
+    func testATickGrantsEveryLiveElementOnceTheyCarryNoTickOfTheirOwn() {
+        let purpose = F.purpose("p", [F.a], elements: [F.element("required", required: true), F.element("optional", required: false)])
+        XCTAssertEqual(ProductConsent.liveDataElements(purpose), ["required", "optional"])
+    }
+
+    func testATickThatGrantsEveryLiveElementNeverGrantsADisabledOne() {
+        let purpose = F.purpose("p", [F.a], elements: [F.element("off", required: true, enabled: false), F.element("on", required: false)])
+        XCTAssertEqual(ProductConsent.liveDataElements(purpose), ["on"])
+    }
+
+    func testEveryLiveElementIsTheGrantOnlyForANoticeWhoseDataElementsHaveNoTick() {
+        let purpose = F.purpose("p", [F.a], elements: [F.element("required", required: true), F.element("optional", required: false)])
+        XCTAssertEqual(ProductConsent.tickGrant(showsDataElementControls: false)(purpose), ["required", "optional"])
+        XCTAssertEqual(ProductConsent.tickGrant(showsDataElementControls: true)(purpose), ["required"])
+    }
+
+    private let listedOnly = F.purpose("listed", [F.a], elements: [
+        F.element("req", required: true),
+        F.element("opt", required: false),
+        F.element("off", required: false, enabled: false),
+    ])
+
+    func testPurposeToggleTicksTheOptionalElementsTooWhenATickGrantsThemAll() {
+        let next = ProductConsent.purposeToggle(purpose: listedOnly, productUuid: nil, selectedPurposes: [:], grants: ProductConsent.liveDataElements)
+        XCTAssertEqual(next.selectedPurposes, [F.key(nil, listedOnly): true])
+        XCTAssertEqual(next.selectedDataElements, [
+            "\(F.key(nil, listedOnly))-req": true,
+            "\(F.key(nil, listedOnly))-opt": true,
+            "\(F.key(nil, listedOnly))-off": false,
+        ])
+    }
+
+    func testSectionToggleGrantsEachPurposesOptionalElementsTooWhenATickGrantsThemAll() {
+        let next = ProductConsent.sectionToggle(sectionPurposes: [listedOnly], keyProductUuid: F.a, selectedPurposes: [:], grants: ProductConsent.liveDataElements)
+        XCTAssertEqual(next.selectedPurposes, [F.key(F.a, listedOnly): true])
+        XCTAssertEqual(next.selectedDataElements, [
+            "\(F.key(F.a, listedOnly))-req": true,
+            "\(F.key(F.a, listedOnly))-opt": true,
+            "\(F.key(F.a, listedOnly))-off": false,
+        ])
+    }
+
+    func testUntickingStillClearsEveryElementWhenATickGrantsThemAll() {
+        let ticked = [F.key(F.a, listedOnly): true]
+        let byPurpose = ProductConsent.purposeToggle(purpose: listedOnly, productUuid: F.a, selectedPurposes: ticked, grants: ProductConsent.liveDataElements)
+        let bySection = ProductConsent.sectionToggle(sectionPurposes: [listedOnly], keyProductUuid: F.a, selectedPurposes: ticked, grants: ProductConsent.liveDataElements)
+        XCTAssertTrue(byPurpose.selectedDataElements.values.allSatisfy { !$0 })
+        XCTAssertTrue(bySection.selectedDataElements.values.allSatisfy { !$0 })
     }
 
     func testPurposeToggleLeavesTheOptionalElementsAlone() {

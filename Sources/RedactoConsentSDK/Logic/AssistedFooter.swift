@@ -22,7 +22,7 @@ enum AssistedFooter {
     ) -> [[AssistedTextRun]] {
         var lines = [[AssistedTextRun(text: translate("notice_text", config.noticeText), elementId: AssistedElementId.noticeText)]]
         if showsPolicyLink {
-            lines.append([
+            let policy = [
                 AssistedTextRun(
                     text: translate("privacy_policy_prefix_text", config.privacyPolicyPrefixText),
                     elementId: AssistedElementId.privacyPolicyText
@@ -36,13 +36,21 @@ enum AssistedFooter {
                     link: url(config.privacyPolicyUrl),
                     elementId: AssistedElementId.privacyPolicyLink
                 ),
-            ])
+            ]
+            // `privacy_policy_inline` runs the policy line on from the notice
+            // text, one space apart, as React's assisted notice does.
+            if NoticeChromeOptions(served: config.appearance).inlinesPolicyLink {
+                lines[0].append(AssistedTextRun(text: " "))
+                lines[0].append(contentsOf: policy)
+            } else {
+                lines.append(policy)
+            }
         }
         return lines
     }
 
     static func hasPrivacyCenterLine(_ config: ActiveConfig) -> Bool {
-        !config.privacyCenterUrl.isEmpty || !config.additionalText.isEmpty
+        config.showsPrivacyCenterEntry || !config.additionalText.isEmpty
     }
 
     /// Empty when there is nothing to show, so the divider is not drawn either.
@@ -59,11 +67,11 @@ enum AssistedFooter {
                 text: translate("additional_text", config.additionalText.isEmpty ? AssistedDefaults.additionalText : config.additionalText),
                 elementId: AssistedElementId.additionalText
             )]
-            if !config.privacyCenterUrl.isEmpty {
+            if config.showsPrivacyCenterEntry {
                 line.append(AssistedTextRun(text: " "))
                 line.append(AssistedTextRun(
                     text: translate("privacy_center_anchor_text", nonEmpty(config.privacyCenterAnchorText) ?? AssistedDefaults.privacyCenterAnchor),
-                    link: url(config.privacyCenterUrl),
+                    link: config.privacyCenterAsText ? nil : url(config.privacyCenterUrl),
                     elementId: AssistedElementId.privacyCenterLink
                 ))
                 line.append(AssistedTextRun(text: "."))

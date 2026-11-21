@@ -39,6 +39,10 @@ struct TransportStubRequest {
         body.flatMap { try? JSONSerialization.jsonObject(with: $0) as? [String: Any] }
     }
 
+    var idempotencyKey: String? {
+        jsonBody?["idempotency_key"] as? String
+    }
+
     var queryItems: [URLQueryItem] {
         URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
     }

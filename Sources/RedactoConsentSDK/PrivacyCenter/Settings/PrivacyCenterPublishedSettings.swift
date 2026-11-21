@@ -49,6 +49,12 @@ public enum PrivacyCenterRequestTypeKey: String, CaseIterable, Sendable {
     }
 }
 
+/// Where the top bar puts the logo. `auto` keeps it at the leading edge,
+/// as it sat before the setting existed.
+public enum PrivacyCenterLogoAlign: String, CaseIterable, Sendable {
+    case auto, left, center, right
+}
+
 public enum PrivacyCenterSignInLayout: String, CaseIterable, Sendable {
     case card, split, minimal
 }
@@ -107,6 +113,8 @@ public struct PrivacyCenterBrandingSettings: Equatable, Sendable {
     public var logoUrl: String?
     /// 28-96 points; nil keeps the built-in size.
     public var logoHeight: Int?
+    /// Where the top bar places the logo.
+    public var logoAlign: PrivacyCenterLogoAlign = .auto
     public var inheritColors: Bool
     public var primaryColor: String?
     public var accentColor: String?

@@ -62,6 +62,7 @@ enum PrivacyCenterSettingsResolver {
             displayName: nullableText(raw["display_name"], fallback: base.displayName),
             logoUrl: nullableUrl(raw["logo_url"], fallback: base.logoUrl),
             logoHeight: clampedInt(raw["logo_height"], PrivacyCenterSettingsLimits.logoHeight, fallback: base.logoHeight),
+            logoAlign: option(raw["logo_align"], fallback: base.logoAlign),
             inheritColors: bool(raw["inherit_colors"], fallback: base.inheritColors),
             primaryColor: hex(raw["primary_color"], fallback: base.primaryColor),
             accentColor: hex(raw["accent_color"], fallback: base.accentColor),
@@ -320,6 +321,7 @@ enum PrivacyCenterSettingsOverrides {
         put(&record, "display_name", branding.displayName)
         put(&record, "logo_url", branding.logoUrl)
         put(&record, "logo_height", nullable: branding.logoHeight)
+        put(&record, "logo_align", branding.logoAlign?.rawValue)
         put(&record, "inherit_colors", branding.inheritColors)
         put(&record, "primary_color", branding.primaryColor)
         put(&record, "accent_color", branding.accentColor)

@@ -34,7 +34,8 @@ final class PrivacyCenterSandboxLedgerTests: XCTestCase {
         XCTAssertEqual(request.firstPurpose["selected"] as? Bool, false)
         XCTAssertEqual(request.header(SandboxConfig.tokenHeader), "sandbox-token")
         XCTAssertNil(request.header("Authorization"))
-        XCTAssertNotNil(request.header(IdempotencyKeys.header))
+        XCTAssertNotNil(request.idempotencyKey)
+        XCTAssertNil(request.header("Idempotency-Key"))
     }
 
     func testASandboxReceiptDownloadGoesToTheLedgerWithTheIdentityInTheQuery() async throws {
@@ -76,7 +77,7 @@ final class PrivacyCenterSandboxLedgerTests: XCTestCase {
         XCTAssertEqual(request.urlWithoutQuery, "\(F.consentPrefix)/manage-consent")
         XCTAssertEqual(request.json["contact"] as? String, "UCIC-9")
         XCTAssertNil(request.json["org_user_id"])
-        XCTAssertNil(request.header(IdempotencyKeys.header))
+        XCTAssertNil(request.idempotencyKey)
     }
 
     func testALiveLedgerRevokeSendsNoSandboxIdentity() async throws {
@@ -108,6 +109,7 @@ final class PrivacyCenterSandboxLedgerTests: XCTestCase {
         let submits = PCMockURLProtocol.requests(pathSuffix: "/submit-consent")
         XCTAssertEqual(submits.count, 2)
         XCTAssertEqual(submits[0].body, submits[1].body)
-        XCTAssertEqual(submits[0].header(IdempotencyKeys.header), submits[1].header(IdempotencyKeys.header))
+        XCTAssertNotNil(submits[0].idempotencyKey)
+        XCTAssertEqual(submits[0].idempotencyKey, submits[1].idempotencyKey)
     }
 }

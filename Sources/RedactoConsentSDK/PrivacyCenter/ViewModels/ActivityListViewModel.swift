@@ -6,12 +6,28 @@ import SwiftUI
 @MainActor
 public final class ActivityListViewModel: ObservableObject {
     /// Activities of one calendar day, newest first as the server orders them.
+    public struct Row: Identifiable, Equatable {
+        public let id: String
+        public let activity: Activity
+    }
+
     public struct DayGroup: Identifiable, Equatable {
         public let key: String
         public let label: String
         public let newest: String
-        public let items: [Activity]
+        public let rows: [Row]
+        public var items: [Activity] { rows.map(\.activity) }
         public var id: String { key }
+    }
+
+    nonisolated static func rowKeys(_ activities: [Activity]) -> [String] {
+        var seen = Set<String>()
+        return activities.enumerated().map { index, activity in
+            if let backendId = activity.backendId, !backendId.isEmpty, seen.insert(backendId).inserted {
+                return "id:" + backendId
+            }
+            return "row:\(index):" + activity.activityType + ":" + activity.timestamp + ":" + (activity.caseId ?? "")
+        }
     }
 
     @Published public var activities: [Activity] = []
@@ -34,19 +50,19 @@ public final class ActivityListViewModel: ObservableObject {
 
     public var dayGroups: [DayGroup] {
         var order: [String] = []
-        var byKey: [String: [Activity]] = [:]
-        for activity in activities {
+        var byKey: [String: [Row]] = [:]
+        for (activity, rowKey) in zip(activities, Self.rowKeys(activities)) {
             let key = PrivacyCenterDateFormatters.dayKey(activity.timestamp)
             if byKey[key] == nil { order.append(key) }
-            byKey[key, default: []].append(activity)
+            byKey[key, default: []].append(Row(id: rowKey, activity: activity))
         }
         return order.map { key in
-            let items = byKey[key] ?? []
+            let rows = byKey[key] ?? []
             return DayGroup(
                 key: key,
-                label: PrivacyCenterDateFormatters.formatDate(items.first?.timestamp),
-                newest: items.first?.timestamp ?? "",
-                items: items
+                label: PrivacyCenterDateFormatters.formatDate(rows.first?.activity.timestamp),
+                newest: rows.first?.activity.timestamp ?? "",
+                rows: rows
             )
         }
     }

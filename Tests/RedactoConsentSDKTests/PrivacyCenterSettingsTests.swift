@@ -66,6 +66,23 @@ final class PrivacyCenterSettingsTests: XCTestCase {
         XCTAssertEqual(settings.footer.links, [])
     }
 
+    /// React resolve.test.ts: the top bar's logo alignment keeps a known
+    /// value and drops anything else for `auto`, which draws the bar as before.
+    func testLogoAlignKeepsAKnownValueAndFallsBackToAuto() {
+        XCTAssertEqual(defaults.branding.logoAlign, .auto)
+        XCTAssertEqual(resolve(["branding": ["logo_align": "right"]]).branding.logoAlign, .right)
+        XCTAssertEqual(resolve(["branding": ["logo_align": "center"]]).branding.logoAlign, .center)
+        XCTAssertEqual(resolve(["branding": ["logo_align": "left"]]).branding.logoAlign, .left)
+        XCTAssertEqual(resolve(["branding": ["logo_align": "middle"]]).branding.logoAlign, .auto)
+        XCTAssertEqual(resolve(["branding": ["logo_align": 2]]).branding.logoAlign, .auto)
+    }
+
+    func testAHostLogoAlignOverridesThePublishedOne() {
+        let overrides = PrivacyCenterSettings(branding: .init(logoAlign: .center))
+        XCTAssertEqual(resolve(["branding": ["logo_align": "right"]], overrides).branding.logoAlign, .center)
+        XCTAssertEqual(resolve(nil, overrides).branding.logoAlign, .center)
+    }
+
     // A number is never read as a boolean, nor the reverse.
     func testDoesNotConfuseNumbersAndBooleans() {
         let settings = resolve(["portal": ["welcome_enabled": 1, "session_timeout_minutes": true]])

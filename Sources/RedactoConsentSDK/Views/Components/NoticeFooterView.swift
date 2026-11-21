@@ -52,6 +52,8 @@ struct NoticeFooterView: View {
     let declineLabel: String
     let acceptSelectedDisabled: Bool
     let acceptSelectedHint: String?
+    /// Why Accept Selected is held when the notice hides the hint from sight.
+    var acceptSelectedValue: String? = nil
     let isSubmittingAccept: Bool
     let isSubmitting: Bool
     let theme: NoticeTheme
@@ -114,6 +116,7 @@ struct NoticeFooterView: View {
         .id("confirm_button_text")
         .accessibilityLabel(acceptSelectedLabel)
         .accessibilityHint(acceptSelectedHint ?? "")
+        .accessibilityValue(acceptSelectedValue ?? "")
     }
 
     private func decline(fullWidth: Bool) -> some View {

@@ -129,33 +129,6 @@ struct NoticeConfigurationErrorView: View {
     }
 }
 
-/// Glass loads as a compact pill instead of an empty card.
-struct NoticeLoaderPill: View {
-    let theme: NoticeTheme
-
-    var body: some View {
-        HStack(spacing: 10) {
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: theme.accent))
-            Text(NoticeCopy.loading)
-                .noticeFont(size: 14, weight: .semibold)
-                .foregroundColor(theme.heading)
-        }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 12)
-        .background(
-            ZStack {
-                Capsule().fill(.regularMaterial)
-                Capsule().fill(theme.glass?.control.color ?? .white)
-            }
-        )
-        .overlay(Capsule().stroke(theme.glass?.panelEdge.color ?? .clear, lineWidth: 1))
-        .noticeShadow(theme.glass?.floatShadow)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Loading consent notice")
-    }
-}
-
 /// As tall as its content, never taller than `cap`. `.frame(maxHeight:)` would
 /// take the whole cap whenever there is room, so a short notice drew a
 /// full-height card with its content floating in the middle.

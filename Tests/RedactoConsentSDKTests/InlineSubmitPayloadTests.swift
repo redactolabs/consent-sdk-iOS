@@ -65,7 +65,9 @@ final class InlineSubmitPayloadTests: XCTestCase {
 
             let request = try await send(config, state)
             let body = try XCTUnwrap(try XCTUnwrap(request).body)
-            XCTAssertEqual(sortedJSON(body), todaysSingleProductBody)
+            var json = try XCTUnwrap(try JSONSerialization.jsonObject(with: body) as? [String: Any])
+            XCTAssertNotNil(json.removeValue(forKey: "idempotency_key"))
+            XCTAssertEqual(sortedJSONObject(json), todaysSingleProductBody)
             XCTAssertFalse(String(decoding: body, as: UTF8.self).contains("product_uuid"))
         }
     }

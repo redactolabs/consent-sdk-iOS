@@ -30,8 +30,9 @@ enum TTSQueueBuilder {
         urls: [String: String],
         purposes: [ActiveConfigPurpose],
         hasAdditionalText: Bool,
-        hasPrivacyCenterUrl: Bool,
-        hasDpoInfo: Bool
+        hasPrivacyCenterEntry: Bool,
+        hasDpoInfo: Bool,
+        options: NoticeChromeOptions = NoticeChromeOptions(served: nil)
     ) -> [TTSQueueItem] {
         var queue: [TTSQueueItem] = []
 
@@ -39,20 +40,26 @@ enum TTSQueueBuilder {
         appendIfPresent("notice_text", urls: urls, queue: &queue)
         appendIfPresent("privacy_policy_prefix_text", urls: urls, queue: &queue)
         appendIfPresent("privacy_policy_anchor_text", urls: urls, queue: &queue)
-        appendIfPresent("purpose_section_heading", urls: urls, queue: &queue)
+        if options.showsPurposeSectionHeading {
+            appendIfPresent("purpose_section_heading", urls: urls, queue: &queue)
+        }
 
         for purpose in purposes {
             appendIfPresent("purpose_name_\(purpose.uuid)", urls: urls, queue: &queue)
-            appendIfPresent("purpose_desc_\(purpose.uuid)", urls: urls, queue: &queue)
-            for dataElement in purpose.dataElements {
-                appendIfPresent("element_\(dataElement.uuid)", urls: urls, queue: &queue)
+            if options.descriptionPlacement != .hidden {
+                appendIfPresent("purpose_desc_\(purpose.uuid)", urls: urls, queue: &queue)
+            }
+            if options.showsDataElements {
+                for dataElement in purpose.dataElements {
+                    appendIfPresent("element_\(dataElement.uuid)", urls: urls, queue: &queue)
+                }
             }
         }
 
         if hasAdditionalText {
             appendIfPresent("additional_text", urls: urls, queue: &queue)
         }
-        if hasPrivacyCenterUrl {
+        if hasPrivacyCenterEntry {
             appendIfPresent("privacy_center_anchor_text", urls: urls, queue: &queue)
         }
 
@@ -470,8 +477,9 @@ public class ConsentNoticeViewModel: ObservableObject {
             urls: ttsAudioUrls,
             purposes: ttsPurposes,
             hasAdditionalText: !ac.additionalText.isEmpty,
-            hasPrivacyCenterUrl: !ac.privacyCenterUrl.isEmpty,
-            hasDpoInfo: ac.dpoInfo != nil
+            hasPrivacyCenterEntry: ac.showsPrivacyCenterEntry,
+            hasDpoInfo: ac.dpoInfo != nil,
+            options: chromeOptions
         )
         guard !ttsQueue.isEmpty else { return }
         ttsIndex = 0

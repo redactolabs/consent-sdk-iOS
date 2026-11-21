@@ -57,6 +57,26 @@ public enum NoticeTextScale: String, CaseIterable {
     }
 }
 
+/// Which edge of a purpose, product or data element row the tick sits on.
+public enum NoticeControlPosition: String, CaseIterable {
+    case left
+    case right
+}
+
+/// Alignment of the notice's own prose: the title and the notice text.
+public enum NoticeHeaderAlign: String, CaseIterable {
+    case left
+    case center
+}
+
+/// Where a purpose's description goes: on the row, behind the chevron, or
+/// nowhere.
+public enum PurposeDescriptionPlacement: String, CaseIterable {
+    case always
+    case expanded
+    case hidden
+}
+
 /// Every colour the console can set on a notice, in the order the server's
 /// `NoticeAppearanceColorsIn` declares them. Keys outside this list are ignored,
 /// so a newer console never breaks an older SDK.
@@ -112,10 +132,35 @@ public struct NoticeAppearance: Codable, Equatable {
     public var desktopPosition: String?
     public var backdrop: String?
     public var collapsibleSections: Bool?
+    /// Only read when the notice covers one product.
+    public var showProductSection: Bool?
+    /// Absent draws the data elements, and the chevron that opens them.
+    public var showDataElements: Bool?
+    /// Absent gives each data element its own tick. `false` lists them with no
+    /// tick, and a ticked purpose then submits every one of its data elements.
+    public var showDataElementControls: Bool?
+    /// Absent draws the description on the row.
+    public var purposeDescription: String?
+    public var showPurposeSectionHeading: Bool?
+    /// Absent leaves the tick on the trailing edge and the chevron leading.
+    public var controlPosition: String?
+    /// Absent leaves the title and notice text ranged left.
+    public var headerAlign: String?
     public var phoneFooter: String?
     public var autoDark: Bool?
     public var darkColors: [String: String]?
     public var maxWidth: Double?
+    /// Absent shows the title. Hidden, it still names the notice for VoiceOver.
+    public var showTitle: Bool?
+    /// Absent draws the talkback control wherever notice audio is available.
+    public var showAudioButton: Bool?
+    /// Absent draws the logo, the way every notice published before the field did.
+    public var showLogo: Bool?
+    /// Absent starts the privacy policy line under the notice text.
+    public var privacyPolicyInline: Bool?
+    public var privacyCenterAsText: Bool?
+    /// Absent draws the "Accept the required purposes" hint above the actions.
+    public var showRequiredHint: Bool?
     public var logoSize: Double?
     public var textScale: String?
     public var motion: Bool?
@@ -133,10 +178,23 @@ public struct NoticeAppearance: Codable, Equatable {
         case mobileLayout = "mobile_layout"
         case desktopPosition = "desktop_position"
         case collapsibleSections = "collapsible_sections"
+        case showProductSection = "show_product_section"
+        case showDataElements = "show_data_elements"
+        case showDataElementControls = "show_data_element_controls"
+        case purposeDescription = "purpose_description"
+        case showPurposeSectionHeading = "show_purpose_section_heading"
+        case controlPosition = "control_position"
+        case headerAlign = "header_align"
         case phoneFooter = "phone_footer"
         case autoDark = "auto_dark"
         case darkColors = "dark_colors"
         case maxWidth = "max_width"
+        case showTitle = "show_title"
+        case showAudioButton = "show_audio_button"
+        case showLogo = "show_logo"
+        case privacyPolicyInline = "privacy_policy_inline"
+        case privacyCenterAsText = "privacy_center_as_text"
+        case showRequiredHint = "show_required_hint"
         case logoSize = "logo_size"
         case textScale = "text_scale"
         case customCss = "custom_css"
@@ -157,10 +215,23 @@ public struct NoticeAppearance: Codable, Equatable {
         desktopPosition: String? = nil,
         backdrop: String? = nil,
         collapsibleSections: Bool? = nil,
+        showProductSection: Bool? = nil,
+        showDataElements: Bool? = nil,
+        showDataElementControls: Bool? = nil,
+        purposeDescription: String? = nil,
+        showPurposeSectionHeading: Bool? = nil,
+        controlPosition: String? = nil,
+        headerAlign: String? = nil,
         phoneFooter: String? = nil,
         autoDark: Bool? = nil,
         darkColors: [String: String]? = nil,
         maxWidth: Double? = nil,
+        showTitle: Bool? = nil,
+        showAudioButton: Bool? = nil,
+        showLogo: Bool? = nil,
+        privacyPolicyInline: Bool? = nil,
+        privacyCenterAsText: Bool? = nil,
+        showRequiredHint: Bool? = nil,
         logoSize: Double? = nil,
         textScale: String? = nil,
         motion: Bool? = nil,
@@ -180,10 +251,23 @@ public struct NoticeAppearance: Codable, Equatable {
         self.desktopPosition = desktopPosition
         self.backdrop = backdrop
         self.collapsibleSections = collapsibleSections
+        self.showProductSection = showProductSection
+        self.showDataElements = showDataElements
+        self.showDataElementControls = showDataElementControls
+        self.purposeDescription = purposeDescription
+        self.showPurposeSectionHeading = showPurposeSectionHeading
+        self.controlPosition = controlPosition
+        self.headerAlign = headerAlign
         self.phoneFooter = phoneFooter
         self.autoDark = autoDark
         self.darkColors = darkColors
         self.maxWidth = maxWidth
+        self.showTitle = showTitle
+        self.showAudioButton = showAudioButton
+        self.showLogo = showLogo
+        self.privacyPolicyInline = privacyPolicyInline
+        self.privacyCenterAsText = privacyCenterAsText
+        self.showRequiredHint = showRequiredHint
         self.logoSize = logoSize
         self.textScale = textScale
         self.motion = motion
@@ -206,10 +290,23 @@ public struct NoticeAppearance: Codable, Equatable {
         desktopPosition = c.optional(String.self, forKey: .desktopPosition)
         backdrop = c.optional(String.self, forKey: .backdrop)
         collapsibleSections = c.optional(Bool.self, forKey: .collapsibleSections)
+        showProductSection = c.optional(Bool.self, forKey: .showProductSection)
+        showDataElements = c.optional(Bool.self, forKey: .showDataElements)
+        showDataElementControls = c.optional(Bool.self, forKey: .showDataElementControls)
+        purposeDescription = c.optional(String.self, forKey: .purposeDescription)
+        showPurposeSectionHeading = c.optional(Bool.self, forKey: .showPurposeSectionHeading)
+        controlPosition = c.optional(String.self, forKey: .controlPosition)
+        headerAlign = c.optional(String.self, forKey: .headerAlign)
         phoneFooter = c.optional(String.self, forKey: .phoneFooter)
         autoDark = c.optional(Bool.self, forKey: .autoDark)
         darkColors = c.stringEntries(forKey: .darkColors)
         maxWidth = c.optional(Double.self, forKey: .maxWidth)
+        showTitle = c.optional(Bool.self, forKey: .showTitle)
+        showAudioButton = c.optional(Bool.self, forKey: .showAudioButton)
+        showLogo = c.optional(Bool.self, forKey: .showLogo)
+        privacyPolicyInline = c.optional(Bool.self, forKey: .privacyPolicyInline)
+        privacyCenterAsText = c.optional(Bool.self, forKey: .privacyCenterAsText)
+        showRequiredHint = c.optional(Bool.self, forKey: .showRequiredHint)
         logoSize = c.optional(Double.self, forKey: .logoSize)
         textScale = c.optional(String.self, forKey: .textScale)
         motion = c.optional(Bool.self, forKey: .motion)
