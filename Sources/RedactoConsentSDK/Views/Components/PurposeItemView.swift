@@ -14,6 +14,7 @@ struct PurposeItemView: View {
     let onDataElementToggle: (String, String) -> Void
     let getTranslatedText: (String, String, String?) -> String
     let isAlreadyConsented: Bool
+    var lockedReason: String?
     var initialDataElementSelections: [String: Bool] = [:]
     var activeTTSSegmentKey: String?
     var productUuid: String?
@@ -105,6 +106,16 @@ struct PurposeItemView: View {
                 }
             }
 
+            if let lockedReason {
+                Text(lockedReason)
+                    .noticeFont(size: theme.size(.optionDescription))
+                    .foregroundColor(theme.text)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(disclosureInsets)
+            }
+
             if !isCollapsed {
                 if disclosesDescription {
                     descriptionText
@@ -183,6 +194,7 @@ struct PurposeItemView: View {
             recordedAnswer: recordedAnswer,
             label: "Select all data elements for \(purposeName)",
             lockedLabel: SelectionControlCopy.settled(purposeName),
+            lockedHint: lockedReason,
             accentColor: accentColor,
             onSelect: { _ in onPurposeToggle(purpose.uuid) }
         )

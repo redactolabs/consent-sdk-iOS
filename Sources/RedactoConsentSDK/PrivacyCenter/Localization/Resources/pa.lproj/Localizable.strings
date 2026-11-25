@@ -125,6 +125,7 @@
 "aboutToModifyConsentOnBehalf" = "ਤੁਸੀਂ {{nominator}} ਦੀ ਤਰਫ਼ੋਂ ਸਹਿਮਤੀ ਵਿੱਚ ਬਦਲਾਅ ਕਰਨ ਵਾਲੇ ਹੋ:";
 "noDataElementsAvailable" = "ਕੋਈ ਡਾਟਾ ਤੱਤ ਉਪਲਬਧ ਨਹੀਂ ਹੈ";
 "revokeConsentWarning" = "ਜੇਕਰ ਤੁਸੀਂ ਇਸ ਸਹਿਮਤੀ ਨੂੰ ਰੱਦ ਕਰਦੇ ਹੋ ਤਾਂ, ਇਸ ਡਾਟਾ 'ਤੇ ਨਿਰਭਰ ਕੁਝ ਫੀਚਰਾਂ ਤੱਕ ਪਹੁੰਚ ਗੁਆਚ ਸਕਦੀ ਹੈ।";
+"nonRevocableConsentWarning" = "ਇਹ ਸਹਿਮਤੀ ਵਾਪਸ ਨਹੀਂ ਲਈ ਜਾ ਸਕਦੀ, ਇਸ ਲਈ ਰੱਦ ਕਰਨ ਦਾ ਵਿਕਲਪ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।";
 "revokeConsent" = "ਸਹਿਮਤੀ ਰੱਦ ਕਰੋ";
 "regrantConsent" = "ਸਹਿਮਤੀ ਮੁੜ ਦਿਓ";
 "regrantConsentWarning" = "ਇਸ ਸਹਿਮਤੀ ਨੂੰ ਮੁੜ ਦੇਣ ਨਾਲ, ਤੁਸੀਂ ਸੰਸਥਾ ਨੂੰ ਇਸ ਮਕਸਦ ਲਈ ਮੁੜ ਤੋਂ ਤੁਹਾਡਾ ਡਾਟਾ ਪ੍ਰੋਸੈਸ ਕਰਨ ਦੀ ਆਗਿਆ ਦੇਵੋਗੇ।";

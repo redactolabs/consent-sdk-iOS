@@ -148,11 +148,14 @@ public struct ActiveConfigPurpose: Codable {
     public let industries: String?
     public let dataElements: [ActiveConfigDataElement]
     public var productUuids: [String]?
+    public var revocable: Bool?
+    public var revokeWarningMessage: String?
 
     enum CodingKeys: String, CodingKey {
-        case uuid, name, description, industries
+        case uuid, name, description, industries, revocable
         case dataElements = "data_elements"
         case productUuids = "product_uuids"
+        case revokeWarningMessage = "revoke_warning_message"
     }
 }
 

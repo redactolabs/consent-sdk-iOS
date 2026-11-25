@@ -88,16 +88,17 @@ enum ProductConsent {
         return collapsed
     }
 
+    static func isRecordedGrant(_ recorded: PurposeSelection?) -> Bool {
+        guard let recorded else { return false }
+        return recorded.selected
+            && (recorded.status.isEmpty || recorded.status == PurposeStatus.active)
+            && !recorded.needsReconsent
+    }
+
     static func recordedBaseline(rows: [NoticePurposeRow], recordedFor: @escaping RecordedLookup) -> [String: Bool] {
         var baseline: [String: Bool] = [:]
         for row in rows {
-            guard let recorded = recordedFor(row.purpose.uuid, row.productUuid) else {
-                baseline[rowKey(row)] = false
-                continue
-            }
-            baseline[rowKey(row)] = recorded.selected
-                && (recorded.status.isEmpty || recorded.status == PurposeStatus.active)
-                && !recorded.needsReconsent
+            baseline[rowKey(row)] = isRecordedGrant(recordedFor(row.purpose.uuid, row.productUuid))
         }
         return baseline
     }

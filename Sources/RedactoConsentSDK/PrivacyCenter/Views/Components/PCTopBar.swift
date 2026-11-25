@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// The top bar (React AppShell/TopAppBar): workspace logo, language, the
-/// notification bell, the account menu, and the host's close control.
+/// The top bar, laid out as the Android SDK's: the workspace logo and name,
+/// then language, the notification bell and the account menu. Leaving the
+/// Privacy Center sits in the account menu, so there is no close control.
 struct PCTopBar: View {
     @Environment(\.privacyCenterTheme) private var theme
     @EnvironmentObject private var store: PrivacyCenterStore
@@ -44,7 +45,7 @@ struct PCTopBar: View {
             }
         case .right:
             HStack(spacing: 8) {
-                actions
+                pinnedActions
                 Spacer(minLength: 4)
                 brandButton
             }
@@ -52,14 +53,31 @@ struct PCTopBar: View {
             HStack(spacing: 8) {
                 brandButton
                 Spacer(minLength: 4)
-                actions
+                pinnedActions
             }
         }
     }
 
+    /// Held at full size so a long brand name truncates instead of squeezing the controls.
+    private var pinnedActions: some View {
+        HStack(spacing: 8) {
+            actions
+        }
+        .fixedSize()
+    }
+
     private var brandButton: some View {
         Button(action: { store.navigate(to: store.homePage) }) {
-            brandMark
+            HStack(spacing: 8) {
+                brandMark
+                if !store.displayOrgName.isEmpty {
+                    Text(store.displayOrgName)
+                        .font(theme.font(size: 14, weight: .semibold))
+                        .foregroundColor(theme.text)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
+            }
         }
         .buttonStyle(.plain)
         .accessibilityLabel(store.displayOrgName)
@@ -78,10 +96,6 @@ struct PCTopBar: View {
             bell
         }
         userMenu
-        if store.onDismiss != nil {
-            PCIconButton(systemName: "xmark") { store.handleBackOrSignout() }
-                .accessibilityLabel(PCStrings.close)
-        }
     }
 
     /// The published logo height, capped at what the 56pt bar can hold.
@@ -102,10 +116,10 @@ struct PCTopBar: View {
         let name = store.displayOrgName
         switch PCBrandMark.resolve(logoUrl: store.logoUrl, iconUrl: store.iconUrl) {
         case .logo(let logo):
-            AsyncImage(url: logo) { image in
+            PCRemoteImage(url: logo) { image in
                 image.resizable().scaledToFit()
             } placeholder: {
-                PCInitialsAvatar(text: PCInitialsAvatar.initials(name), seed: name, size: 32)
+                Color.clear.frame(width: logoHeight, height: logoHeight)
             }
             .frame(maxWidth: 160, maxHeight: logoHeight, alignment: logoFrameAlignment)
         case .icon(let icon):
@@ -130,7 +144,7 @@ struct PCTopBar: View {
             Image(systemName: "bell")
                 .font(theme.font(size: 15, weight: .semibold))
                 .foregroundColor(theme.text)
-                .frame(width: 34, height: 34)
+                .frame(width: Self.controlHeight, height: Self.controlHeight)
                 .background(theme.surface)
                 .overlay(Circle().stroke(theme.border, lineWidth: 1))
                 .clipShape(Circle())
@@ -151,21 +165,26 @@ struct PCTopBar: View {
         .accessibilityLabel(PCStrings.notifications)
     }
 
-    /// React `initialsFromEmail`.
-    static func initials(fromEmail email: String) -> String {
-        guard !email.isEmpty else { return "?" }
-        let handle = email.split(separator: "@").first.map(String.init) ?? ""
-        let parts = handle.split(whereSeparator: { ".-_".contains($0) })
-        if parts.count >= 2, let a = parts[0].first, let b = parts[1].first {
-            return "\(a)\(b)".uppercased()
-        }
-        return (handle.first.map { String($0) } ?? "?").uppercased()
+    /// The language pill, the bell and the account pill share one height.
+    static let controlHeight: CGFloat = 36
+
+    /// The workspace icon for the account button, as the Android SDK and
+    /// React's UserMenu draw it: from the org branding, whatever the brand settings.
+    private var accountIconUrl: URL? {
+        store.branding?.iconUrl.pcNonEmpty.flatMap(URL.init(string:))
+    }
+
+    /// Without an icon the account button shows the brand's initial. Never the
+    /// contact's: with no email or mobile in the token the contact is the
+    /// org_user_id, and a UUID reads as initials like "04".
+    private var accountInitial: String {
+        String(store.displayOrgName.prefix(1)).uppercased()
     }
 
     private var userMenu: some View {
         let email = store.contact ?? ""
         return Menu {
-            Section(store.displayOrgName.isEmpty ? "—" : store.displayOrgName) {
+            Section(store.displayOrgName.isEmpty ? "-" : store.displayOrgName) {
                 if !email.isEmpty { Text(email) }
                 if let id = store.currentOrgUserId { Text(PCStrings.userIdLabel(id)) }
             }
@@ -176,28 +195,49 @@ struct PCTopBar: View {
                     Label(PCStrings.switchProfile, systemImage: "person.2")
                 }
             }
-            if let onBack = store.onBack {
+            if let exit = store.exitAction {
+                let signsOut = exit == .signout
                 Button {
                     store.performExitAction()
                 } label: {
                     Label(
-                        onBack == .back ? PCStrings.back : PCStrings.signOut,
-                        systemImage: onBack == .back ? "arrow.left" : "rectangle.portrait.and.arrow.right"
+                        signsOut ? PCStrings.signOut : PCStrings.back,
+                        systemImage: signsOut ? "rectangle.portrait.and.arrow.right" : "arrow.left"
                     )
                 }
             }
         } label: {
+            HStack(spacing: 4) {
+                accountAvatar
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundColor(theme.textSecondary)
+            }
+            .padding(.leading, 3)
+            .padding(.trailing, 8)
+            .frame(height: Self.controlHeight)
+            .background(theme.surface)
+            .overlay(Capsule().stroke(theme.border, lineWidth: 1))
+            .clipShape(Capsule())
+        }
+        .accessibilityLabel(PCStrings.accountMenu)
+    }
+
+    @ViewBuilder
+    private var accountAvatar: some View {
+        let side = Self.controlHeight - 8
+        if let icon = accountIconUrl {
+            PCLogoAvatar(url: icon, name: accountInitial, size: side)
+        } else {
             Circle()
                 .fill(theme.primarySoft)
-                .frame(width: 34, height: 34)
+                .frame(width: side, height: side)
                 .overlay(
-                    Text(email.isEmpty ? String(store.displayOrgName.prefix(1)).uppercased() : Self.initials(fromEmail: email))
+                    Text(accountInitial)
                         .font(.system(size: 12, weight: .bold))
                         .foregroundColor(theme.primary)
                 )
-                .overlay(Circle().stroke(theme.border, lineWidth: 1))
         }
-        .accessibilityLabel(PCStrings.accountMenu)
     }
 }
 

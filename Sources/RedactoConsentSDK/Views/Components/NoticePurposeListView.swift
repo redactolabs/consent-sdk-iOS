@@ -33,7 +33,10 @@ struct NoticePurposeListView: View {
         return viewModel.renderedPurposes.map { ListedPurpose(id: $0.uuid, purpose: $0) }
     }
 
-    private func isListedLocked(_ item: ListedPurpose) -> Bool {
+    private func isListedLocked(_ item: ListedPurpose, productUuid: String?) -> Bool {
+        if viewModel.revocationLockReason(item.purpose.uuid, productUuid: productUuid) != nil {
+            return true
+        }
         if viewModel.categorizedPurposes != nil {
             return item.id.hasPrefix("consented-")
         }
@@ -78,9 +81,14 @@ struct NoticePurposeListView: View {
 
     @ViewBuilder
     private var singleList: some View {
+        let ungroupedProductUuid: String? = nil
         ForEach(Array(listedPurposes.enumerated()), id: \.element.id) { index, item in
             separated(index) {
-                row(item.purpose, productUuid: nil, locked: isListedLocked(item))
+                row(
+                    item.purpose,
+                    productUuid: ungroupedProductUuid,
+                    locked: isListedLocked(item, productUuid: ungroupedProductUuid)
+                )
             }
         }
     }
@@ -147,6 +155,7 @@ struct NoticePurposeListView: View {
             onDataElementToggle: { viewModel.handleDataElementToggle($0, purposeUuid: $1, productUuid: productUuid) },
             getTranslatedText: viewModel.getTranslatedText,
             isAlreadyConsented: locked,
+            lockedReason: viewModel.revocationLockReason(purpose.uuid, productUuid: productUuid),
             initialDataElementSelections: viewModel.initialDataElementSelections,
             activeTTSSegmentKey: viewModel.activeTTSSegmentKey,
             productUuid: productUuid,

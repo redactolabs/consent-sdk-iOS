@@ -26,6 +26,7 @@ struct NoticeChromeCopy: Equatable {
     let hintNothingChosen: String
     let hintNothingEngaged: String
     let hintRequiredOutstanding: String
+    let nonRevocableReason: String
 
     /// The copy for the language the notice is read in: its display name
     /// ("Hindi") or a BCP-47 code. An unknown language answers in English.

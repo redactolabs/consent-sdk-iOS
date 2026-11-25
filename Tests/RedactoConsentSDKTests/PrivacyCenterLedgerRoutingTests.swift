@@ -109,6 +109,9 @@ final class PrivacyCenterLedgerRoutingTests: XCTestCase {
         XCTAssertEqual(request.json["notice_uuid"] as? String, F.notice)
         XCTAssertEqual(request.json["partial"] as? Bool, true)
         XCTAssertEqual(request.json["declined"] as? Bool, false)
+        // The ledger records it as the consent's method; without it a change
+        // made in the app's Privacy Center is recorded as WEB.
+        XCTAssertEqual(request.json["source"] as? String, "MOBILE")
         XCTAssertNil(request.json["contact"])
     }
 

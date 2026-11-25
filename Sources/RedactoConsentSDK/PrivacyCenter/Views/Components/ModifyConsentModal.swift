@@ -125,29 +125,40 @@ public struct ModifyConsentModal: View {
         .clipShape(RoundedRectangle(cornerRadius: theme.controlRadius))
     }
 
+    @ViewBuilder
     private var actions: some View {
         HStack(spacing: 10) {
             Spacer()
             PCButton(PCStrings.cancel, variant: .outline, fullWidth: false) { dismiss() }
-            PCButton(
-                vm.buttonLabel,
-                variant: vm.canRevoke ? .destructive : .primary,
-                fullWidth: false,
-                isLoading: vm.isProcessing,
-                isDisabled: vm.isConfirmDisabled
-            ) {
-                guard let action = vm.action else { return }
-                Task {
-                    vm.isProcessing = true
-                    await consentManagerVm.performAction(
-                        on: vm.consent,
-                        action: action,
-                        nominatorContact: vm.nominatorContact,
-                        dataElementUuids: vm.dataElementUuidsForAction
-                    )
-                    vm.isProcessing = false
-                    dismiss()
-                }
+            if let reason = vm.revokeBlockedReason {
+                confirmButton
+                    .accessibilityLabel(vm.buttonLabel)
+                    .accessibilityHint(reason)
+            } else {
+                confirmButton
+            }
+        }
+    }
+
+    private var confirmButton: some View {
+        PCButton(
+            vm.buttonLabel,
+            variant: vm.canRevoke ? .destructive : .primary,
+            fullWidth: false,
+            isLoading: vm.isProcessing,
+            isDisabled: vm.isConfirmDisabled
+        ) {
+            guard let action = vm.action else { return }
+            Task {
+                vm.isProcessing = true
+                await consentManagerVm.performAction(
+                    on: vm.consent,
+                    action: action,
+                    nominatorContact: vm.nominatorContact,
+                    dataElementUuids: vm.dataElementUuidsForAction
+                )
+                vm.isProcessing = false
+                dismiss()
             }
         }
     }

@@ -186,6 +186,7 @@ public enum PCStrings {
     public static var renew: String { t("renew") }
     public static var revokeConfirmTitle: String { t("revokeConfirmTitle") }
     public static var revokeConsentWarning: String { t("revokeConsentWarning") }
+    public static var nonRevocableConsentWarning: String { t("nonRevocableConsentWarning") }
     public static var consentRevokedSuccess: String { t("consentRevokedSuccess") }
     public static var consentRegrantedSuccess: String { t("consentRegrantedSuccess") }
     public static var consentRenewedSuccess: String { t("consentRenewedSuccess") }

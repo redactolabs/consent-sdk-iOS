@@ -360,7 +360,7 @@ public enum ConsentAPI {
             noticeUuid: params.noticeUuid,
             purposes: validatedPurposes,
             selectAllMandatory: false,
-            source: "MOBILE",
+            source: ConsentSource.current,
             declined: params.declined,
             language: params.language.flatMap { $0.isEmpty ? nil : $0 },
             metaData: params.metaData,

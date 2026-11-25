@@ -142,10 +142,13 @@ public struct PCLanguagePickerButton: View {
                 Text(selectedCode.uppercased())
                     .font(theme.font(size: 12, weight: .semibold))
                     .lineLimit(1)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundColor(theme.textSecondary)
             }
             .foregroundColor(theme.text)
             .padding(.horizontal, 10)
-            .padding(.vertical, 7)
+            .frame(height: PCTopBar.controlHeight)
             .background(theme.surface)
             .overlay(
                 Capsule().stroke(theme.border, lineWidth: 1)

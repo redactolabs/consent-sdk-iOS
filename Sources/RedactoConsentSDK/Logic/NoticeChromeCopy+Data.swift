@@ -22,7 +22,8 @@ extension NoticeChromeCopy {
         productPoliciesLabel: "Privacy policies:",
         hintNothingChosen: "Select at least one purpose to confirm.",
         hintNothingEngaged: "Select or change a purpose for the product you are consenting to.",
-        hintRequiredOutstanding: "Accept the required purposes to confirm."
+        hintRequiredOutstanding: "Accept the required purposes to confirm.",
+        nonRevocableReason: "This consent cannot be withdrawn, so the revoke option is not available."
     )
 
     /// Keyed by BCP-47 code: English and the 22 languages of the 8th Schedule.
@@ -47,7 +48,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "गोपनीयता नीतियाँ:",
             hintNothingChosen: "पुष्टि के लिए कम से कम एक उद्देश्य चुनें।",
             hintNothingEngaged: "जिस उत्पाद के लिए आप सहमति दे रहे हैं, उसका कोई उद्देश्य चुनें या बदलें।",
-            hintRequiredOutstanding: "पुष्टि के लिए आवश्यक उद्देश्य स्वीकार करें।"
+            hintRequiredOutstanding: "पुष्टि के लिए आवश्यक उद्देश्य स्वीकार करें।",
+            nonRevocableReason: "यह सहमति वापस नहीं ली जा सकती, इसलिए वापस लेने का विकल्प उपलब्ध नहीं है।"
         ),
         "bn": NoticeChromeCopy(
             yes: "হ্যাঁ",
@@ -68,7 +70,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "গোপনীয়তা নীতি:",
             hintNothingChosen: "নিশ্চিত করতে অন্তত একটি উদ্দেশ্য নির্বাচন করুন।",
             hintNothingEngaged: "আপনি যে পণ্যে সম্মতি দিচ্ছেন তার একটি উদ্দেশ্য নির্বাচন করুন বা পরিবর্তন করুন।",
-            hintRequiredOutstanding: "নিশ্চিত করতে আবশ্যক উদ্দেশ্যগুলি গ্রহণ করুন।"
+            hintRequiredOutstanding: "নিশ্চিত করতে আবশ্যক উদ্দেশ্যগুলি গ্রহণ করুন।",
+            nonRevocableReason: "এই সম্মতি প্রত্যাহার করা যায় না, তাই প্রত্যাহারের বিকল্পটি উপলব্ধ নয়।"
         ),
         "mr": NoticeChromeCopy(
             yes: "होय",
@@ -89,7 +92,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "गोपनीयता धोरणे:",
             hintNothingChosen: "पुष्टी करण्यासाठी किमान एक उद्दिष्ट निवडा.",
             hintNothingEngaged: "तुम्ही ज्या उत्पादनाला संमती देत आहात त्याचे उद्दिष्ट निवडा किंवा बदला.",
-            hintRequiredOutstanding: "पुष्टी करण्यासाठी आवश्यक उद्दिष्टे स्वीकारा."
+            hintRequiredOutstanding: "पुष्टी करण्यासाठी आवश्यक उद्दिष्टे स्वीकारा.",
+            nonRevocableReason: "ही संमती मागे घेता येत नाही, म्हणून मागे घेण्याचा पर्याय उपलफ्ध नाही."
         ),
         "ta": NoticeChromeCopy(
             yes: "ஆம்",
@@ -110,7 +114,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "தனியுரிமைக் கொள்கைகள்:",
             hintNothingChosen: "உறுதிப்படுத்த குறைந்தது ஒரு நோக்கத்தைத் தேர்ந்தெடுக்கவும்.",
             hintNothingEngaged: "நீங்கள் ஒப்புதல் அளிக்கும் தயாரிப்பின் நோக்கத்தைத் தேர்ந்தெடுக்கவும் அல்லது மாற்றவும்.",
-            hintRequiredOutstanding: "உறுதிப்படுத்த தேவையான நோக்கங்களை ஏற்கவும்."
+            hintRequiredOutstanding: "உறுதிப்படுத்த தேவையான நோக்கங்களை ஏற்கவும்.",
+            nonRevocableReason: "இந்த சம்மதத்தை திரும்பப் பெற முடியாது, எநவே திரும்பப் பெறும் விருப்பம் கிடைக்கவில்லை."
         ),
         "te": NoticeChromeCopy(
             yes: "అవును",
@@ -131,7 +136,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "గోప్యతా విధానాలు:",
             hintNothingChosen: "నిర్ధారించడానికి కనీసం ఒక ప్రయోజనాన్ని ఎంచుకోండి.",
             hintNothingEngaged: "మీరు సమ్మతి ఇస్తున్న ఉత్పత్తికి ఒక ప్రయోజనాన్ని ఎంచుకోండి లేదా మార్చండి.",
-            hintRequiredOutstanding: "నిర్ధారించడానికి అవసరమైన ప్రయోజనాలను అంగీకరించండి."
+            hintRequiredOutstanding: "నిర్ధారించడానికి అవసరమైన ప్రయోజనాలను అంగీకరించండి.",
+            nonRevocableReason: "ఈ సమ్మతిని ఉపసంహరింజడం సాధ్యం కాదు, కాబట్టి రద్దు చేసే ఎంపిక అందుబాటులో లేదు."
         ),
         "gu": NoticeChromeCopy(
             yes: "હા",
@@ -152,7 +158,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "ગોપનીયતા નીતિઓ:",
             hintNothingChosen: "પુષ્ટિ કરવા ઓછામાં ઓછો એક હેતુ પસંદ કરો.",
             hintNothingEngaged: "તમે જે ઉત્પાદનને સંમતિ આપી રહ્યા છો તેનો હેતુ પસંદ કરો અથવા બદલો.",
-            hintRequiredOutstanding: "પુષ્ટિ કરવા જરૂરી હેતુઓ સ્વીકારો."
+            hintRequiredOutstanding: "પુષ્ટિ કરવા જરૂરી હેતુઓ સ્વીકારો.",
+            nonRevocableReason: "આ ਸંમતિ પાછી ખેંચી શકાતી નથી, તેથી રદ કરવાની વિકલ્પ ઉપલબ્ધ નથી."
         ),
         "kn": NoticeChromeCopy(
             yes: "ಹೌದು",
@@ -173,7 +180,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "ಗೌಪ್ಯತಾ ನೀತಿಗಳು:",
             hintNothingChosen: "ಖಚಿತಪಡಿಸಲು ಕನಿಷ್ಠ ಒಂದು ಉದ್ದೇಶವನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
             hintNothingEngaged: "ನೀವು ಸಮ್ಮತಿ ನೀಡುತ್ತಿರುವ ಉತ್ಪನ್ನದ ಉದ್ದೇಶವನ್ನು ಆಯ್ಕೆಮಾಡಿ ಅಥವಾ ಬದಲಾಯಿಸಿ.",
-            hintRequiredOutstanding: "ಖಚಿತಪಡಿಸಲು ಅಗತ್ಯವಿರುವ ಉದ್ದೇಶಗಳನ್ನು ಸ್ವೀಕರಿಸಿ."
+            hintRequiredOutstanding: "ಖಚಿತಪಡಿಸಲು ಅಗತ್ಯವಿರುವ ಉದ್ದೇಶಗಳನ್ನು ಸ್ವೀಕರಿಸಿ.",
+            nonRevocableReason: "ಈ ಸಮ್ಮತಿಯನ್ನು ಹಿಂಪಡೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ, ಆದ್ದರಿಂದ ರದ್ದು ಮಾಡುವ ಆಯ್ಕೆ ಲಭ್ಯವಿಲ್ಲ."
         ),
         "ml": NoticeChromeCopy(
             yes: "അതെ",
@@ -194,7 +202,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "സ്വകാര്യതാ നയങ്ങൾ:",
             hintNothingChosen: "സ്ഥിരീകരിക്കാൻ കുറഞ്ഞത് ഒരു ഉദ്ദേശ്യമെങ്കിലും തിരഞ്ഞെടുക്കുക.",
             hintNothingEngaged: "നിങ്ങൾ സമ്മതം നൽകുന്ന ഉൽപ്പന്നത്തിന്റെ ഉദ്ദേശ്യം തിരഞ്ഞെടുക്കുകയോ മാറ്റുകയോ ചെയ്യുക.",
-            hintRequiredOutstanding: "സ്ഥിരീകരിക്കാൻ ആവശ്യമായ ഉദ്ദേശ്യങ്ങൾ സ്വീകരിക്കുക."
+            hintRequiredOutstanding: "സ്ഥിരീകരിക്കാൻ ആവശ്യമായ ഉദ്ദേശ്യങ്ങൾ സ്വീകരിക്കുക.",
+            nonRevocableReason: "ഈ സമ്മതം പിൻവലിക്കാൻ കഴിയില്ല, അതിനാൽ പിൻവലിക്കൽ ഓപ്ഷൻ ലഭ്യമല്ല."
         ),
         "pa": NoticeChromeCopy(
             yes: "ਹਾਂ",
@@ -215,7 +224,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "ਪਰਦੇਦਾਰੀ ਨੀਤੀਆਂ:",
             hintNothingChosen: "ਪੁਸ਼ਟੀ ਲਈ ਘੱਟੋ-ਘੱਟ ਇੱਕ ਮੰਤਵ ਚੁਣੋ।",
             hintNothingEngaged: "ਜਿਸ ਉਤਪਾਦ ਲਈ ਤੁਸੀਂ ਸਹਿਮਤੀ ਦੇ ਰਹੇ ਹੋ, ਉਸ ਦਾ ਮੰਤਵ ਚੁਣੋ ਜਾਂ ਬਦਲੋ।",
-            hintRequiredOutstanding: "ਪੁਸ਼ਟੀ ਲਈ ਲੋੜੀਂਦੇ ਮੰਤਵ ਸਵੀਕਾਰ ਕਰੋ।"
+            hintRequiredOutstanding: "ਪੁਸ਼ਟੀ ਲਈ ਲੋੜੀਂਦੇ ਮੰਤਵ ਸਵੀਕਾਰ ਕਰੋ।",
+            nonRevocableReason: "ਇਹ ਸਹਿਮਤੀ ਵਾਪਸ ਨਹੀਂ ਲਈ ਜਾ ਸਕਦੀ, ਇਸ ਲਈ ਰੱਦ ਕਰਨ ਦਾ ਵਿਕਲਪ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।"
         ),
         "or": NoticeChromeCopy(
             yes: "ହଁ",
@@ -236,7 +246,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "ଗୋପନୀୟତା ନୀତି:",
             hintNothingChosen: "ନିଶ୍ଚିତ କରିବାକୁ ଅତି କମରେ ଗୋଟିଏ ଉଦ୍ଦେଶ୍ୟ ଚୟନ କରନ୍ତୁ।",
             hintNothingEngaged: "ଆପଣ ସମ୍ମତି ଦେଉଥିବା ଉତ୍ପାଦର ଉଦ୍ଦେଶ୍ୟ ଚୟନ କରନ୍ତୁ କିମ୍ବା ବଦଳାନ୍ତୁ।",
-            hintRequiredOutstanding: "ନିଶ୍ଚିତ କରିବାକୁ ଆବଶ୍ୟକ ଉଦ୍ଦେଶ୍ୟ ଗ୍ରହଣ କରନ୍ତୁ।"
+            hintRequiredOutstanding: "ନିଶ୍ଚିତ କରିବାକୁ ଆବଶ୍ୟକ ଉଦ୍ଦେଶ୍ୟ ଗ୍ରହଣ କରନ୍ତୁ।",
+            nonRevocableReason: "ଏହି ସହମତି ପ୍ରତ୍ୟାହାର କରାଯାଇପାରିଭ ନାହିଁ, ତେଣୁ ପ୍ରତ୍ୟାହାର ବିକଳ୍ପ ଉପଲବ୍ଧ ନାହିଁ।"
         ),
         "as": NoticeChromeCopy(
             yes: "হয়",
@@ -257,7 +268,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "গোপনীয়তা নীতিসমূহ:",
             hintNothingChosen: "নিশ্চিত কৰিবলৈ অন্ততঃ এটা উদ্দেশ্য নিৰ্বাচন কৰক।",
             hintNothingEngaged: "আপুনি সন্মতি দি থকা সামগ্ৰীৰ এটা উদ্দেশ্য নিৰ্বাচন কৰক বা সলনি কৰক।",
-            hintRequiredOutstanding: "নিশ্চিত কৰিবলৈ প্ৰয়োজনীয় উদ্দেশ্যবোৰ গ্ৰহণ কৰক।"
+            hintRequiredOutstanding: "নিশ্চিত কৰিবলৈ প্ৰয়োজনীয় উদ্দেশ্যবোৰ গ্ৰহণ কৰক।",
+            nonRevocableReason: "এই সন্মতি প্ৰত্যাহাৰ কৰিব নোৱাৰি, সেযেহে প্ৰত্যাহাৰৰ বিকল্প উপলব্ধ নহয়।"
         ),
         "ur": NoticeChromeCopy(
             yes: "ہاں",
@@ -278,7 +290,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "پرائیویسی پالیسیاں:",
             hintNothingChosen: "تصدیق کے لیے کم از کم ایک مقصد منتخب کریں۔",
             hintNothingEngaged: "جس پروڈکٹ کے لیے آپ رضامندی دے رہے ہیں، اس کا مقصد منتخب کریں یا تبدیل کریں۔",
-            hintRequiredOutstanding: "تصدیق کے لیے مطلوبہ مقاصد قبول کریں۔"
+            hintRequiredOutstanding: "تصدیق کے لیے مطلوبہ مقاصد قبول کریں۔",
+            nonRevocableReason: "یہ رضامندی واپس نہیں لی جا سکتی، اس لیہ واپس لینے کا آپشن دستیاب نہیں ہے۔"
         ),
         "ne": NoticeChromeCopy(
             yes: "हो",
@@ -299,7 +312,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "गोपनीयता नीतिहरू:",
             hintNothingChosen: "पुष्टि गर्न कम्तीमा एउटा उद्देश्य छान्नुहोस्।",
             hintNothingEngaged: "तपाईंले सहमति दिइरहनुभएको उत्पादनको उद्देश्य छान्नुहोस् वा परिवर्तन गर्नुहोस्।",
-            hintRequiredOutstanding: "पुष्टि गर्न आवश्यक उद्देश्य स्वीकार गर्नुहोस्।"
+            hintRequiredOutstanding: "पुष्टि गर्न आवश्यक उद्देश्य स्वीकार गर्नुहोस्।",
+            nonRevocableReason: "यो सहमति फिर्ता लिन मिल्दैन, त्यसैले रद्द गर्ने विकल्प उपलब्ध अंंलैन।"
         ),
         "sa": NoticeChromeCopy(
             yes: "आम्",
@@ -320,7 +334,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "गोपनीयतानीतयः:",
             hintNothingChosen: "निश्चेतुं न्यूनातिन्यूनम् एकं प्रयोजनं चिनोतु।",
             hintNothingEngaged: "यस्मै उत्पादाय भवान् सम्मतिं ददाति तस्य प्रयोजनं चिनोतु परिवर्तयतु वा।",
-            hintRequiredOutstanding: "निश्चेतुम् आवश्यकानि प्रयोजनानि स्वीकुर्वन्तु।"
+            hintRequiredOutstanding: "निश्चेतुम् आवश्यकानि प्रयोजनानि स्वीकुर्वन्तु।",
+            nonRevocableReason: "एषा सम्मतिः प्रत्याहर्तुं न शक्यते, अतः प्रत्याहरणस्य विकल्पः उपलब्धः नास्ति।"
         ),
         "mai": NoticeChromeCopy(
             yes: "हँ",
@@ -341,7 +356,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "गोपनीयता नीति:",
             hintNothingChosen: "पुष्टिक लेल कम सँ कम एकटा उद्देश्य चुनू।",
             hintNothingEngaged: "जाहि उत्पादक लेल अहाँ सहमति द रहल छी, ओकर उद्देश्य चुनू वा बदलू।",
-            hintRequiredOutstanding: "पुष्टिक लेल आवश्यक उद्देश्य स्वीकार करू।"
+            hintRequiredOutstanding: "पुष्टिक लेल आवश्यक उद्देश्य स्वीकार करू।",
+            nonRevocableReason: "ई सहमति वापस नहि लेल जा सकैत अडि, तैं वापस लेबाक विकल्प उपलब्ध नहि।"
         ),
         "gom": NoticeChromeCopy(
             yes: "हंय",
@@ -362,7 +378,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "गुपितपण धोरणां:",
             hintNothingChosen: "खात्री करपाक उणेंत उणें एक उद्दिश्ट निवडात.",
             hintNothingEngaged: "तुमी जाच्या उत्पादनाक संमती दितात ताचें उद्दिश्ट निवडात वा बदलात.",
-            hintRequiredOutstanding: "खात्री करपाक जाय आशिल्लीं उद्दिश्टां स्वीकारात."
+            hintRequiredOutstanding: "खात्री करपाक जाय आशिल्लीं उद्दिश्टां स्वीकारात.",
+            nonRevocableReason: "ही संमती माग घेवंक मेळना, देखून माग घेवपाचो विकल्प उपलब्ध ना."
         ),
         "doi": NoticeChromeCopy(
             yes: "हाँ",
@@ -383,7 +400,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "निजता नीतियां:",
             hintNothingChosen: "पुश्टी आस्तै घट्टोघट्ट इक मकसद चुनो।",
             hintNothingEngaged: "जिस उत्पाद आस्तै तुस सहमति देआ करदे ओ, उंदा मकसद चुनो जां बदलो।",
-            hintRequiredOutstanding: "पुश्टी आस्तै लोड़चदे मकसद स्वीकार करो।"
+            hintRequiredOutstanding: "पुश्टी आस्तै लोड़चदे मकसद स्वीकार करो।",
+            nonRevocableReason: "एह सहमति वापस नेईं लैती जाई सकदी, इस लेई वापस लैने दा विकल्प उपलब्ध नहीं।"
         ),
         "brx": NoticeChromeCopy(
             yes: "नंगौ",
@@ -404,7 +422,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "गुबै नीति:",
             hintNothingChosen: "थिक खालामनो खमसिन मोनसे उद्देश्य सायख।",
             hintNothingEngaged: "नोंथाङा राजि होगासिनो दं बै प्र'डाक्टनि उद्देश्यखौ सायख एबा सोलाय।",
-            hintRequiredOutstanding: "थिक खालामनो नांगौ उद्देश्यफोरखौ ला।"
+            hintRequiredOutstanding: "थिक खालामनो नांगौ उद्देश्यफोरखौ ला।",
+            nonRevocableReason: "बे सहमतिखौ लाबो खालामनो हाया, बेनिखायनो लाबो खालामनाय अक्सन उपलब्ध नङा।"
         ),
         "mni-Mtei": NoticeChromeCopy(
             yes: "ꯍꯣꯏ",
@@ -425,7 +444,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "ꯑꯔꯣꯠꯄꯒꯤ ꯄꯥꯟꯗꯝꯁꯤꯡ:",
             hintNothingChosen: "ꯆꯨꯝꯃꯤ ꯍꯥꯌꯅꯕ ꯌꯥꯝꯅ ꯌꯥꯝꯅ ꯄꯥꯟꯗꯝ ꯑꯃ ꯈꯜꯂꯨ।",
             hintNothingEngaged: "ꯅꯪꯅ ꯑꯌꯥꯕ ꯄꯤꯔꯤꯕ ꯄ꯭ꯔꯣꯗꯛꯠ ꯑꯗꯨꯒꯤ ꯄꯥꯟꯗꯝ ꯈꯜꯂꯨ ꯅꯠꯔꯒ ꯍꯣꯡꯗꯣꯛꯂꯨ।",
-            hintRequiredOutstanding: "ꯆꯨꯝꯃꯤ ꯍꯥꯌꯅꯕ ꯗꯔꯀꯥꯔ ꯑꯣꯏꯕ ꯄꯥꯟꯗꯝꯁꯤꯡ ꯌꯥꯕꯤꯌꯨ।"
+            hintRequiredOutstanding: "ꯆꯨꯝꯃꯤ ꯍꯥꯌꯅꯕ ꯗꯔꯀꯥꯔ ꯑꯣꯏꯕ ꯄꯥꯟꯗꯝꯁꯤꯡ ꯌꯥꯕꯤꯌꯨ।",
+            nonRevocableReason: "ꯃꯁꯤꯒꯤ ꯌꯥꯎꯈꯠꯄ ꯑꯄꯨꯕꯥ ꯇꯧꯕꯥ ꯌꯥꯔꯣꯏ, ꯃꯔꯝ ꯑꯗꯨꯅꯥ ꯑꯄꯨꯕꯥ ꯇꯧꯕꯒꯤ ꯑꯣꯞꯁꯟ ꯂꯩꯗꯦ꯫"
         ),
         "sat": NoticeChromeCopy(
             yes: "ᱦᱚᱭ",
@@ -446,7 +466,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "ᱱᱤᱡᱮᱨᱟᱜ ᱱᱤᱛᱤ ᱠᱚ:",
             hintNothingChosen: "ᱛᱷᱤᱠ ᱞᱟᱹᱜᱤᱫ ᱠᱚᱢ ᱛᱮ ᱠᱚᱢ ᱢᱤᱫ ᱩᱫᱫᱮᱥᱭ ᱵᱟᱪᱷᱟᱣ ᱢᱮ।",
             hintNothingEngaged: "ᱟᱢ ᱨᱟᱡᱤ ᱮᱢ ᱠᱟᱱ ᱯᱚᱱᱚᱛ ᱨᱮᱭᱟᱜ ᱩᱫᱫᱮᱥᱭ ᱵᱟᱪᱷᱟᱣ ᱢᱮ ᱟᱨ ᱵᱟᱝ ᱵᱚᱫᱚᱞ ᱢᱮ।",
-            hintRequiredOutstanding: "ᱛᱷᱤᱠ ᱞᱟᱹᱜᱤᱫ ᱡᱟᱹᱨᱩᱨᱤ ᱩᱫᱫᱮᱥᱭ ᱠᱚ ᱦᱟᱛᱟᱣ ᱢᱮ।"
+            hintRequiredOutstanding: "ᱛᱷᱤᱠ ᱞᱟᱹᱜᱤᱫ ᱡᱟᱹᱨᱩᱨᱤ ᱩᱫᱫᱮᱥᱭ ᱠᱚ ᱦᱟᱛᱟᱣ ᱢᱮ।",
+            nonRevocableReason: "ᱱᱚᱶᱟ ᱥᱟᱢᱢᱟᱣ ᱚᱪᱚᱜ ᱵᱟᱝ ᱦᱩᱭᱩᱜᱼᱟ, ᱚᱱᱟᱛᱮ ᱚᱪᱚᱜ ᱚᱱᱪᱚᱜ ᱵᱟᱹᱱᱩᱜᱼᱟ।"
         ),
         "sd": NoticeChromeCopy(
             yes: "ها",
@@ -467,7 +488,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "رازداري پاليسيون:",
             hintNothingChosen: "تصديق لاءِ گهٽ ۾ گهٽ هڪ مقصد چونڊيو.",
             hintNothingEngaged: "جنهن پراڊڪٽ لاءِ توهان رضامندي ڏئي رهيا آهيو، ان جو مقصد چونڊيو يا تبديل ڪريو.",
-            hintRequiredOutstanding: "تصديق لاءِ گهربل مقصد قبول ڪريو."
+            hintRequiredOutstanding: "تصديق لاءِ گهربل مقصد قبول ڪريو.",
+            nonRevocableReason: "هيءَ رضامندي واپس نه ڀي سگهي، تنهڪري رد ڪرڿ جو اختيار موجود ناهي."
         ),
         "ks": NoticeChromeCopy(
             yes: "آہن",
@@ -488,7 +510,8 @@ extension NoticeChromeCopy {
             productPoliciesLabel: "رازداری پالیسی:",
             hintNothingChosen: "تصدیقہٕ خٲطرٕ کم از کم اکھ مقصد ژاریو۔",
             hintNothingEngaged: "یَمہ پراڈکٹس خٲطرٕ توہہِ چھِو رضامندی دِوان، تَمہ ہُنٛد مقصد ژاریو یا بدلاو۔",
-            hintRequiredOutstanding: "تصدیقہٕ خٲطرٕ ضروری مقصد قبول کریو۔"
+            hintRequiredOutstanding: "تصدیقہٕ خٲطرٕ ضروری مقصد قبول کریو۔",
+            nonRevocableReason: "اس رضامندی کو منسوخ نہیں کیا جا سکتا، اس لیہ منسوخ کرنے کا آپشن دستیاب نَہ۔"
         ),
     ]
 }

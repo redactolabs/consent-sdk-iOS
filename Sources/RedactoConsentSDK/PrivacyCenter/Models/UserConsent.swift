@@ -70,8 +70,11 @@ public struct PurposeItem: Codable, Sendable, Identifiable, Equatable {
     public let noticeUuid: String?
     /// The status as the server wrote it, for a value this SDK has no case for.
     public var statusText: String? = nil
+    public var revocable: Bool? = nil
 
     public var id: String { purposeUuid }
+
+    public var isRevocable: Bool { PurposeRevocability.isRevocable(revocable) }
 
     enum CodingKeys: String, CodingKey {
         case purposeUuid = "purpose_uuid"
@@ -86,6 +89,7 @@ public struct PurposeItem: Codable, Sendable, Identifiable, Equatable {
         case linkReason = "link_reason"
         case revokeWarningMessage = "revoke_warning_message"
         case noticeUuid = "notice_uuid"
+        case revocable
     }
 }
 
@@ -108,6 +112,7 @@ extension PurposeItem {
         linkReason = c.optional(String.self, forKey: .linkReason)
         revokeWarningMessage = c.optional(String.self, forKey: .revokeWarningMessage)
         noticeUuid = c.optional(String.self, forKey: .noticeUuid)
+        revocable = c.optional(Bool.self, forKey: .revocable)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -123,6 +128,7 @@ extension PurposeItem {
         try c.encodeIfPresent(linkReason, forKey: .linkReason)
         try c.encodeIfPresent(revokeWarningMessage, forKey: .revokeWarningMessage)
         try c.encodeIfPresent(noticeUuid, forKey: .noticeUuid)
+        try c.encodeIfPresent(revocable, forKey: .revocable)
     }
 }
 
@@ -183,8 +189,11 @@ public struct UserConsent: Codable, Sendable, Identifiable, Equatable {
     public let noticeUuid: String?
     /// The status as the server wrote it, for a value this SDK has no case for.
     public var statusText: String? = nil
+    public var revocable: Bool? = nil
 
     public var id: String { (purposeUuid ?? "") + "::" + (productUuid ?? "") + "::" + (nominatorInfo?.uuid ?? "") }
+
+    public var isRevocable: Bool { PurposeRevocability.isRevocable(revocable) }
 
     enum CodingKeys: String, CodingKey {
         case purposeUuid = "purpose_uuid"
@@ -201,6 +210,7 @@ public struct UserConsent: Codable, Sendable, Identifiable, Equatable {
         case nominatorInfo = "nominator_info"
         case revokeWarningMessage = "revoke_warning_message"
         case noticeUuid = "notice_uuid"
+        case revocable
     }
 }
 
@@ -222,6 +232,7 @@ extension UserConsent {
         nominatorInfo = c.optional(NominatorInfo.self, forKey: .nominatorInfo)
         revokeWarningMessage = c.optional(String.self, forKey: .revokeWarningMessage)
         noticeUuid = c.optional(String.self, forKey: .noticeUuid)
+        revocable = c.optional(Bool.self, forKey: .revocable)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -240,6 +251,7 @@ extension UserConsent {
         try c.encodeIfPresent(nominatorInfo, forKey: .nominatorInfo)
         try c.encodeIfPresent(revokeWarningMessage, forKey: .revokeWarningMessage)
         try c.encodeIfPresent(noticeUuid, forKey: .noticeUuid)
+        try c.encodeIfPresent(revocable, forKey: .revocable)
     }
 }
 
@@ -413,7 +425,8 @@ public enum ConsentManagerNormalization {
                             nominatorInfo: entry.nominatorInfo,
                             revokeWarningMessage: purpose.revokeWarningMessage,
                             noticeUuid: purpose.noticeUuid,
-                            statusText: purpose.statusText
+                            statusText: purpose.statusText,
+                            revocable: purpose.revocable
                         )
                     },
                     totalPurposes: group.totalPurposes,
@@ -464,7 +477,8 @@ public enum ConsentManagerNormalization {
             nominatorInfo: nominator,
             revokeWarningMessage: purpose.revokeWarningMessage,
             noticeUuid: purpose.noticeUuid,
-            statusText: purpose.statusText
+            statusText: purpose.statusText,
+            revocable: purpose.revocable
         )
     }
 }

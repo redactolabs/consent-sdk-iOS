@@ -9,6 +9,15 @@ public enum NoticeButtonDefaults {
     public static let decline = "Decline"
 }
 
+/// The channel the consent ledger records as a consent's method: the `source`
+/// on every consent write (the notices, and the Privacy Center's revoke,
+/// regrant and renew). This SDK runs only in apps, so it is always `MOBILE`,
+/// one of the two channels the console reports on (`MOBILE`, `WEB`). Without a
+/// source the ledger records `WEB`, which is wrong for an app.
+enum ConsentSource {
+    static let current = "MOBILE"
+}
+
 enum PurposeStatus {
     static let active = "ACTIVE"
 }

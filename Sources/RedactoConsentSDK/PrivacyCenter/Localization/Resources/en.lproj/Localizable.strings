@@ -128,6 +128,7 @@
 "aboutToModifyConsentOnBehalf" = "You are about to modify consent on behalf of {{nominator}} for:";
 "noDataElementsAvailable" = "No data elements available";
 "revokeConsentWarning" = "If you revoke this consent, you may lose access to certain features that rely on this data.";
+"nonRevocableConsentWarning" = "This consent cannot be withdrawn, so the revoke option is not available.";
 "revokeConsent" = "Revoke Consent";
 "regrantConsent" = "Regrant Consent";
 "regrantConsentWarning" = "By regranting this consent, you will allow the organization to process your data for this purpose again.";

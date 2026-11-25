@@ -364,7 +364,9 @@ public final class ConsentManagerViewModel: ObservableObject {
             productUuid: consent.productUuid,
             noticeUuid: consent.noticeUuid,
             dataElements: consent.dataElements,
-            nominatorUuid: consent.nominatorInfo?.uuid
+            nominatorUuid: consent.nominatorInfo?.uuid,
+            revocable: consent.revocable,
+            revokeWarningMessage: consent.revokeWarningMessage
         )
     }
 
@@ -399,8 +401,20 @@ public final class ConsentManagerViewModel: ObservableObject {
         productUuid: String? = nil,
         noticeUuid: String? = nil,
         dataElements: [ConsentDataElement] = [],
-        nominatorUuid: String? = nil
+        nominatorUuid: String? = nil,
+        revocable: Bool? = nil,
+        revokeWarningMessage: String? = nil
     ) async {
+        if action == .revoke && !PurposeRevocability.isRevocable(revocable) {
+            store.showToast(
+                PurposeRevocability.reasonText(
+                    purposeWarning: revokeWarningMessage,
+                    fallback: PCStrings.nonRevocableConsentWarning
+                ),
+                kind: .error
+            )
+            return
+        }
         guard let contact = store.contact.pcNonEmpty else {
             store.showToast(PCStrings.missingInfoToManage, kind: .error)
             return

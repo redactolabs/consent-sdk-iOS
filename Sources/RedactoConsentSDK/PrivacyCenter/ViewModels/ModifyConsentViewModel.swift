@@ -47,6 +47,14 @@ public final class ModifyConsentViewModel: ObservableObject {
     public var canRegrant: Bool { action == .regrant }
     public var canRenew: Bool { action == .renew }
 
+    public var isRevokeBlockedByPurpose: Bool {
+        action == .revoke && !consent.isRevocable
+    }
+
+    public var revokeBlockedReason: String? {
+        isRevokeBlockedByPurpose ? warningText : nil
+    }
+
     /// Elements a regrant can cover: enabled ones with a uuid.
     public static func regrantEligible(_ consent: UserConsent) -> [ConsentDataElement] {
         consent.dataElements.filter { !$0.uuid.isEmpty && $0.enabled }
@@ -93,6 +101,9 @@ public final class ModifyConsentViewModel: ObservableObject {
             if let custom = consent.revokeWarningMessage, !custom.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 return custom
             }
+            if isRevokeBlockedByPurpose {
+                return PCStrings.nonRevocableConsentWarning
+            }
             if let organisation = organisationWarning, !organisation.isEmpty {
                 return organisation
             }
@@ -113,7 +124,9 @@ public final class ModifyConsentViewModel: ObservableObject {
     }
 
     public var isConfirmDisabled: Bool {
-        (consent.purposeUuid ?? "").isEmpty || (action == .regrant && selectedDataElementUuids.isEmpty)
+        (consent.purposeUuid ?? "").isEmpty
+            || (action == .regrant && selectedDataElementUuids.isEmpty)
+            || isRevokeBlockedByPurpose
     }
 
     /// What goes to the server as `data_element_uuids`: only for a regrant.
@@ -123,6 +136,9 @@ public final class ModifyConsentViewModel: ObservableObject {
         return regrantEligibleElements.map(\.uuid).filter { selectedDataElementUuids.contains($0) || required.contains($0) }
     }
 
-    public func startRevoke() { step = .confirmRevoke }
+    public func startRevoke() {
+        guard !isRevokeBlockedByPurpose else { return }
+        step = .confirmRevoke
+    }
     public func startRegrant() { step = .regrantSelect }
 }

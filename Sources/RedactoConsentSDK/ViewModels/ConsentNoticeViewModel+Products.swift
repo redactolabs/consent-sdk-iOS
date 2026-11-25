@@ -88,6 +88,9 @@ extension ConsentNoticeViewModel {
     /// reconsent locks the purposes already consented to and leaves the rest
     /// editable, and a fully consented review locks everything.
     func isRowLocked(_ purposeUuid: String, productUuid: String?) -> Bool {
+        if revocationLockReason(purposeUuid, productUuid: productUuid) != nil {
+            return true
+        }
         if isMultiProduct {
             return consentedPurposes[ProductMatrix.productPurposeKey(productUuid, purposeUuid)] ?? false
         }
@@ -95,6 +98,25 @@ extension ConsentNoticeViewModel {
             return categorizedPurposes.alreadyConsented.contains { $0.uuid == purposeUuid }
         }
         return isReviewMode
+    }
+
+    func revocationLockReason(_ purposeUuid: String, productUuid: String?) -> String? {
+        guard let purpose = activeConfig?.purposes.first(where: { $0.uuid == purposeUuid }) else {
+            return nil
+        }
+        let isAlreadyGranted = recordedPurposeSelections[
+            ProductMatrix.productPurposeKey(productUuid, purposeUuid)
+        ] == true
+        guard PurposeRevocability.locksGrantedSelection(
+            revocable: purpose.revocable,
+            isAlreadyGranted: isAlreadyGranted
+        ) else {
+            return nil
+        }
+        return PurposeRevocability.reasonText(
+            purposeWarning: purpose.revokeWarningMessage,
+            fallback: chromeCopy.nonRevocableReason
+        )
     }
 
     func rowKeys(forPurpose purposeUuid: String) -> [String] {
@@ -164,6 +186,7 @@ extension ConsentNoticeViewModel {
 
     func handlePurposeToggle(_ purposeUuid: String, productUuid: String? = nil) {
         guard !otpLocked else { return }
+        guard revocationLockReason(purposeUuid, productUuid: productUuid) == nil else { return }
         guard let purpose = activeConfig?.purposes.first(where: { $0.uuid == purposeUuid }) else { return }
         apply(ProductConsent.purposeToggle(
             purpose: purpose,
@@ -180,6 +203,7 @@ extension ConsentNoticeViewModel {
 
     func handleDataElementToggle(_ elementUuid: String, purposeUuid: String, productUuid: String? = nil) {
         guard !otpLocked else { return }
+        guard revocationLockReason(purposeUuid, productUuid: productUuid) == nil else { return }
         guard let purpose = activeConfig?.purposes.first(where: { $0.uuid == purposeUuid }) else { return }
         let key = ProductMatrix.productPurposeKey(productUuid, purposeUuid)
         let elementKey = "\(key)-\(elementUuid)"
@@ -204,13 +228,7 @@ extension ConsentNoticeViewModel {
     func handleSoleProductCheckboxChange(to target: Bool? = nil) {
         guard !otpLocked else { return }
         guard let purposes = activeConfig?.purposes else { return }
-        apply(ProductConsent.sectionToggle(
-            sectionPurposes: ProductConsent.productBoxPurposes(purposes),
-            keyProductUuid: nil,
-            selectedPurposes: selectedPurposes,
-            target: target,
-            grants: tickGrant(activeConfig?.appearance)
-        ))
+        applySectionToggle(purposes, keyProductUuid: nil, target: target)
     }
 
     private func applySectionToggle(_ sectionPurposes: [ActiveConfigPurpose], keyProductUuid: String?, target: Bool?) {

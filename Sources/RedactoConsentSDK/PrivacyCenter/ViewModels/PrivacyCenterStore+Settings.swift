@@ -205,9 +205,9 @@ extension PrivacyCenterStore {
     }
 
     /// The session-expired screen offers signing in again when the host gave
-    /// no way out.
+    /// no way out that works.
     var canSignInAgain: Bool {
-        builtInSignIn && onBack == nil
+        builtInSignIn && effectiveOnBack == nil
     }
 
     // MARK: - Inactivity

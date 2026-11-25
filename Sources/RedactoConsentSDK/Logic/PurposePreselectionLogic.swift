@@ -18,6 +18,9 @@ enum PurposePreselectionLogic {
         guard let selection else {
             return false
         }
+        if ProductConsent.isRecordedGrant(selection) {
+            return true
+        }
         if !selection.status.isEmpty && selection.status != inactiveStatus {
             return true
         }

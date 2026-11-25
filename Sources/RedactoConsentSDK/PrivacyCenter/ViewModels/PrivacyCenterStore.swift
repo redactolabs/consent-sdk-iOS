@@ -353,16 +353,31 @@ public final class PrivacyCenterStore: ObservableObject {
         }
     }
 
-    /// The host's close control: always dismisses.
+    /// The host's `onBack`, dropped when it is `back` with no `onDismiss`: that
+    /// Back would leave nothing, so no surface offers it. `signout` still works
+    /// alone, as it ends the session and tells the host.
+    var effectiveOnBack: OnBackBehavior? {
+        onBack == .back && onDismiss == nil ? nil : onBack
+    }
+
+    /// The account menu's way out. A host that passed only `onDismiss`, which
+    /// the removed close button called, gets Back.
+    var exitAction: OnBackBehavior? {
+        effectiveOnBack ?? (onDismiss == nil ? nil : .back)
+    }
+
+    /// What the removed close button called. Kept so host code that calls it
+    /// still compiles; it dismisses as before.
+    @available(*, deprecated, message: "The top bar has no close button. Call performExitAction() to leave the way the account menu does.")
     public func handleBackOrSignout() {
         onDismiss?()
     }
 
     /// React `usePrivacyCenterExitAction`: `back` leaves, `signout` drops the
-    /// session first. Only offered when the host passed `onBack`.
+    /// session first. A host that passed only `onDismiss` gets `back`.
     public func performExitAction() {
-        guard let onBack else { return }
-        if onBack == .signout {
+        guard let exitAction else { return }
+        if exitAction == .signout {
             signOut()
             events.signedOut()
         }

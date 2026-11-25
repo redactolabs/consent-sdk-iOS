@@ -4,6 +4,19 @@ All notable changes to `RedactoConsentSDK` are documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [Unreleased]
+
+### Changed
+
+- The Privacy Center top bar matches the Android SDK: the workspace logo and name on the left, then the language pill, the bell and the account pill on the right. The account pill shows the brand icon (or the brand's initial) with a chevron; it showed the contact's initials, and a token with no email or mobile leaves the `org_user_id` as the contact, so a UUID read as "04". The language pill gains a chevron.
+- The close (✕) button is gone from the top bar. Back or Sign out sits in the account menu, which now offers Back when the host passed only `onDismiss`. `PrivacyCenterStore.handleBackOrSignout()`, which the button called, is deprecated and still dismisses; call `performExitAction()` instead.
+
+### Fixed
+
+- Back no longer shows where it can do nothing. With `onBack: .back` and no `onDismiss`, the account menu and the session-expired screen offered a Back that left nothing, which stranded the user on an expired session. Back now needs `onDismiss`; without it the session-expired screen offers signing in again when the built-in sign-in is on. `.signout` still shows on its own, as it ends the session and tells the host.
+- The top bar's logo and the account icon no longer flash a placeholder each time the bar redraws. They loaded through `AsyncImage`, which keeps nothing, so every rebuild refetched them; a loaded image is now kept in memory for the session.
+- A revoke, regrant or renew in the Privacy Center now sends `source` (`MOBILE`, `ConsentSource.current`, the value the notices already send), so the ledger keeps the consent's method. It sent none, so the ledger recorded `WEB` once a consent given in the app was changed in the app. The Consent Manager also shows the phone icon for `ANDROID` and `IOS`. The legacy consent-server path (no ledger) ignores `source` and still records `WEB`; that needs a backend change.
+
 ## [2.2.0] - 2026-11-21
 
 Brings the SDK to parity with the React SDK `11.4.0`.

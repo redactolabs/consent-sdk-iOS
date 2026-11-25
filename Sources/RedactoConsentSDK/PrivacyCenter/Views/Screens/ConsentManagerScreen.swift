@@ -381,7 +381,9 @@ public struct ConsentManagerScreen: View {
             }
             meta(PCStrings.method) {
                 HStack(spacing: 4) {
-                    if consent.method == "MOBILE" { Image(systemName: "iphone").font(theme.font(size: 10)) }
+                    // An app's consent: MOBILE, or ANDROID / IOS on records
+                    // written with a platform source (the Kotlin SDK sent ANDROID).
+                    if ["MOBILE", "IOS", "ANDROID"].contains(consent.method) { Image(systemName: "iphone").font(theme.font(size: 10)) }
                     if consent.method == "WEB" { Image(systemName: "laptopcomputer").font(theme.font(size: 10)) }
                     Text(consent.method).font(theme.font(size: 11, weight: .semibold))
                 }

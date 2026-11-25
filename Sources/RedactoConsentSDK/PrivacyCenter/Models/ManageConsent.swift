@@ -69,6 +69,10 @@ struct LedgerManageConsentBody: Encodable {
     let declined: Bool
     let select_all_mandatory: Bool
     let self_declared_adult: Bool
+    /// The channel the ledger records as the consent's method (`MOBILE`), as the
+    /// notices send it (`ConsentSource.current`). Without it the ledger records
+    /// a revoke, regrant or renew made in the app as WEB.
+    let source = ConsentSource.current
     let purposes: [LedgerPurposeSelection]
     let language: String?
     let nominator_uuid: String?

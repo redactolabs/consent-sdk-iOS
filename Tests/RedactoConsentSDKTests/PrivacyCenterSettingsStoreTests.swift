@@ -668,8 +668,14 @@ final class PrivacyCenterSettingsStoreTests: XCTestCase {
     @MainActor
     func testOffersSigningInAgainOnlyWhenTheHostGaveNoWayOut() {
         XCTAssertTrue(makeStore(builtInSignIn: true).canSignInAgain)
-        XCTAssertFalse(makeStore(onBack: .back, builtInSignIn: true).canSignInAgain)
         XCTAssertFalse(makeStore().canSignInAgain)
+
+        // Back without onDismiss does nothing, so it is not a way out and the
+        // expired screen has to offer signing in again. Signout works alone.
+        XCTAssertTrue(makeStore(onBack: .back, builtInSignIn: true).canSignInAgain)
+        XCTAssertFalse(
+            makeStore(onBack: .back, builtInSignIn: true, onDismiss: {}).canSignInAgain)
+        XCTAssertFalse(makeStore(onBack: .signout, builtInSignIn: true).canSignInAgain)
     }
 
     @MainActor

@@ -125,6 +125,7 @@
 "aboutToModifyConsentOnBehalf" = "તમે {{nominator}} વતી સંમતિમાં ફેરફાર કરવા જઈ રહ્યા છો:";
 "noDataElementsAvailable" = "કોઈ ડેટા ઘટક ઉપલબ્ધ નથી";
 "revokeConsentWarning" = "જો તમે આ સંમતિ રદ કરશો તો, આ ડેટા પર આધારિત ચોક્કસ ફીચર્સની ઍક્સેસ ગુમાવી શકશો.";
+"nonRevocableConsentWarning" = "આ ਸંમતિ પાછી ખેંચી શકાતી નથી, તેથી રદ કરવાની વિકલ્પ ઉપલબ્ધ નથી.";
 "revokeConsent" = "સંમતિ રદ કરો";
 "regrantConsent" = "સંમતિ ફરીથી આપો";
 "regrantConsentWarning" = "આ સંમતિ ફરીથી આપવાથી, તમે સંસ્થાને આ હેતુ માટે ફરી તમારા ડેટા પ્રોસેસ કરવાની મંજૂરી આપશો.";

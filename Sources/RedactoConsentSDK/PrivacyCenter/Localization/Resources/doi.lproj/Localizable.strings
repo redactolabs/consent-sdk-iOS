@@ -125,6 +125,7 @@
 "aboutToModifyConsentOnBehalf" = "तुस {{nominator}} दी तरफा कन्नै सहमति च बदलाव करने आले ओ:";
 "noDataElementsAvailable" = "कोनो डेटा तत्व उपलब्ध नै अछि";
 "revokeConsentWarning" = "जँ रउआ एहि सहमति वापस लेत छी तँ एहि डेटा प पर निर्भर कुछ फीचर क पहुंच खो सकैत छी।";
+"nonRevocableConsentWarning" = "एह सहमति वापस नेईं लैती जाई सकदी, इस लेई वापस लैने दा विकल्प उपलब्ध नहीं।";
 "revokeConsent" = "सहमति वापस लेवो";
 "regrantConsent" = "सहमति फिर तों देवो";
 "regrantConsentWarning" = "ई सहमति फिर तों देय पर, रउआ संगठन के ई उद्देश्य खातिर फिर तों रउआ डेटा प्रोसेस करै क इजाजत दैत छी।";

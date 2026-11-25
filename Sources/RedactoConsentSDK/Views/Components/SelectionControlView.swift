@@ -9,6 +9,7 @@ struct SelectionControlView: View {
     var level: SelectionControlLevel = .purpose
     let label: String
     let lockedLabel: String
+    var lockedHint: String?
     var accentColor = "#4f87ff"
     let onSelect: (Bool) -> Void
 
@@ -88,6 +89,7 @@ struct SelectionControlView: View {
         .padding(.leading, 12)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(lockedLabel)
+        .accessibilityHint(lockedHint ?? "")
         .accessibilityAddTraits(.isImage)
     }
 
@@ -110,6 +112,7 @@ struct SelectionControlView: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(locked ? lockedLabel : label)
+        .accessibilityHint(locked ? (lockedHint ?? "") : "")
     }
 
     private func radioOption(_ title: String, value: Bool) -> some View {
@@ -193,5 +196,6 @@ struct SelectionControlView: View {
             .frame(width: slotWidth, alignment: .trailing)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(lockedLabel)
+            .accessibilityHint(lockedHint ?? "")
     }
 }

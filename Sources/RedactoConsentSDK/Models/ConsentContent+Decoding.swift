@@ -137,6 +137,8 @@ extension ActiveConfigPurpose {
         industries = c.optional(String.self, forKey: .industries)
         dataElements = c.lenient([ActiveConfigDataElement].self, forKey: .dataElements)
         productUuids = c.optional([String].self, forKey: .productUuids)
+        revocable = c.optional(Bool.self, forKey: .revocable)
+        revokeWarningMessage = c.optional(String.self, forKey: .revokeWarningMessage)
     }
 }
 

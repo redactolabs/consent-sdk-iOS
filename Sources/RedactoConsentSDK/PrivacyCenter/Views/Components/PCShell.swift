@@ -245,20 +245,18 @@ struct PCLogoAvatar: View {
     var size: CGFloat = 32
 
     var body: some View {
-        AsyncImage(url: url) { phase in
-            if let image = phase.image {
-                ZStack {
-                    Circle().fill(theme.background)
-                    Circle().stroke(theme.border, lineWidth: 1)
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: Self.imageSide(for: size), height: Self.imageSide(for: size))
-                }
-                .frame(width: size, height: size)
-            } else {
-                PCInitialsAvatar(text: PCInitialsAvatar.initials(name), seed: name, size: size)
+        PCRemoteImage(url: url) { image in
+            ZStack {
+                Circle().fill(theme.background)
+                Circle().stroke(theme.border, lineWidth: 1)
+                image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Self.imageSide(for: size), height: Self.imageSide(for: size))
             }
+            .frame(width: size, height: size)
+        } placeholder: {
+            PCInitialsAvatar(text: PCInitialsAvatar.initials(name), seed: name, size: size)
         }
         .frame(width: size, height: size)
     }

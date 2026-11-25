@@ -125,6 +125,7 @@
 "aboutToModifyConsentOnBehalf" = "तुमी {{nominator}} वतीन संमती बदलूंक वचपी आसात:";
 "noDataElementsAvailable" = "कोणचेच डेटा घटक उपलब्ध नात";
 "revokeConsentWarning" = "जर तूं ही संमती माग घेतल्यार, ह्या डेटावर आधारिल्ल्या कांय फीचरांक पहुंच गमावूंक पडूं शकता.";
+"nonRevocableConsentWarning" = "ही संमती माग घेवंक मेळना, देखून माग घेवपाचो विकल्प उपलब्ध ना.";
 "revokeConsent" = "संमती माग घे";
 "regrantConsent" = "संमती परत दी";
 "regrantConsentWarning" = "ही संमती परत दिल्यार, तूं संस्थेक ह्या उद्देशाखातीर परत तुजो डेटा प्रक्रिया करपाक परवानगी दितलो.";

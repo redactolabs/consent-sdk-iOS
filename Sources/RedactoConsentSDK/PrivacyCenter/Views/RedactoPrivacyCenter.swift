@@ -319,7 +319,7 @@ struct PCSessionExpiredView: View {
                         .foregroundColor(theme.textSecondary)
                         .multilineTextAlignment(.center)
                 }
-                if let onBack = store.onBack {
+                if let onBack = store.effectiveOnBack {
                     PCButton(
                         onBack == .back ? PCStrings.back : PCStrings.signOut,
                         fullWidth: false,

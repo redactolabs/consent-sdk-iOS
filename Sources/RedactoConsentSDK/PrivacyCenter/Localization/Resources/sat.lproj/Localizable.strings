@@ -125,6 +125,7 @@
 "aboutToModifyConsentOnBehalf" = "ᱟᱢ {{nominator}} ᱞᱟᱹᱜᱤᱫ ᱨᱟᱡᱤᱱᱟᱹᱢᱟ ᱵᱚᱫᱚᱞ ᱥᱟᱱᱟᱢ ᱠᱟᱱᱟ:";
 "noDataElementsAvailable" = "ᱰᱟᱴᱟ ᱚᱱᱪᱚᱜ ᱵᱟᱹᱱᱩᱜᱼᱟ";
 "revokeConsentWarning" = "ᱡᱤᱱᱤᱥ ᱟᱢ ᱱᱚᱶᱟ ᱥᱟᱢᱢᱟᱣ ᱚᱪᱚᱜ ᱠᱷᱟᱱ, ᱱᱚᱶᱟ ᱰᱟᱴᱟ ᱪᱮᱛᱟᱱ ᱨᱮ ᱠᱚᱢᱚᱜ ᱵᱤᱯᱚᱞ ᱠᱚ ᱧᱟᱢ ᱫᱟᱲᱮᱭᱟᱜᱼᱟ ᱵᱟᱝ।";
+"nonRevocableConsentWarning" = "ᱱᱚᱶᱟ ᱥᱟᱢᱢᱟᱣ ᱚᱪᱚᱜ ᱵᱟᱝ ᱦᱩᱭᱩᱜᱼᱟ, ᱚᱱᱟᱛᱮ ᱚᱪᱚᱜ ᱚᱱᱪᱚᱜ ᱵᱟᱹᱱᱩᱜᱼᱟ।";
 "revokeConsent" = "ᱥᱟᱢᱢᱟᱣ ᱚᱪᱚᱜ";
 "regrantConsent" = "ᱥᱟᱢᱢᱟᱣ ᱟᱨᱦᱚᱸ ᱮᱢ";
 "regrantConsentWarning" = "ᱱᱚᱶᱟ ᱥᱟᱢᱢᱟᱣ ᱟᱨᱦᱚᱸ ᱮᱢ ᱠᱷᱟᱱ, ᱟᱢ ᱥᱮᱸᱴᱟᱨᱟᱭᱤᱡᱮᱥᱚᱱ ᱠᱷᱚᱱ ᱱᱚᱶᱟ ᱠᱟᱹᱢᱤ ᱞᱟᱹᱜᱤᱫ ᱟᱢᱟᱜ ᱰᱟᱴᱟ ᱯᱨᱚᱥᱮᱥ ᱠᱟᱹᱢᱤ ᱞᱟᱹᱜᱤᱫ ᱦᱚᱸ ᱮᱢᱟ।";
