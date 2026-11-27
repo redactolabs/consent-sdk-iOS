@@ -392,4 +392,13 @@
 "selectGrievanceType" = "अपन शिकायत प्रकार चुनू";
 "requestSubmittedTitle" = "अनुरोध सफलतापूर्वक जमा क देल गेल";
 "requestSubmittedSubtitle" = "अपन अनुरोध जमा करय लेल धन्यवाद";
-"requestSubmittedNotice" = "हम कानून के अनुसार 30 दिन के भीतर अहाँक अनुरोध के प्रसंस्करण करब";
+"requestSubmittedNotice" = "हम अहाँक अनुरोध कऽ कानून अनुसार प्रक्रिया करब";
+"allCaughtUp" = "अहाँ सभ किछु देखि लेलहुँ";
+"filtersApplied" = "फिल्टर लागू कएल गेल";
+"noMatchingRequests" = "कोनो मेल खाइत अनुरोध नहि";
+"refresh" = "रिफ्रेश करू";
+"noMessagesYetSubtitle" = "नीचाँ बातचीत शुरू करू";
+"noNotificationsHint" = "जखन कोनो बात पर अहाँक ध्यानक आवश्यकता होएत, हम अहाँकेँ सूचित करब।";
+"noCasesYet" = "अखन तक कोनो अनुरोध नहि";
+"submitFirstRequest" = "अपन पहिल गोपनीयता अनुरोध जमा करू";
+"noResultsForSearch" = "कोनो आन खोज वा फिल्टर आजमाउ";

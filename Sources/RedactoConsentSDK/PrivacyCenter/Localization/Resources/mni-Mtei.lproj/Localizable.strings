@@ -44,7 +44,7 @@
 "retry" = "Retry";
 "retrying" = "Retrying...";
 "confirmationSentTo" = "নিশ্চয়তা প্ৰেৰণ কৰা হৈছে";
-"processRequest" = "আমি আইন অনুসৰি আপোনাৰ অনুৰোধ প্ৰক্ৰিয়া কৰিম";
+"processRequest" = "ꯑꯩꯈꯣꯌꯅꯥ ꯑꯥꯏꯟ ꯃꯇꯨꯡ ꯏꯟꯅꯥ ꯅꯍꯥꯛꯀꯤ ꯍꯥꯌꯖꯕ ꯑꯁꯤ ꯄꯥꯡꯊꯣꯛꯀꯅꯤ";
 "yourDataIsSafeWithUs" = "আপোনাৰ তথ্য আমাৰ সৈতে সুৰক্ষিত। আমি সুৰক্ষিত প্ৰক্ৰিয়া নিশ্চিত কৰোঁ";
 "enterYourEmail" = "আপোনাৰ ইমেইল প্ৰৱিষ্ট কৰক";
 "letsConfirm" = "চাওঁ আহক, এইটো আপুনি";
@@ -392,4 +392,13 @@
 "selectGrievanceType" = "নহাক্কী ৱাকৎ মখল খল্লো";
 "requestSubmittedTitle" = "রিকুএস্ত মাইপাকপগা লোইননা সবমিত তৌরে";
 "requestSubmittedSubtitle" = "নহাক্কী রিকুএস্ত সবমিত তৌবিবদা থাগৎচরি";
-"requestSubmittedNotice" = "ঐখোয়না ৱাযেলগী মতুং ইন্না নুমিৎ ৩০গী মনুংদা নহাক্কী রিকুএস্ত প্রসেস তৌগনি";
+"requestSubmittedNotice" = "ꯑꯩꯈꯣꯌꯅꯥ ꯑꯥꯏꯟ ꯃꯇꯨꯡ ꯏꯟꯅꯥ ꯅꯍꯥꯛꯀꯤ ꯍꯥꯌꯖꯕ ꯑꯁꯤ ꯄꯥꯡꯊꯣꯛꯀꯅꯤ";
+"allCaughtUp" = "ꯅꯍꯥꯛꯅꯥ ꯄꯨꯝꯅꯃꯛ ꯌꯦꯡꯂꯦ";
+"filtersApplied" = "ꯐꯤꯜꯇꯔꯁꯤꯡ ꯁꯤꯖꯤꯟꯅꯔꯦ";
+"noMatchingRequests" = "ꯃꯥꯟꯅꯕ ꯍꯥꯌꯖꯕ ꯑꯃꯠꯇꯥ ꯂꯩꯇꯦ";
+"refresh" = "ꯔꯤꯐ꯭ꯔꯦꯁ ꯇꯧꯔꯣ";
+"noMessagesYetSubtitle" = "ꯃꯈꯥꯗ ꯋꯥꯔꯤ ꯁꯥꯅꯕ ꯍꯧꯔꯣ";
+"noNotificationsHint" = "ꯀꯔꯤꯒꯨꯝꯕ ꯑꯃꯗ ꯅꯍꯥꯛꯀꯤ ꯌꯦꯡꯁꯤꯟꯕ ꯃꯊꯧ ꯇꯥꯔꯕ ꯃꯇꯃꯗ ꯑꯩꯈꯣꯌꯅꯥ ꯈꯉꯍꯅꯒꯅꯤ꯫";
+"noCasesYet" = "ꯍꯧꯖꯤꯛ ꯐꯥꯑꯣꯕ ꯍꯥꯌꯖꯕ ꯑꯃꯠꯇꯥ ꯂꯩꯇꯦ";
+"submitFirstRequest" = "ꯅꯍꯥꯛꯀꯤ ꯑꯍꯥꯅꯕ ꯄ꯭ꯔꯥꯏꯚꯦꯁꯤ ꯍꯥꯌꯖꯕ ꯊꯥꯔꯛꯎ";
+"noResultsForSearch" = "ꯇꯣꯉꯥꯟꯕ ꯊꯤꯕ ꯅꯠꯔꯒꯥ ꯐꯤꯜꯇꯔ ꯑꯃ ꯁꯤꯖꯤꯟꯅꯕꯤꯌꯨ";

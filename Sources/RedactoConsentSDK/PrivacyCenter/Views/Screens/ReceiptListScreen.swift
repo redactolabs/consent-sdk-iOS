@@ -92,13 +92,15 @@ public struct ReceiptListScreen: View {
                 selection: $vm.eventType,
                 options: eventOptions,
                 placeholder: PCStrings.all,
-                label: PCStrings.event
+                label: PCStrings.event,
+                allOptionLabel: PCStrings.all
             )
             PCSelect(
                 selection: $vm.datePreset,
                 options: dateOptions,
                 placeholder: PCStrings.allTime,
-                label: PCStrings.dateRange
+                label: PCStrings.dateRange,
+                allOptionLabel: PCStrings.allTime
             )
 
             if vm.datePreset == .custom {
@@ -205,40 +207,25 @@ public struct ReceiptListScreen: View {
     // MARK: - Row
     @ViewBuilder
     private func receiptRow(_ receipt: Receipt) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 10) {
-                PCAvatar(initial: productInitials(receipt), size: 32)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(productName(receipt))
-                        .font(theme.font(size: 14, weight: .semibold))
-                        .foregroundColor(theme.text)
-                        .lineLimit(1)
-                    HStack(spacing: 6) {
-                        Text(PrivacyCenterDateFormatters.formatDate(receipt.createdAt))
-                        Text("•")
-                        Text(PrivacyCenterDateFormatters.formatTime(receipt.createdAt))
-                    }
-                    .font(theme.font(size: 11))
-                    .foregroundColor(theme.textTertiary)
-                }
-                Spacer()
-                eventBadge(receipt)
+        HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(eventLabel(receipt))
+                    .font(theme.font(size: 14, weight: .semibold))
+                    .foregroundColor(theme.text)
+                Text(productName(receipt))
+                    .font(theme.font(size: 13))
+                    .foregroundColor(theme.textSecondary)
+                Text(PrivacyCenterDateFormatters.formatDateTimeShort(receipt.createdAt))
+                    .font(theme.font(size: 13))
+                    .foregroundColor(theme.textSecondary)
             }
-            HStack {
-                Spacer()
-                downloadButton(receipt)
-            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            downloadButton(receipt)
+                .fixedSize()
         }
-        .padding(12)
+        .padding(14)
         .background(theme.surface)
-        .cornerRadius(10)
-    }
-
-    @ViewBuilder
-    private func eventBadge(_ receipt: Receipt) -> some View {
-        let raw = receipt.eventType.uppercased()
-        let label = receipt.eventTypeDisplay.pcNonEmpty ?? eventFallbackLabel(raw)
-        PCBadge(label, variant: eventVariant(raw))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     @ViewBuilder
@@ -248,8 +235,7 @@ public struct ReceiptListScreen: View {
             PCStrings.download,
             variant: .outline,
             isLoading: isDownloading,
-            isDisabled: vm.downloadingUuid != nil,
-            leadingIcon: "arrow.down.circle"
+            isDisabled: vm.downloadingUuid != nil
         ) {
             Task {
                 if let url = await vm.downloadReceipt(receipt) {
@@ -262,33 +248,17 @@ public struct ReceiptListScreen: View {
 
     // MARK: - Helpers
     private func productName(_ receipt: Receipt) -> String {
-        receipt.productNameDisplay.pcNonEmpty ?? receipt.productName.pcNonEmpty ?? "—"
+        receipt.productNameDisplay.pcNonEmpty ?? receipt.productName.pcNonEmpty ?? "-"
     }
 
-    private func productInitials(_ receipt: Receipt) -> String {
-        let name = productName(receipt)
-        let cleaned = name.unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }
-        let str = String(String.UnicodeScalarView(cleaned))
-        let prefix = String(str.prefix(2))
-        return prefix.isEmpty ? "?" : prefix
-    }
-
-    private func eventFallbackLabel(_ raw: String) -> String {
-        switch raw {
+    /// Android `receiptEventLabel`: our translation for the four known events, then the server's display, then the raw value.
+    private func eventLabel(_ receipt: Receipt) -> String {
+        switch receipt.eventType.uppercased() {
         case "GRANTED": return PCStrings.consentGranted
-        case "WITHDRAWN": return PCStrings.consentRevoked
+        case "WITHDRAWN", "WITHDRAW", "REVOKED": return PCStrings.consentRevoked
         case "DECLINED": return PCStrings.consentDeclined
         case "EXPIRED": return PCStrings.consentExpired
-        default: return raw.isEmpty ? "—" : raw
-        }
-    }
-
-    private func eventVariant(_ raw: String) -> PCBadgeVariant {
-        switch raw {
-        case "GRANTED": return .success
-        case "WITHDRAWN", "EXPIRED": return .warning
-        case "DECLINED": return .error
-        default: return .info
+        default: return receipt.eventTypeDisplay.pcNonEmpty ?? (receipt.eventType.isEmpty ? PCStrings.noData : receipt.eventType)
         }
     }
 }

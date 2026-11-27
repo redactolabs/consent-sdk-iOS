@@ -6,13 +6,21 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 ## [Unreleased]
 
+### Added
+
+- The opt-in confirmation dialog takes its title and detail from the notice when it carries them: six optional fields on `active_config` and on each language's entry in `supported_languages_and_translations`, a title and a detail for each of accept all, accept selected and decline, so an admin can word the question in the client's own voice and have it translated with the rest of the notice. Resolution follows the footer button labels: the selected language's translation, then the notice's base text, then the SDK's own copy. Absent or empty is no override, so a notice already published renders exactly what it renders today in all 23 languages, and the dialog still appears only when `confirm_before_submit` is set.
+
 ### Changed
 
+- The request-submitted text no longer promises 30 days: `processRequest` and `requestSubmittedNotice` read "We will process your request as per laws" in every language, the React SDK's wording.
+- Nine Privacy Center strings that existed only in `en.lproj` are translated in all 22 languages: `allCaughtUp`, `filtersApplied`, `noMatchingRequests`, `refresh`, `noMessagesYetSubtitle`, `noNotificationsHint`, `noCasesYet`, `submitFirstRequest` and `noResultsForSearch`.
 - The Privacy Center top bar matches the Android SDK: the workspace logo and name on the left, then the language pill, the bell and the account pill on the right. The account pill shows the brand icon (or the brand's initial) with a chevron; it showed the contact's initials, and a token with no email or mobile leaves the `org_user_id` as the contact, so a UUID read as "04". The language pill gains a chevron.
 - The close (✕) button is gone from the top bar. Back or Sign out sits in the account menu, which now offers Back when the host passed only `onDismiss`. `PrivacyCenterStore.handleBackOrSignout()`, which the button called, is deprecated and still dismisses; call `performExitAction()` instead.
 
 ### Fixed
 
+- `RedactoNoticeConsentInline` drew its confirmation dialog in English under a translated notice. It now follows the notice's language, as the modal notice already did.
+- A Privacy Center sign-in by mobile number for an organisation that has not enabled SMS now says "SMS service isn't enabled. Please contact the organisation." It said "We couldn't send your code right now", which read like an outage. consent-server sends the new `SMS_LOGIN_DISABLED` code for this case (`otpErrorSmsDisabled`, English in every language like the other OTP errors).
 - Back no longer shows where it can do nothing. With `onBack: .back` and no `onDismiss`, the account menu and the session-expired screen offered a Back that left nothing, which stranded the user on an expired session. Back now needs `onDismiss`; without it the session-expired screen offers signing in again when the built-in sign-in is on. `.signout` still shows on its own, as it ends the session and tells the host.
 - The top bar's logo and the account icon no longer flash a placeholder each time the bar redraws. They loaded through `AsyncImage`, which keeps nothing, so every rebuild refetched them; a loaded image is now kept in memory for the session.
 - A revoke, regrant or renew in the Privacy Center now sends `source` (`MOBILE`, `ConsentSource.current`, the value the notices already send), so the ledger keeps the consent's method. It sent none, so the ledger recorded `WEB` once a consent given in the app was changed in the app. The Consent Manager also shows the phone icon for `ANDROID` and `IOS`. The legacy consent-server path (no ledger) ignores `source` and still records `WEB`; that needs a backend change.

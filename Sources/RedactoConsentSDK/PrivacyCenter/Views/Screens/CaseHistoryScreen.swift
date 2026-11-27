@@ -12,7 +12,7 @@ func caseStatusVariant(_ status: String) -> PCBadgeVariant {
     }
 }
 
-/// The requests list (React CaseHistory.tsx).
+/// The requests list (Android CaseHistoryScreen).
 public struct CaseHistoryScreen: View {
     @Environment(\.privacyCenterTheme) private var theme
     @EnvironmentObject private var store: PrivacyCenterStore
@@ -27,17 +27,12 @@ public struct CaseHistoryScreen: View {
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                PCPageHeader(title: PCStrings.grievanceRequests, description: PCStrings.grievanceSubtitle)
-                PCButton(PCStrings.newRequest, leadingIcon: "plus") { onNewRequest() }
+                titleRow
                 PCInput(text: $vm.searchText, placeholder: PCStrings.searchCasesByID, leadingIcon: "magnifyingglass")
-                PCSegmentedTabs(
-                    options: CaseRequestStatusFilter.allCases.map { ($0, label($0)) },
-                    selection: vm.statusFilter,
-                    onSelect: { vm.setStatusFilter($0) }
-                )
+                statusTabs
                 typeFilter
                 content
-                if !vm.isLoading && vm.errorMessage == nil {
+                if !vm.isLoading && vm.errorMessage == nil && !vm.pagedCases.isEmpty {
                     PCPaginationBar(
                         currentPage: vm.pageIndex + 1,
                         totalPages: vm.totalPages,
@@ -49,7 +44,7 @@ public struct CaseHistoryScreen: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.bottom, 16)
+            .padding(.vertical, 12)
         }
         .background(theme.background)
         .refreshable { await vm.refresh() }
@@ -59,6 +54,47 @@ public struct CaseHistoryScreen: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .privacyCenterCasesChanged)) { _ in
             Task { await vm.refresh() }
+        }
+    }
+
+    private var titleRow: some View {
+        HStack(alignment: .center, spacing: 12) {
+            Text(PCStrings.grievanceRequests)
+                .font(theme.font(size: 20, weight: .bold))
+                .foregroundColor(theme.text)
+                .lineLimit(1)
+            Spacer(minLength: 8)
+            PCButton("+ \(PCStrings.newRequest)", size: .compact) { onNewRequest() }
+        }
+    }
+
+    private var statusTabs: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(CaseRequestStatusFilter.allCases, id: \.self) { filter in
+                    let isActive = filter == vm.statusFilter
+                    Button(action: { vm.setStatusFilter(filter) }) {
+                        Text(label(filter))
+                            .font(theme.font(size: 12, weight: .semibold))
+                            .foregroundColor(isActive ? theme.primaryText : theme.text)
+                            .lineLimit(1)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .frame(minHeight: 36)
+                            .background(isActive ? theme.primary : theme.surface)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: theme.controlRadius)
+                                    .stroke(isActive ? theme.primary : theme.border, lineWidth: 1)
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: theme.controlRadius))
+                            .padding(.vertical, 4)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(isActive ? [.isButton, .isSelected] : .isButton)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -78,14 +114,16 @@ public struct CaseHistoryScreen: View {
                 }
             }
         } label: {
-            HStack(spacing: 6) {
-                Text(PCStrings.filter).font(theme.font(size: 13, weight: .semibold))
-                Image(systemName: "line.3.horizontal.decrease").font(theme.font(size: 13, weight: .semibold))
-            }
-            .foregroundColor(theme.text)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .overlay(RoundedRectangle(cornerRadius: theme.controlRadius).stroke(theme.border, lineWidth: 1))
+            Text(PCStrings.filter)
+                .font(theme.font(size: 13, weight: .medium))
+                .foregroundColor(theme.text)
+                .padding(.horizontal, 12)
+                .frame(minHeight: 36)
+                .background(theme.surfaceElevated)
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(theme.border, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .padding(.vertical, 4)
+                .contentShape(Rectangle())
         }
     }
 
@@ -100,43 +138,58 @@ public struct CaseHistoryScreen: View {
             }
             .frame(maxWidth: .infinity, minHeight: 240)
         } else if vm.pagedCases.isEmpty {
-            PCEmpty(title: PCStrings.noData, icon: "tray")
+            emptyState
         } else {
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 ForEach(vm.pagedCases) { caseCard($0) }
             }
         }
     }
 
+    private var emptyState: some View {
+        VStack(spacing: 4) {
+            PCEmpty(
+                title: vm.isFiltered ? PCStrings.noMatchingRequests : PCStrings.noCasesYet,
+                subtitle: vm.isFiltered ? PCStrings.noResultsForSearch : PCStrings.submitFirstRequest,
+                icon: "tray"
+            )
+            PCButton(PCStrings.newRequest, fullWidth: false) { onNewRequest() }
+        }
+        .frame(maxWidth: .infinity, minHeight: 280)
+    }
+
     private func caseCard(_ caseRequest: CaseRequest) -> some View {
         Button(action: { store.openCase(caseRequest) }) {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(caseRequest.caseId)
-                            .font(theme.font(size: 14, weight: .semibold))
-                            .foregroundColor(theme.text)
-                        Text(PrivacyCenterDateFormatters.formatDateShort(caseRequest.createdAt))
-                            .font(theme.font(size: 12))
-                            .foregroundColor(theme.textSecondary)
-                    }
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .center) {
+                    Text(caseRequest.caseId)
+                        .font(theme.font(size: 14, weight: .bold))
+                        .foregroundColor(theme.text)
+                        .lineLimit(1)
                     Spacer(minLength: 8)
                     PCBadge(caseRequest.displayStatus, variant: caseStatusVariant(caseRequest.rawStatus ?? ""))
                 }
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(PCStrings.requestType).font(theme.font(size: 11)).foregroundColor(theme.textTertiary)
-                        Text(caseRequest.displayRequestType).font(theme.font(size: 13)).foregroundColor(theme.text)
-                    }
-                    Spacer()
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text(PCStrings.submittedOn).font(theme.font(size: 11)).foregroundColor(theme.textTertiary)
-                        Text(PrivacyCenterDateFormatters.formatDateShort(caseRequest.createdAt)).font(theme.font(size: 13)).foregroundColor(theme.textSecondary)
-                    }
+                HStack(spacing: 6) {
+                    Text(caseRequest.displayRequestType)
+                        .font(theme.font(size: 12, weight: .semibold))
+                        .foregroundColor(theme.text)
+                    Text("·")
+                        .font(theme.font(size: 12))
+                        .foregroundColor(theme.textTertiary)
+                    Text(PrivacyCenterDateFormatters.formatDateShort(caseRequest.createdAt))
+                        .font(theme.font(size: 12))
+                        .foregroundColor(theme.textSecondary)
+                }
+                if !caseRequest.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    Text(caseRequest.description)
+                        .font(theme.font(size: 13))
+                        .foregroundColor(theme.textSecondary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
                 }
             }
             .padding(14)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
             .background(theme.isGlass ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(theme.surfaceElevated))
             .overlay(RoundedRectangle(cornerRadius: theme.panelRadius).stroke(theme.border, lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: theme.panelRadius))
@@ -146,7 +199,7 @@ public struct CaseHistoryScreen: View {
 
     private func label(_ filter: CaseRequestStatusFilter) -> String {
         switch filter {
-        case .all: return PCStrings.allRequests
+        case .all: return PCStrings.all
         case .processing: return PCStrings.processing
         case .completed: return PCStrings.completed
         case .rejected: return PCStrings.rejected

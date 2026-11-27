@@ -92,6 +92,7 @@
 "manageConsent" = "Manage Consent";
 "manageConsentSubtitle" = "Explore and manage all your consents in one place";
 "export" = "Export";
+"refresh" = "Refresh";
 "search" = "Search";
 "searchConsentsProductsPurposes" = "Search consents, products, purposes...";
 "status" = "Status";
@@ -249,6 +250,7 @@
 "secureMessagesNotice" = "Your messages are securely sent to the privacy team only.";
 "caseFinalizedMessagesTooltip" = "This case is finalized — messages can no longer be sent.";
 "noMessagesYet" = "No messages yet";
+"noMessagesYetSubtitle" = "Start the conversation below";
 "writeMessagePlaceholder" = "Write a message to the privacy team...";
 "attachFile" = "Attach file";
 "send" = "Send";
@@ -311,6 +313,7 @@
 "minutesAgo" = "{{count}}m ago";
 "next" = "Next";
 "noNotificationsInCategory" = "No notifications in this category.";
+"noNotificationsHint" = "We'll let you know when something needs your attention.";
 "noNotificationsYet" = "No notifications yet.";
 "notificationHub" = "Notification Hub";
 "notificationHubSubtitle" = "All your privacy-related notifications in one place";
@@ -391,9 +394,9 @@
 "uploadDocument" = "Upload Document";
 "rejectionReason" = "Rejection reason";
 "secureChannelNotice" = "Messages are sent through a secure channel.";
-"grievanceConsentViolation" = "Consent Violation";
-"grievanceUnlawfulProcessing" = "Unlawful Processing";
-"grievanceDataBreach" = "Data Breach";
+"grievanceConsentViolation" = "Consent violation";
+"grievanceUnlawfulProcessing" = "Unlawful processing";
+"grievanceDataBreach" = "Data breach";
 "somethingWentWrong" = "Something went wrong. Please try again.";
 "dataRequestsSubtitleLong" = "Submit a request to access, correct, erase, or raise a grievance about your data.";
 "attachment" = "Attachment";
@@ -406,7 +409,7 @@
 "selectGrievanceType" = "Select your grievance type";
 "requestSubmittedTitle" = "Request Submitted Successfully";
 "requestSubmittedSubtitle" = "Thank you for submitting your request";
-"requestSubmittedNotice" = "We will process your request as per laws within 30 days";
+"requestSubmittedNotice" = "We will process your request as per laws";
 "uploadFailedGeneric" = "Document upload failed. Please try again.";
 "fileEmpty" = "File is empty. Please select a valid file.";
 "fileTooLarge" = "File size must not exceed 10 MB.";
@@ -455,6 +458,7 @@
 "otpSentPhone" = "OTP sent to your phone";
 "otpErrorRateLimit" = "Too many code requests. Please wait a minute and try again.";
 "otpErrorSendFailed" = "We couldn't send your code right now. Please try again in a moment.";
+"otpErrorSmsDisabled" = "SMS service isn't enabled. Please contact the organisation.";
 "otpErrorInvalidContact" = "Please enter a valid email address or phone number.";
 "otpErrorNotFound" = "Your code wasn't found. Please request a new one.";
 "otpErrorExpired" = "Your code has expired. Please request a new one.";
@@ -468,3 +472,7 @@
 "footerGrievanceOfficer" = "Grievance officer:";
 "footerDataProtectionBoard" = "If your grievance is not resolved, you can complain to the Data Protection Board of India.";
 "footerGrievanceForm" = "Grievance form";
+"noCasesYet" = "No requests yet";
+"noMatchingRequests" = "No matching requests";
+"submitFirstRequest" = "Submit your first privacy request";
+"noResultsForSearch" = "Try a different search or filter";

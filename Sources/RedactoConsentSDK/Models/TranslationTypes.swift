@@ -58,6 +58,12 @@ public struct LanguageTranslation: Codable {
     public let acceptAllButtonText: String?
     public let confirmButtonText: String?
     public let declineButtonText: String?
+    public let confirmAcceptAllTitle: String?
+    public let confirmAcceptAllDetail: String?
+    public let confirmAcceptSelectedTitle: String?
+    public let confirmAcceptSelectedDetail: String?
+    public let confirmDeclineTitle: String?
+    public let confirmDeclineDetail: String?
     public let privacyPolicyPrefixText: String?
     public let privacyPolicyAnchorText: String?
     public let privacyCenterAnchorText: String?
@@ -75,6 +81,12 @@ public struct LanguageTranslation: Codable {
         case acceptAllButtonText = "accept_all_button_text"
         case confirmButtonText = "confirm_button_text"
         case declineButtonText = "decline_button_text"
+        case confirmAcceptAllTitle = "confirm_accept_all_title"
+        case confirmAcceptAllDetail = "confirm_accept_all_detail"
+        case confirmAcceptSelectedTitle = "confirm_accept_selected_title"
+        case confirmAcceptSelectedDetail = "confirm_accept_selected_detail"
+        case confirmDeclineTitle = "confirm_decline_title"
+        case confirmDeclineDetail = "confirm_decline_detail"
         case privacyPolicyPrefixText = "privacy_policy_prefix_text"
         case privacyPolicyAnchorText = "privacy_policy_anchor_text"
         case privacyCenterAnchorText = "privacy_center_anchor_text"
@@ -96,6 +108,12 @@ public struct LanguageTranslation: Codable {
         acceptAllButtonText = try container.decodeIfPresent(String.self, forKey: .acceptAllButtonText)
         confirmButtonText = try container.decodeIfPresent(String.self, forKey: .confirmButtonText)
         declineButtonText = try container.decodeIfPresent(String.self, forKey: .declineButtonText)
+        confirmAcceptAllTitle = try container.decodeIfPresent(String.self, forKey: .confirmAcceptAllTitle)
+        confirmAcceptAllDetail = try container.decodeIfPresent(String.self, forKey: .confirmAcceptAllDetail)
+        confirmAcceptSelectedTitle = try container.decodeIfPresent(String.self, forKey: .confirmAcceptSelectedTitle)
+        confirmAcceptSelectedDetail = try container.decodeIfPresent(String.self, forKey: .confirmAcceptSelectedDetail)
+        confirmDeclineTitle = try container.decodeIfPresent(String.self, forKey: .confirmDeclineTitle)
+        confirmDeclineDetail = try container.decodeIfPresent(String.self, forKey: .confirmDeclineDetail)
         privacyPolicyPrefixText = try container.decodeIfPresent(String.self, forKey: .privacyPolicyPrefixText)
         privacyPolicyAnchorText = try container.decodeIfPresent(String.self, forKey: .privacyPolicyAnchorText)
         privacyCenterAnchorText = try container.decodeIfPresent(String.self, forKey: .privacyCenterAnchorText)
@@ -154,6 +172,12 @@ public struct LanguageTranslation: Codable {
         case "accept_all_button_text": return acceptAllButtonText
         case "confirm_button_text": return confirmButtonText
         case "decline_button_text": return declineButtonText
+        case "confirm_accept_all_title": return confirmAcceptAllTitle
+        case "confirm_accept_all_detail": return confirmAcceptAllDetail
+        case "confirm_accept_selected_title": return confirmAcceptSelectedTitle
+        case "confirm_accept_selected_detail": return confirmAcceptSelectedDetail
+        case "confirm_decline_title": return confirmDeclineTitle
+        case "confirm_decline_detail": return confirmDeclineDetail
         case "privacy_policy_prefix_text": return privacyPolicyPrefixText
         case "privacy_policy_anchor_text": return privacyPolicyAnchorText
         case "privacy_center_anchor_text": return privacyCenterAnchorText

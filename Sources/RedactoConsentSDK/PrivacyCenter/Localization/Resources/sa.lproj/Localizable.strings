@@ -392,4 +392,13 @@
 "selectGrievanceType" = "स्वस्य अभियोगप्रकारं चिनोतु";
 "requestSubmittedTitle" = "निवेदनं सफलतया प्रस्तुतम्";
 "requestSubmittedSubtitle" = "भवतः निवेदनस्य प्रस्तुत्यर्थं धन्यवादाः";
-"requestSubmittedNotice" = "वयं नियमानुसारं ३० दिनेषु भवतः निवेदनं प्रक्रियायिष्यामः";
+"requestSubmittedNotice" = "वयं तव निवेदनं नियमानुसारं संसाधयिष्यामः";
+"allCaughtUp" = "भवता सर्वं दृष्टम्";
+"filtersApplied" = "छाननानि प्रयुक्तानि";
+"noMatchingRequests" = "समानाः अनुरोधाः न सन्ति";
+"refresh" = "नवीकरोतु";
+"noMessagesYetSubtitle" = "अधः संवादम् आरभताम्";
+"noNotificationsHint" = "यदा किमपि भवतः ध्यानम् अपेक्षते तदा वयं भवन्तं सूचयिष्यामः।";
+"noCasesYet" = "अद्यावधि अनुरोधाः न सन्ति";
+"submitFirstRequest" = "स्वस्य प्रथमं गोपनीयता-अनुरोधं प्रेषयतु";
+"noResultsForSearch" = "अन्यत् अन्वेषणं छाननं वा प्रयतताम्";

@@ -99,11 +99,25 @@ enum PrivacyCenterDateFormatters {
         return formatter(template: "dMMMyyyy", language: PCStrings.currentLanguage, fixedEnglish: "d MMM yyyy").string(from: date)
     }
 
+    /// "25 Nov 2026, 22:08" (Android `formatDateTimeShort`, case created/completed); "-" when absent.
+    static func formatDateTimeShort(_ iso: String?) -> String {
+        guard let iso, !iso.isEmpty else { return "-" }
+        guard let date = parse(iso) else { return iso }
+        return formatter(template: "dMMMyyyyHHmm", language: PCStrings.currentLanguage, fixedEnglish: "d MMM yyyy, HH:mm").string(from: date)
+    }
+
     /// "Jan 15, 2025 at 2:30 PM" (React `getGivenDateLabel`); "-" when absent.
     static func formatDateTime(_ iso: String?) -> String {
         guard let iso, !iso.isEmpty else { return "-" }
         guard let date = parse(iso) else { return iso }
         return formatter(template: "MMMdyyyyhmma", language: PCStrings.currentLanguage, fixedEnglish: "MMM d, yyyy 'at' h:mm a").string(from: date)
+    }
+
+    /// "Nov 25, 2026 10:04 PM" (consent manager given date); "-" when absent.
+    static func formatGivenDate(_ iso: String?) -> String {
+        guard let iso, !iso.isEmpty else { return "-" }
+        guard let date = parse(iso) else { return iso }
+        return formatter(template: "yyyyMMMdhmma", language: PCStrings.currentLanguage, fixedEnglish: "MMM d, yyyy h:mm a").string(from: date)
     }
 
     /// "Jan 15, 2025 • 2:30 PM" (product card latest activity).
@@ -161,6 +175,12 @@ enum PrivacyCenterDateFormatters {
         let days = hours / 24
         if days < 7 { return PCStrings.daysAgo(days) }
         return PCStrings.weeksAgo(days / 7)
+    }
+
+    /// Android activity `relativeTime`: `timeAgo` with "just now" in lowercase.
+    static func activityTimeAgo(_ iso: String?, now: Date = Date()) -> String {
+        let value = timeAgo(iso, now: now)
+        return value == PCStrings.justNow ? value.lowercased(with: locale()) : value
     }
 
     static func isPast(_ iso: String?, now: Date = Date()) -> Bool {

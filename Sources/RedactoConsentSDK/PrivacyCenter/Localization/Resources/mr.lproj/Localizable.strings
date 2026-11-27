@@ -44,7 +44,7 @@
 "retry" = "Retry";
 "retrying" = "Retrying...";
 "confirmationSentTo" = "पडताळणी पाठवण्यात आली आहे";
-"processRequest" = "आम्ही ही विनंती कायद्यानुसार पूर्ण करू";
+"processRequest" = "आम्ही कायद्यानुसार तुमच्या विनंतीवर प्रक्रिया करू";
 "yourDataIsSafeWithUs" = "तुमचा डेटा आमच्याकडे सुरक्षित आहे. आम्ही प्रमाणित प्रक्रिया वापरतो";
 "enterYourEmail" = "तुमचा ईमेल पत्ता प्रविष्ट करा";
 "letsConfirm" = "ही तुमचीच ओळख असल्याची पुष्टी करूया";
@@ -392,4 +392,13 @@
 "selectGrievanceType" = "आपला तक्रार प्रकार निवडा";
 "requestSubmittedTitle" = "विनंती यशस्वीरित्या सादर केली";
 "requestSubmittedSubtitle" = "आपली विनंती सादर केल्याबद्दल धन्यवाद";
-"requestSubmittedNotice" = "आम्ही कायद्यानुसार 30 दिवसांच्या आत आपली विनंती प्रक्रिया करू";
+"requestSubmittedNotice" = "आम्ही कायद्यानुसार तुमच्या विनंतीवर प्रक्रिया करू";
+"allCaughtUp" = "तुम्ही सर्व पाहिले आहे";
+"filtersApplied" = "फिल्टर लागू केले";
+"noMatchingRequests" = "जुळणाऱ्या विनंत्या नाहीत";
+"refresh" = "रिफ्रेश करा";
+"noMessagesYetSubtitle" = "खाली संभाषण सुरू करा";
+"noNotificationsHint" = "एखाद्या गोष्टीकडे तुमचे लक्ष आवश्यक असेल तेव्हा आम्ही तुम्हाला कळवू.";
+"noCasesYet" = "अद्याप कोणतीही विनंती नाही";
+"submitFirstRequest" = "तुमची पहिली गोपनीयता विनंती सबमिट करा";
+"noResultsForSearch" = "वेगळा शोध किंवा फिल्टर वापरून पहा";

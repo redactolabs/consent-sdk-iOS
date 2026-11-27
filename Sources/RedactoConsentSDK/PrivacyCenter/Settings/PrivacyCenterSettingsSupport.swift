@@ -140,6 +140,8 @@ enum PrivacyCenterRequestOptions {
         let label: String?
     }
 
+    static let builtInOrder: [RequestType] = [.access, .erasure, .correction, .grievance, .nomination]
+
     /// Those the settings enable, in their order, narrowed to the server's own
     /// list when it sends one. Until anything is published the built-in order
     /// is kept, so the list reads as it always did.
@@ -152,7 +154,7 @@ enum PrivacyCenterRequestOptions {
             .filter { $0.enabled && (serverEnabled?.contains($0.key.rawValue) ?? true) }
             .map { Option(type: $0.key.requestType, label: $0.label) }
         guard keepLegacyOrder else { return options }
-        let legacy = RequestType.allCases
+        let legacy = builtInOrder
         return options.sorted { (legacy.firstIndex(of: $0.type) ?? 0) < (legacy.firstIndex(of: $1.type) ?? 0) }
     }
 
@@ -244,6 +246,7 @@ enum PrivacyCenterSignInContact {
         let byCode = [
             "RATE_LIMIT_EXCEEDED": "otpErrorRateLimit",
             "OTP_SEND_FAILED": "otpErrorSendFailed",
+            "SMS_LOGIN_DISABLED": "otpErrorSmsDisabled",
             "INVALID_CONTACT": "otpErrorInvalidContact",
             "OTP_NOT_FOUND": "otpErrorNotFound",
             "OTP_EXPIRED": "otpErrorExpired",

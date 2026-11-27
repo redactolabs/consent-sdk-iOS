@@ -4,22 +4,11 @@ import SwiftUI
 struct NotificationsScreen: View {
     @Environment(\.privacyCenterTheme) private var theme
     @Environment(\.openURL) private var openURL
-    @EnvironmentObject private var store: PrivacyCenterStore
     @ObservedObject var vm: NotificationsViewModel
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                PCPageHeader(title: PCStrings.notificationHub, description: PCStrings.notificationHubSubtitle)
-                Button(action: { store.navigate(to: .consentManager) }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left").font(theme.font(size: 12, weight: .semibold))
-                        Text(PCStrings.backToManageConsent).font(theme.font(size: 13, weight: .medium))
-                    }
-                    .foregroundColor(theme.textSecondary)
-                }
-                .buttonStyle(.plain)
-
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
                     stat(vm.summary.total, PCStrings.total)
                     stat(vm.summary.unread, PCStrings.unread)
@@ -30,6 +19,7 @@ struct NotificationsScreen: View {
                 panel
             }
             .padding(.horizontal, 16)
+            .padding(.top, 14)
             .padding(.bottom, 24)
         }
         .background(theme.background)
@@ -64,7 +54,7 @@ struct NotificationsScreen: View {
     }
 
     private var panel: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Text("\(PCStrings.notifications) (\(vm.totalCount))")
                     .font(theme.font(size: 15, weight: .semibold))
@@ -75,60 +65,102 @@ struct NotificationsScreen: View {
                     .font(theme.font(size: 12, weight: .semibold))
                     .foregroundColor(theme.primary)
             }
-            PCSegmentedTabs(
-                options: NotificationsViewModel.FilterTab.allCases.map { ($0, $0.label) },
-                selection: vm.activeTab,
-                onSelect: { vm.setTab($0) }
-            )
-            if vm.isLoading && !vm.isRefreshing {
-                Text(PCStrings.loadingNotifications)
-                    .font(theme.font(size: 13))
-                    .foregroundColor(theme.textSecondary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 24)
-            } else if vm.notifications.isEmpty {
-                Text(PCStrings.noNotificationsInCategory)
-                    .font(theme.font(size: 13))
-                    .foregroundColor(theme.textSecondary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 24)
-            } else {
-                VStack(spacing: 0) {
-                    ForEach(vm.notifications) { notification in
-                        NotificationRowView(notification: notification, large: true, onTap: {
-                            Task { await vm.open(notification, fromPage: true) }
-                        }, onCTA: { cta in
-                            Task { await runCTA(cta, notification) }
-                        })
-                        Divider()
-                    }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            NotificationTabRow(selection: vm.activeTab, onSelect: { vm.setTab($0) })
+            Group {
+                if vm.isLoading && !vm.isRefreshing {
+                    Text(PCStrings.loadingNotifications)
+                        .font(theme.font(size: 13))
+                        .foregroundColor(theme.textSecondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 24)
+                } else if vm.notifications.isEmpty {
+                    PCEmpty(title: PCStrings.noNotificationsInCategory, subtitle: PCStrings.noNotificationsHint, icon: "bell")
+                } else {
+                    notificationList
                 }
             }
+            .padding(.horizontal, 14)
             if vm.totalCount > NotificationsViewModel.pageSize {
-                HStack {
-                    PCButton(PCStrings.previous, variant: .outline, size: .compact, isDisabled: vm.skip == 0) {
-                        vm.setSkip(vm.skip - NotificationsViewModel.pageSize)
-                    }
-                    Spacer()
-                    Text(PCStrings.paginationRange(vm.skip + 1, end: min(vm.skip + NotificationsViewModel.pageSize, vm.totalCount), total: vm.totalCount))
-                        .font(theme.font(size: 12))
-                        .foregroundColor(theme.textSecondary)
-                    Spacer()
-                    PCButton(PCStrings.next, variant: .outline, size: .compact, isDisabled: !vm.hasMore) {
-                        vm.setSkip(vm.skip + NotificationsViewModel.pageSize)
-                    }
-                }
+                pagination
             }
         }
-        .padding(14)
         .background(theme.panelFill)
         .overlay(RoundedRectangle(cornerRadius: theme.panelRadius).stroke(theme.border, lineWidth: 1))
         .clipShape(RoundedRectangle(cornerRadius: theme.panelRadius))
     }
 
+    private var notificationList: some View {
+        VStack(spacing: 0) {
+            ForEach(vm.notifications) { notification in
+                NotificationRowView(notification: notification, large: true, onTap: {
+                    Task { await vm.open(notification, fromPage: true) }
+                }, onCTA: { cta in
+                    Task { await runCTA(cta, notification) }
+                })
+                Divider()
+            }
+        }
+    }
+
+    private var pagination: some View {
+        HStack {
+            PCButton(PCStrings.previous, variant: .outline, size: .compact, isDisabled: vm.skip == 0) {
+                vm.setSkip(vm.skip - NotificationsViewModel.pageSize)
+            }
+            Spacer()
+            Text(PCStrings.paginationRange(vm.skip + 1, end: min(vm.skip + NotificationsViewModel.pageSize, vm.totalCount), total: vm.totalCount))
+                .font(theme.font(size: 12))
+                .foregroundColor(theme.textSecondary)
+            Spacer()
+            PCButton(PCStrings.next, variant: .outline, size: .compact, isDisabled: !vm.hasMore) {
+                vm.setSkip(vm.skip + NotificationsViewModel.pageSize)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+    }
+
     private func runCTA(_ cta: PrivacyNotificationCTA, _ notification: PrivacyNotification) async {
         let result = await vm.performCTA(cta, on: notification, fromPage: true)
         if case .opened(let url) = result { openURL(url) }
+    }
+}
+
+/// The category tabs, underlined like Android's Material tab row.
+private struct NotificationTabRow: View {
+    @Environment(\.privacyCenterTheme) private var theme
+    let selection: NotificationsViewModel.FilterTab
+    let onSelect: (NotificationsViewModel.FilterTab) -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 0) {
+                ForEach(NotificationsViewModel.FilterTab.allCases, id: \.self) { tab in
+                    let isActive = tab == selection
+                    Button(action: { onSelect(tab) }) {
+                        Text(tab.label)
+                            .font(theme.font(size: 14, weight: isActive ? .semibold : .medium))
+                            .foregroundColor(isActive ? theme.primary : theme.textSecondary)
+                            .lineLimit(1)
+                            .padding(.horizontal, 16)
+                            .frame(minWidth: 90, minHeight: 48)
+                            .overlay(alignment: .bottom) {
+                                if isActive {
+                                    Rectangle().fill(theme.primary).frame(height: 3)
+                                }
+                            }
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(isActive ? .isSelected : [])
+                }
+            }
+        }
+        .background(alignment: .bottom) {
+            Rectangle().fill(theme.border).frame(height: 1)
+        }
     }
 }
 

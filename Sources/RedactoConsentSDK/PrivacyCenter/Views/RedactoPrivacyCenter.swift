@@ -177,6 +177,7 @@ struct PrivacyCenterContent: View {
                 showsNotifications: showsNav && store.isSectionEnabled(.notifications),
                 notifications: notifications.vm(for: store)
             )
+            .zIndex(1)
             ZStack {
                 theme.background.ignoresSafeArea()
                 // Gate on data availability so the tab bar never flashes before
@@ -214,7 +215,7 @@ struct PrivacyCenterContent: View {
             }
             .animation(.easeInOut(duration: 0.2), value: store.toast)
 
-            if showsNav && store.visiblePage != .caseDetails && !store.isNotificationsOpen {
+            if showsNav {
                 PCBottomTabBar(
                     selectedPage: Binding(
                         get: { store.visiblePage },
@@ -226,6 +227,7 @@ struct PrivacyCenterContent: View {
                         }
                     }
                 )
+                .showingSelection(!store.isNotificationsOpen)
             }
             PCSettingsFooter()
         }

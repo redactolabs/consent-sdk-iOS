@@ -392,4 +392,13 @@
 "selectGrievanceType" = "ਆਪਣੀ ਸ਼ਿਕਾਇਤ ਕਿਸਮ ਚੁਣੋ";
 "requestSubmittedTitle" = "ਬੇਨਤੀ ਸਫਲਤਾਪੂਰਵਕ ਜਮ੍ਹਾਂ ਕੀਤੀ ਗਈ";
 "requestSubmittedSubtitle" = "ਤੁਹਾਡੀ ਬੇਨਤੀ ਜਮ੍ਹਾਂ ਕਰਨ ਲਈ ਧੰਨਵਾਦ";
-"requestSubmittedNotice" = "ਅਸੀਂ ਕਾਨੂੰਨਾਂ ਅਨੁਸਾਰ 30 ਦਿਨਾਂ ਦੇ ਅੰਦਰ ਤੁਹਾਡੀ ਬੇਨਤੀ ਦੀ ਪ੍ਰਕਿਰਿਆ ਕਰਾਂਗੇ";
+"requestSubmittedNotice" = "ਅਸੀਂ ਤੁਹਾਡੀ ਬੇਨਤੀ ਨੂੰ ਕਾਨੂੰਨ ਅਨੁਸਾਰ ਕਾਰਵਾਈ ਕਰਾਂਗੇ";
+"allCaughtUp" = "ਤੁਸੀਂ ਸਭ ਕੁਝ ਦੇਖ ਲਿਆ ਹੈ";
+"filtersApplied" = "ਫਿਲਟਰ ਲਾਗੂ ਕੀਤੇ ਗਏ";
+"noMatchingRequests" = "ਕੋਈ ਮੇਲ ਖਾਂਦੀ ਬੇਨਤੀ ਨਹੀਂ";
+"refresh" = "ਰਿਫ੍ਰੈਸ਼ ਕਰੋ";
+"noMessagesYetSubtitle" = "ਹੇਠਾਂ ਗੱਲਬਾਤ ਸ਼ੁਰੂ ਕਰੋ";
+"noNotificationsHint" = "ਜਦੋਂ ਕਿਸੇ ਚੀਜ਼ ਨੂੰ ਤੁਹਾਡੇ ਧਿਆਨ ਦੀ ਲੋੜ ਹੋਵੇਗੀ, ਅਸੀਂ ਤੁਹਾਨੂੰ ਦੱਸਾਂਗੇ।";
+"noCasesYet" = "ਅਜੇ ਕੋਈ ਬੇਨਤੀ ਨਹੀਂ";
+"submitFirstRequest" = "ਆਪਣੀ ਪਹਿਲੀ ਪਰਦੇਦਾਰੀ ਬੇਨਤੀ ਜਮ੍ਹਾਂ ਕਰੋ";
+"noResultsForSearch" = "ਕੋਈ ਵੱਖਰੀ ਖੋਜ ਜਾਂ ਫਿਲਟਰ ਅਜ਼ਮਾਓ";

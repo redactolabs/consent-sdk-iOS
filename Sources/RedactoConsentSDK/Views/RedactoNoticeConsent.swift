@@ -190,6 +190,7 @@ public struct RedactoNoticeConsent: View {
         .noticeConfirmDialog(
             action: viewModel.pendingConfirmAction,
             copy: viewModel.chromeCopy,
+            copyOverride: viewModel.confirmDialogCopyOverride,
             onConfirm: viewModel.confirmPendingAction,
             onCancel: viewModel.dismissConfirm
         )

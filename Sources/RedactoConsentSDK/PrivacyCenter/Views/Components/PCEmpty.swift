@@ -13,13 +13,15 @@ public struct PCEmpty: View {
     }
 
     public var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 8) {
             Image(systemName: icon)
-                .font(theme.font(size: 32, weight: .light))
+                .font(theme.font(size: 40, weight: .light))
                 .foregroundColor(theme.textTertiary)
+                .frame(width: 48, height: 48)
             Text(title)
-                .font(theme.font(size: 15, weight: .semibold))
+                .font(theme.font(size: 16, weight: .semibold))
                 .foregroundColor(theme.text)
+                .multilineTextAlignment(.center)
             if let subtitle {
                 Text(subtitle)
                     .font(theme.font(size: 13))
@@ -28,7 +30,6 @@ public struct PCEmpty: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 24)
-        .padding(.vertical, 32)
+        .padding(24)
     }
 }

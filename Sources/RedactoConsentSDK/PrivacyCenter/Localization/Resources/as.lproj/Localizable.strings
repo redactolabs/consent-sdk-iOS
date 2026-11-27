@@ -392,4 +392,13 @@
 "selectGrievanceType" = "আপোনাৰ অভিযোগ প্ৰকাৰ বাছনি কৰক";
 "requestSubmittedTitle" = "অনুৰোধ সফলভাৱে জমা দিয়া হ’ল";
 "requestSubmittedSubtitle" = "আপোনাৰ অনুৰোধ জমা দিয়াৰ বাবে ধন্যবাদ";
-"requestSubmittedNotice" = "আমি আইন অনুসৰি 30 দিনৰ ভিতৰত আপোনাৰ অনুৰোধ প্ৰক্ৰিয়াকৰণ কৰিম";
+"requestSubmittedNotice" = "আমি আপোনাৰ অনুৰোধ আইন অনুসৰি প্ৰসেছ কৰিম";
+"allCaughtUp" = "আপুনি সকলোবোৰ চাই শেষ কৰিলে";
+"filtersApplied" = "ফিল্টাৰ প্ৰয়োগ কৰা হৈছে";
+"noMatchingRequests" = "মিল থকা কোনো অনুৰোধ নাই";
+"refresh" = "ৰিফ্ৰেছ কৰক";
+"noMessagesYetSubtitle" = "তলত কথোপকথন আৰম্ভ কৰক";
+"noNotificationsHint" = "কোনো বিষয়ত আপোনাৰ মনোযোগৰ প্ৰয়োজন হ'লে আমি আপোনাক জনাম।";
+"noCasesYet" = "এতিয়ালৈকে কোনো অনুৰোধ নাই";
+"submitFirstRequest" = "আপোনাৰ প্ৰথম গোপনীয়তা অনুৰোধ জমা দিয়ক";
+"noResultsForSearch" = "অন্য কোনো সন্ধান বা ফিল্টাৰ চেষ্টা কৰক";

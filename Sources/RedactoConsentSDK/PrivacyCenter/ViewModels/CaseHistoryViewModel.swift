@@ -85,6 +85,12 @@ public final class CaseHistoryViewModel: ObservableObject {
 
     public var isEmpty: Bool { !isLoading && cases.isEmpty }
 
+    public var isFiltered: Bool {
+        !searchText.trimmingCharacters(in: .whitespaces).isEmpty
+            || statusFilter != .all
+            || selectedRequestTypes != Set(RequestType.allCases)
+    }
+
     public func loadInitial() async {
         if store.isSessionExpired { return }
         isLoading = true
@@ -93,6 +99,7 @@ public final class CaseHistoryViewModel: ObservableObject {
         do {
             let result = try await store.api.getCaseHistory(language: store.langParam)
             self.cases = result.items
+            goToPage(pageIndex)
             self.pagination = result.page
         } catch {
             if isSilentPrivacyCenterError(error) { return }

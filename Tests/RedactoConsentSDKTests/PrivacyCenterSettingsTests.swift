@@ -361,7 +361,7 @@ final class PrivacyCenterSettingsTests: XCTestCase {
 
     func testListsEveryTypeInTheBuiltInOrderUntilSettingsArePublished() {
         let options = PrivacyCenterRequestOptions.requestTypes(defaults.portal.requestTypes, serverEnabled: nil, keepLegacyOrder: true)
-        XCTAssertEqual(options.map(\.type), RequestType.allCases)
+        XCTAssertEqual(options.map(\.type), [.access, .erasure, .correction, .grievance, .nomination])
     }
 
     func testFollowsThePublishedOrderLabelsAndSwitches() {

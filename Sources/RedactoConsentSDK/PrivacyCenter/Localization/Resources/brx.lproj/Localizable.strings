@@ -392,4 +392,13 @@
 "selectGrievanceType" = "नोंथांगनि गोरोबथाव रोखोम बासिख";
 "requestSubmittedTitle" = "खौरांथि जाफुंसारै जमा जाबाय";
 "requestSubmittedSubtitle" = "नोंथांगनि खौरांथि जमा खालामनायनि थाखाय जोनाय";
-"requestSubmittedNotice" = "जों कानुन समायना 30 साननि भितरै नोंथांगनि खौरांथिखौ प्रक्रिया खालामगोन";
+"requestSubmittedNotice" = "जों नायजाथायनि गेजेरजों नोंथांनि अरजिखौ प्रसेस खालामनांगौ";
+"allCaughtUp" = "नों गासैबो नायजोबबाय";
+"filtersApplied" = "फिल्टार बाहायनाय जादों";
+"noMatchingRequests" = "मिलाखां कोनो अनुरोध गैया";
+"refresh" = "रिफ्रेस खालाम";
+"noMessagesYetSubtitle" = "गाहायाव सावराय जागाय";
+"noNotificationsHint" = "जेब्ला मोनसे जिनिसआव नोंथांनि गोसो नांगौ, जों नोंथांखौ फोरमायगोन।";
+"noCasesYet" = "दानो सम कोनो अनुरोध गैया";
+"submitFirstRequest" = "नोंथांनि गिबि सुरखिथि अनुरोधखौ हो";
+"noResultsForSearch" = "गुबुन नागिरनाय एबा फिल्टार नाजा";

@@ -392,4 +392,13 @@
 "selectGrievanceType" = "اپنہٕ شکایت قِسم چُنیو";
 "requestSubmittedTitle" = "گزارش کامیٲبی سٕتؠ جمع کٔرنہٕ آو";
 "requestSubmittedSubtitle" = "اپنہٕ گزارش جمع کرنہٕ خٲطرٕ شکریہ";
-"requestSubmittedNotice" = "اَسؠ کرَو قٲنون مطٲبق ۳۰ دوہن منز تُہنٛد گزارش پراسس";
+"requestSubmittedNotice" = "اَسہِ تُہُند درخواست قانون مُطابق پروسیس کَریو";
+"allCaughtUp" = "توہہ چھِو سورُے وُچھمُت";
+"filtersApplied" = "فلٹر لاگو کرنہٕ آمِتۍ";
+"noMatchingRequests" = "کانٛہہ مِلن وول درخواست نٕ";
+"refresh" = "ریفریش کریو";
+"noMessagesYetSubtitle" = "تَلہٕ کٔرِو گفتگو شروٗع";
+"noNotificationsHint" = "ییلہٕ کانٛہہ چیز توہہٕ ہٕنٛز توجہ یژھِ، أسۍ دِمَو توہہ خبر۔";
+"noCasesYet" = "ابٕ تام کانٛہہ درخواست نٕ";
+"submitFirstRequest" = "پنٕنۍ گۄڈنیُک رازداری درخواست کٔرِو جمع";
+"noResultsForSearch" = "بیٛاکھ تلاش یا فلٹر آزمٲیِو";

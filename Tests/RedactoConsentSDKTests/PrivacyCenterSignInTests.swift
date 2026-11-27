@@ -70,6 +70,11 @@ final class PrivacyCenterSignInTests: XCTestCase {
         XCTAssertEqual(PCStrings.t("otpErrorExpired"), "Your code has expired. Please request a new one.")
     }
 
+    func testSaysSmsIsOffWhenTheOrganisationHasNotEnabledIt() {
+        XCTAssertEqual(Contact.errorKey(code: "SMS_LOGIN_DISABLED", status: 400), "otpErrorSmsDisabled")
+        XCTAssertEqual(PCStrings.t("otpErrorSmsDisabled"), "SMS service isn't enabled. Please contact the organisation.")
+    }
+
     // MARK: - Inactivity
 
     private let minute: TimeInterval = 60

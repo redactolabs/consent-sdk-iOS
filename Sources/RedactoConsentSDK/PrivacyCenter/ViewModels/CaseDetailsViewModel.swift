@@ -132,6 +132,7 @@ public final class CaseDetailsViewModel: ObservableObject {
     }
 
     public func uploadAttachment(fileData: Data, filename: String, mimeType: String) async {
+        guard !isUploading else { return }
         if let problem = PCUploadValidation.problem(size: fileData.count, mimeType: mimeType) {
             store.showToast(problem, kind: .error)
             return
@@ -161,6 +162,7 @@ public final class CaseDetailsViewModel: ObservableObject {
     /// Upload a file and file it against a document request (React
     /// `handleSubmitForRequest`).
     public func uploadForDocumentRequest(requestEventUuid: String, fileData: Data, filename: String, mimeType: String) async {
+        guard !isUploading else { return }
         if let problem = PCUploadValidation.problem(size: fileData.count, mimeType: mimeType) {
             store.showToast(problem, kind: .error)
             return

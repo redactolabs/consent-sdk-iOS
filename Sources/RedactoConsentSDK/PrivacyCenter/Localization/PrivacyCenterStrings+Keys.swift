@@ -66,6 +66,7 @@ extension PCStrings {
     public static var unlawfulProcessing: String { t("unlawfulProcessing") }
     public static var dataBreach: String { t("dataBreach") }
     public static var export: String { t("export") }
+    public static var refresh: String { t("refresh") }
     public static var searchConsentsProductsPurposes: String { t("searchConsentsProductsPurposes") }
     public static var exportConsentData: String { t("exportConsentData") }
     public static var exportConsentDataSubtitle: String { t("exportConsentDataSubtitle") }
@@ -108,6 +109,10 @@ extension PCStrings {
     public static var timestamp: String { t("timestamp") }
     public static var searchCasesByID: String { t("searchCasesByID") }
     public static var allRequests: String { t("allRequests") }
+    public static var noCasesYet: String { t("noCasesYet") }
+    public static var noMatchingRequests: String { t("noMatchingRequests") }
+    public static var submitFirstRequest: String { t("submitFirstRequest") }
+    public static var noResultsForSearch: String { t("noResultsForSearch") }
     public static var filterByType: String { t("filterByType") }
     public static var errorLoadingCaseHistory: String { t("errorLoadingCaseHistory") }
     public static var unknownError: String { t("unknownError") }
@@ -162,6 +167,7 @@ extension PCStrings {
     public static var secureMessagesNotice: String { t("secureMessagesNotice") }
     public static var caseFinalizedMessagesTooltip: String { t("caseFinalizedMessagesTooltip") }
     public static var noMessagesYet: String { t("noMessagesYet") }
+    public static var noMessagesYetSubtitle: String { t("noMessagesYetSubtitle") }
     public static var writeMessagePlaceholder: String { t("writeMessagePlaceholder") }
     public static var send: String { t("send") }
     public static var messagesSecureFooter: String { t("messagesSecureFooter") }
@@ -220,6 +226,7 @@ extension PCStrings {
     public static func minutesAgo(_ count: Int) -> String { t("minutesAgo", vars: ["count": String(count)]) }
     public static var next: String { t("next") }
     public static var noNotificationsInCategory: String { t("noNotificationsInCategory") }
+    public static var noNotificationsHint: String { t("noNotificationsHint") }
     public static var noNotificationsYet: String { t("noNotificationsYet") }
     public static var notificationHub: String { t("notificationHub") }
     public static var notificationHubSubtitle: String { t("notificationHubSubtitle") }

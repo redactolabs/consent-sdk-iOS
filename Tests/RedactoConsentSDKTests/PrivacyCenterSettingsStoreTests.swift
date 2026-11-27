@@ -715,6 +715,6 @@ final class PrivacyCenterSettingsStoreTests: XCTestCase {
     @MainActor
     func testTheFormKeepsTheBuiltInOrderWhenNothingIsPublished() {
         let vm = DSRFormViewModel(store: makeStore())
-        XCTAssertEqual(vm.requestTypeOptions.map(\.type), RequestType.allCases)
+        XCTAssertEqual(vm.requestTypeOptions.map(\.type), [.access, .erasure, .correction, .grievance, .nomination])
     }
 }

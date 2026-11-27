@@ -392,4 +392,13 @@
 "selectGrievanceType" = "आफ्नो गुनासो प्रकार छान्नुहोस्";
 "requestSubmittedTitle" = "अनुरोध सफलतापूर्वक पेश गरियो";
 "requestSubmittedSubtitle" = "तपाईंको अनुरोध पेश गर्नुभएकोमा धन्यवाद";
-"requestSubmittedNotice" = "हामी कानून अनुसार 30 दिनभित्र तपाईंको अनुरोध प्रशोधन गर्नेछौं";
+"requestSubmittedNotice" = "हामी तपाईंको अनुरोध कानुनअनुसार प्रक्रिया गर्नेछौं";
+"allCaughtUp" = "तपाईंले सबै हेरिसक्नुभयो";
+"filtersApplied" = "फिल्टरहरू लागू गरिएका छन्";
+"noMatchingRequests" = "मिल्दो कुनै अनुरोध छैन";
+"refresh" = "रिफ्रेस गर्नुहोस्";
+"noMessagesYetSubtitle" = "तल कुराकानी सुरु गर्नुहोस्";
+"noNotificationsHint" = "कुनै कुरामा तपाईंको ध्यान चाहिँदा हामी तपाईंलाई जानकारी दिनेछौं।";
+"noCasesYet" = "अहिलेसम्म कुनै अनुरोध छैन";
+"submitFirstRequest" = "आफ्नो पहिलो गोपनीयता अनुरोध पेश गर्नुहोस्";
+"noResultsForSearch" = "अर्को खोज वा फिल्टर प्रयास गर्नुहोस्";

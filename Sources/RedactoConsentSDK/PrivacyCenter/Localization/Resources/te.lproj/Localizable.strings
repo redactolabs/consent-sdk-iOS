@@ -392,4 +392,13 @@
 "selectGrievanceType" = "మీ ఫిర్యాదు రకాన్ని ఎంచుకోండి";
 "requestSubmittedTitle" = "అభ్యర్థన విజయవంతంగా సమర్పించబడింది";
 "requestSubmittedSubtitle" = "మీ అభ్యర్థన సమర్పించినందుకు ధన్యవాదాలు";
-"requestSubmittedNotice" = "మేము మీ అభ్యర్థనను చట్టాల ప్రకారం 30 రోజులలోపు ప్రాసెస్ చేస్తాము";
+"requestSubmittedNotice" = "మీ అభ్యర్థనను చట్ట ప్రకారం ప్రాసెస్ చేస్తాము";
+"allCaughtUp" = "మీరు అన్నీ చూసేశారు";
+"filtersApplied" = "ఫిల్టర్‌లు వర్తింపజేయబడ్డాయి";
+"noMatchingRequests" = "సరిపోలే అభ్యర్థనలు లేవు";
+"refresh" = "రిఫ్రెష్ చేయండి";
+"noMessagesYetSubtitle" = "క్రింద సంభాషణను ప్రారంభించండి";
+"noNotificationsHint" = "ఏదైనా మీ దృష్టి అవసరమైనప్పుడు మేము మీకు తెలియజేస్తాము.";
+"noCasesYet" = "ఇంకా అభ్యర్థనలు లేవు";
+"submitFirstRequest" = "మీ మొదటి గోప్యతా అభ్యర్థనను సమర్పించండి";
+"noResultsForSearch" = "వేరే శోధన లేదా ఫిల్టర్‌ను ప్రయత్నించండి";

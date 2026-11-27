@@ -17,7 +17,7 @@ public struct PCStatusBadge: View {
         case .withdrawn: return PCStrings.statusWithdrawn
         case .expired: return PCStrings.statusExpired
         case .declined: return PCStrings.statusDeclined
-        case .unknown: return "—"
+        case .unknown: return "-"
         }
     }
 

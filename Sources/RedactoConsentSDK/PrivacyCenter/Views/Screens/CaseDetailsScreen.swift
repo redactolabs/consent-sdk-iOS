@@ -12,8 +12,7 @@ public struct CaseDetailsScreen: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: 10) {
-                PCPageHeader(title: PCStrings.caseDetails, description: PCStrings.yourPrivacyCenter)
+            VStack(alignment: .leading, spacing: 8) {
                 Button(action: { store.isRequestFormOpen = false; store.navigate(to: .form) }) {
                     HStack(spacing: 6) {
                         Image(systemName: "arrow.left").font(theme.font(size: 13, weight: .semibold))
@@ -23,9 +22,10 @@ public struct CaseDetailsScreen: View {
                 }
                 .buttonStyle(.plain)
                 header
-                tabs
             }
             .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            tabs
             Group {
                 switch vm.activeTab {
                 case .requestDetails: RequestDetailsTab(vm: vm)
@@ -40,34 +40,34 @@ public struct CaseDetailsScreen: View {
         }
     }
 
-    /// "CASE-1 · Access · Submitted 15 Jan 2025 · Response due … · Status".
     private var header: some View {
-        FlowLayoutCompat(spacing: 6) {
-            Text(vm.caseId).font(theme.font(size: 13, weight: .bold)).foregroundColor(theme.text)
-            dot
-            Text(vm.requestType).font(theme.font(size: 13)).foregroundColor(theme.textSecondary)
-            dot
-            Text("\(PCStrings.submitted) \(vm.createdAt)").font(theme.font(size: 13)).foregroundColor(theme.textSecondary)
-            if let due = vm.dueDate {
-                dot
-                Text("\(PCStrings.responseDue) \(due)")
-                    .font(theme.font(size: 13, weight: vm.isDueDateOverdue ? .semibold : .regular))
-                    .foregroundColor(vm.isDueDateOverdue ? theme.error : theme.textSecondary)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .center, spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(vm.caseId)
+                        .font(theme.font(size: 16, weight: .bold))
+                        .foregroundColor(theme.text)
+                        .lineLimit(1)
+                    Text(vm.requestType)
+                        .font(theme.font(size: 13))
+                        .foregroundColor(theme.textSecondary)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                PCBadge(vm.statusLabel, variant: caseStatusVariant(vm.caseRequest.rawStatus ?? ""))
             }
-            dot
-            PCBadge(vm.statusLabel, variant: caseStatusVariant(vm.caseRequest.rawStatus ?? ""))
+            if let due = vm.dueDate {
+                Text("\(PCStrings.responseDue) \(due)")
+                    .font(theme.font(size: 12, weight: vm.isDueDateOverdue ? .semibold : .regular))
+                    .foregroundColor(vm.isDueDateOverdue ? theme.error : theme.textTertiary)
+            }
         }
-    }
-
-    private var dot: some View {
-        Text("·").font(theme.font(size: 13)).foregroundColor(theme.textTertiary)
     }
 
     private var tabs: some View {
         HStack(spacing: 0) {
             tabButton(.requestDetails, label: PCStrings.requestDetails)
             tabButton(.messages, label: PCStrings.messages)
-            Spacer()
         }
         .overlay(Rectangle().fill(theme.border).frame(height: 1), alignment: .bottom)
     }
@@ -76,143 +76,15 @@ public struct CaseDetailsScreen: View {
         let isActive = vm.activeTab == tab
         return Button(action: { vm.activeTab = tab }) {
             Text(label)
-                .font(theme.font(size: 13, weight: .semibold))
+                .font(theme.font(size: 13, weight: .medium))
                 .foregroundColor(isActive ? theme.primary : theme.textSecondary)
+                .lineLimit(1)
                 .padding(.horizontal, 12)
-                .padding(.vertical, 10)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity)
+                .contentShape(Rectangle())
                 .overlay(Rectangle().fill(isActive ? theme.primary : Color.clear).frame(height: 2), alignment: .bottom)
         }
         .buttonStyle(.plain)
-    }
-}
-
-/// React CaseDetails/RequestDetailsTab.
-struct RequestDetailsTab: View {
-    @Environment(\.privacyCenterTheme) private var theme
-    @ObservedObject var vm: CaseDetailsViewModel
-
-    var body: some View {
-        let caseRequest = vm.caseRequest
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                LazyVGrid(columns: [GridItem(.flexible(), alignment: .topLeading), GridItem(.flexible(), alignment: .topLeading)], alignment: .leading, spacing: 14) {
-                    field(PCStrings.requestType) { Text(vm.requestType).font(theme.font(size: 14, weight: .semibold)).foregroundColor(theme.text) }
-                    field(PCStrings.status) { PCBadge(vm.statusLabel, variant: caseStatusVariant(caseRequest.rawStatus ?? "")) }
-                    field(PCStrings.createdAt) { Text(vm.createdAt).font(theme.font(size: 14, weight: .medium)).foregroundColor(theme.text) }
-                    if let completed = vm.completedAt {
-                        field(PCStrings.completedAt) { Text(completed).font(theme.font(size: 14, weight: .medium)).foregroundColor(theme.text) }
-                    }
-                }
-                .padding(14)
-                .background(theme.surface)
-                .overlay(RoundedRectangle(cornerRadius: theme.panelRadius).stroke(theme.border, lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: theme.panelRadius))
-
-                if !vm.description.isEmpty {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(PCStrings.descriptionLabel).font(theme.font(size: 14, weight: .semibold)).foregroundColor(theme.text)
-                        Text(vm.description).font(theme.font(size: 14)).foregroundColor(theme.textSecondary)
-                    }
-                }
-
-                if let details = caseRequest.requestDetails {
-                    specifics(details)
-                }
-            }
-            .padding(16)
-        }
-    }
-
-    private func field<Content: View>(_ label: String, @ViewBuilder _ content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label).font(theme.font(size: 12, weight: .medium)).foregroundColor(theme.textSecondary)
-            content()
-        }
-    }
-
-    @ViewBuilder
-    private func specifics(_ details: CaseRequestDetails) -> some View {
-        HStack(spacing: 8) {
-            Rectangle().fill(theme.border).frame(height: 1)
-            Text(PCStrings.requestSpecifics)
-                .font(theme.font(size: 11, weight: .semibold))
-                .foregroundColor(theme.textTertiary)
-                .textCase(.uppercase)
-                .fixedSize()
-            Rectangle().fill(theme.border).frame(height: 1)
-        }
-        if !details.purposes.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(PCStrings.purposesInvolved).font(theme.font(size: 14, weight: .semibold)).foregroundColor(theme.text)
-                ForEach(details.purposes) { wrapper in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(wrapper.purpose.name).font(theme.font(size: 14, weight: .medium)).foregroundColor(theme.text)
-                        if !wrapper.purpose.description.isEmpty {
-                            Text(wrapper.purpose.description).font(theme.font(size: 13)).foregroundColor(theme.textSecondary)
-                        }
-                        let selected = wrapper.purpose.dataElements.filter(\.selected)
-                        if !selected.isEmpty {
-                            FlowLayoutCompat(spacing: 6) {
-                                ForEach(selected) { PCBadge($0.name, variant: .secondary) }
-                            }
-                        }
-                    }
-                    .padding(10)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(theme.surface)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-            }
-        }
-        if !details.correctionData.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(PCStrings.dataToCorrect).font(theme.font(size: 14, weight: .semibold)).foregroundColor(theme.text)
-                VStack(spacing: 0) {
-                    correctionRow(PCStrings.field, PCStrings.currentValue, PCStrings.newValue, header: true)
-                    ForEach(Array(details.correctionData.enumerated()), id: \.offset) { _, item in
-                        Divider()
-                        correctionRow(item.name, item.currValue.isEmpty ? "-" : item.currValue, item.newValue.isEmpty ? "-" : item.newValue, header: false)
-                    }
-                }
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(theme.border, lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-            }
-        }
-        if let nomination = details.nominationData {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(PCStrings.nomination).font(theme.font(size: 14, weight: .semibold)).foregroundColor(theme.text)
-                VStack(alignment: .leading, spacing: 10) {
-                    field(PCStrings.nomineeEmail) { Text(nomination.nomineeEmail.isEmpty ? "-" : nomination.nomineeEmail).font(theme.font(size: 14, weight: .medium)).foregroundColor(theme.text) }
-                    field(PCStrings.nomineeMobile) { Text(nomination.nomineeMobile.pcNonEmpty ?? "-").font(theme.font(size: 14, weight: .medium)).foregroundColor(theme.text) }
-                }
-                .padding(12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(theme.surface)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-            }
-        }
-        if !details.grievanceTypes.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(PCStrings.grievanceTypes).font(theme.font(size: 14, weight: .semibold)).foregroundColor(theme.text)
-                FlowLayoutCompat(spacing: 6) {
-                    ForEach(details.grievanceTypes, id: \.self) { raw in
-                        PCBadge(raw.replacingOccurrences(of: "_", with: " "), variant: .secondary)
-                    }
-                }
-            }
-        }
-    }
-
-    private func correctionRow(_ a: String, _ b: String, _ c: String, header: Bool) -> some View {
-        HStack(alignment: .top, spacing: 8) {
-            ForEach(Array([a, b, c].enumerated()), id: \.offset) { _, value in
-                Text(value)
-                    .font(.system(size: 12, weight: header ? .semibold : .regular))
-                    .foregroundColor(header ? theme.textSecondary : theme.text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        }
-        .padding(10)
-        .background(header ? theme.surface : Color.clear)
     }
 }

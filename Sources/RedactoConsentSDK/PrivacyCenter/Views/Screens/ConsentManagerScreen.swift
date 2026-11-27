@@ -18,7 +18,6 @@ public struct ConsentManagerScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 PCWelcomeBanner()
-                PCPageHeader(title: PCStrings.manageConsent, description: PCStrings.manageConsentSubtitle, status: headerStatus)
                 tabsRow
                 if vm.activeTab == .nominated, !vm.nominatorLabels.isEmpty {
                     (Text("\(PCStrings.managingConsentsFor) ") + Text(vm.nominatorLabels.joined(separator: ", ")).fontWeight(.semibold).foregroundColor(theme.text))
@@ -47,10 +46,13 @@ public struct ConsentManagerScreen: View {
         .onReceive(NotificationCenter.default.publisher(for: .privacyCenterLanguageChanged)) { _ in
             Task { await vm.refresh() }
         }
-        .sheet(item: $modifyTarget) { consent in
-            ModifyConsentModal(consent: consent, nominatorContact: ConsentManagerViewModel.nominatorContact(for: consent.nominatorInfo), consentManagerVm: vm)
-                .environment(\.privacyCenterTheme, theme)
-                .presentationDetents([.medium, .large])
+        .pcDialog(item: $modifyTarget) { consent in
+            ModifyConsentModal(
+                consent: consent,
+                nominatorContact: ConsentManagerViewModel.nominatorContact(for: consent.nominatorInfo),
+                consentManagerVm: vm,
+                onClose: { modifyTarget = nil }
+            )
         }
         .alert(PCStrings.exportConsentData, isPresented: $showExportConfirm) {
             Button(PCStrings.cancel, role: .cancel) {}
@@ -63,21 +65,13 @@ public struct ConsentManagerScreen: View {
         }
     }
 
-    private var headerStatus: (label: String, isSuccess: Bool)? {
-        switch vm.userStatus {
-        case .transferred: return (PCStrings.statusTransferred, false)
-        case .active: return (PCStrings.statusActive, true)
-        case nil: return nil
-        }
-    }
-
     // MARK: - Tabs
 
     private var tabsRow: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 0) {
                 tab(.direct, PCStrings.myConsents, vm.directBadge)
-                tab(.nominated, PCStrings.managing, vm.nominatedBadge)
+                tab(.nominated, PCStrings.managing, nil)
                 Spacer(minLength: 0)
             }
             .overlay(Rectangle().fill(theme.border).frame(height: 1), alignment: .bottom)
@@ -139,29 +133,48 @@ public struct ConsentManagerScreen: View {
         VStack(alignment: .leading, spacing: 8) {
             PCInput(
                 text: Binding(get: { vm.searchText }, set: { vm.setSearch($0) }),
-                placeholder: "\(PCStrings.search) \(PCStrings.consent), \(PCStrings.product), \(PCStrings.purpose)...",
+                placeholder: PCStrings.searchConsentsProductsPurposes,
                 leadingIcon: "magnifyingglass"
             )
             PCSelect(
                 selection: Binding(get: { vm.statusFilter }, set: { vm.setStatusFilter($0) }),
                 options: vm.statusOptions.map { PCSelectOption(value: $0, label: statusLabel($0)) },
-                placeholder: "\(PCStrings.all) \(PCStrings.status)"
+                placeholder: PCStrings.status,
+                leadingIcon: "line.3.horizontal.decrease",
+                allOptionLabel: PCStrings.all
             )
             PCSelect(
                 selection: Binding(get: { vm.productFilter }, set: { vm.setProductFilter($0) }),
                 options: vm.productOptions.map { PCSelectOption(value: $0.uuid, label: $0.name) },
-                placeholder: "\(PCStrings.all) \(PCStrings.product)"
+                placeholder: PCStrings.product,
+                leadingIcon: "circle",
+                allOptionLabel: "\(PCStrings.all) \(PCStrings.product)"
             )
             HStack {
                 Text(vm.summaryText)
                     .font(theme.font(size: 13))
                     .foregroundColor(theme.textSecondary)
-                Spacer()
-                PCButton(PCStrings.export, variant: .outline, size: .compact, fullWidth: false, leadingIcon: "square.and.arrow.up") {
+                Spacer(minLength: 4)
+                iconAction("arrow.clockwise", tint: theme.textSecondary, label: PCStrings.refresh) {
+                    Task { await vm.refresh() }
+                }
+                iconAction("arrow.down.to.line", tint: theme.primary, label: PCStrings.export) {
                     showExportConfirm = true
                 }
             }
         }
+    }
+
+    private func iconAction(_ systemName: String, tint: Color, label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(theme.font(size: 18, weight: .medium))
+                .foregroundColor(tint)
+                .frame(width: 40, height: 40)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
     }
 
     private func statusLabel(_ status: ConsentStatus) -> String {
@@ -234,44 +247,14 @@ public struct ConsentManagerScreen: View {
                     }
                 }
                 Spacer(minLength: 4)
-                (Text("\(group.totalPurposes)").foregroundColor(theme.primary).fontWeight(.bold) + Text(" \(PCStrings.consent)"))
-                    .font(theme.font(size: 11))
-                    .foregroundColor(theme.textSecondary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .overlay(Capsule().stroke(theme.border, lineWidth: 1))
+                PCBadge("\(group.totalPurposes)", variant: .info)
             }
             let chips = statusChips(display)
             if !chips.isEmpty {
                 HStack(spacing: 6) {
                     ForEach(Array(chips.enumerated()), id: \.offset) { _, chip in
-                        let (label, color) = chip
-                        Text(label)
-                            .font(theme.font(size: 11, weight: .semibold))
-                            .foregroundColor(color)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(color.opacity(0.12))
-                            .clipShape(Capsule())
+                        PCBadge(chip.0, variant: chip.1)
                     }
-                }
-            }
-            HStack(alignment: .top) {
-                Text(PCStrings.activity)
-                    .font(theme.font(size: 12))
-                    .foregroundColor(theme.textSecondary)
-                Spacer()
-                if let latest = display.latestGivenDate {
-                    VStack(alignment: .trailing, spacing: 1) {
-                        Text(PrivacyCenterDateFormatters.formatDateBulletTime(latest))
-                            .font(theme.font(size: 13, weight: .medium))
-                            .foregroundColor(theme.text)
-                        Text(PrivacyCenterDateFormatters.relativeTime(latest))
-                            .font(theme.font(size: 12))
-                            .foregroundColor(theme.textSecondary)
-                    }
-                } else {
-                    Text("-").font(theme.font(size: 13)).foregroundColor(theme.textSecondary)
                 }
             }
             Button(action: { withAnimation { vm.toggleCard(display.key) } }) {
@@ -304,19 +287,19 @@ public struct ConsentManagerScreen: View {
         }
     }
 
-    private func statusChips(_ display: ConsentManagerViewModel.DisplayGroup) -> [(String, Color)] {
-        var chips: [(String, Color)] = []
-        if display.activeCount > 0 { chips.append(("\(display.activeCount) \(PCStrings.statusActive)", theme.success)) }
-        if display.withdrawnCount > 0 { chips.append(("\(display.withdrawnCount) \(PCStrings.statusWithdrawn)", theme.error)) }
-        if display.expiredCount > 0 { chips.append(("\(display.expiredCount) \(PCStrings.statusExpired)", theme.warning)) }
-        if display.declinedCount > 0 { chips.append(("\(display.declinedCount) \(PCStrings.statusDeclined)", theme.warning)) }
+    private func statusChips(_ display: ConsentManagerViewModel.DisplayGroup) -> [(String, PCBadgeVariant)] {
+        var chips: [(String, PCBadgeVariant)] = []
+        if display.activeCount > 0 { chips.append(("\(display.activeCount) \(PCStrings.statusActive)", .success)) }
+        if display.withdrawnCount > 0 { chips.append(("\(display.withdrawnCount) \(PCStrings.statusWithdrawn)", .error)) }
+        if display.expiredCount > 0 { chips.append(("\(display.expiredCount) \(PCStrings.statusExpired)", .warning)) }
+        if display.declinedCount > 0 { chips.append(("\(display.declinedCount) \(PCStrings.statusDeclined)", .warning)) }
         return chips
     }
 
     private func purposeItem(_ consent: UserConsent) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             purposeHead(consent)
-            metaGrid(consent)
+            purposeDetails(consent)
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -331,7 +314,7 @@ public struct ConsentManagerScreen: View {
             if let nominator = consent.nominatorInfo {
                 metaRow(PCStrings.nominatedBy, nominator.displayLabel)
             }
-            metaGrid(consent)
+            purposeDetails(consent)
         }
     }
 
@@ -353,59 +336,33 @@ public struct ConsentManagerScreen: View {
     }
 
     private func metaRow(_ label: String, _ value: String) -> some View {
-        HStack {
-            Text(label).font(theme.font(size: 12)).foregroundColor(theme.textSecondary)
-            Spacer()
-            Text(value).font(theme.font(size: 13, weight: .medium)).foregroundColor(theme.text)
-        }
-    }
-
-    private func metaGrid(_ consent: UserConsent) -> some View {
-        LazyVGrid(columns: [GridItem(.flexible(), alignment: .topLeading), GridItem(.flexible(), alignment: .topLeading)], alignment: .leading, spacing: 10) {
-            meta(PCStrings.givenDate) {
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(PrivacyCenterDateFormatters.formatDateTime(consent.givenDate))
-                        .font(theme.font(size: 13, weight: .medium))
-                        .foregroundColor(theme.text)
-                    if !consent.givenDate.isEmpty {
-                        Text(PrivacyCenterDateFormatters.relativeTime(consent.givenDate))
-                            .font(theme.font(size: 11))
-                            .foregroundColor(theme.textSecondary)
-                    }
-                }
-            }
-            meta(PCStrings.validTill) {
-                Text(ConsentManagerViewModel.validTillLabel(consent))
-                    .font(theme.font(size: 13))
-                    .foregroundColor(theme.text)
-            }
-            meta(PCStrings.method) {
-                HStack(spacing: 4) {
-                    // An app's consent: MOBILE, or ANDROID / IOS on records
-                    // written with a platform source (the Kotlin SDK sent ANDROID).
-                    if ["MOBILE", "IOS", "ANDROID"].contains(consent.method) { Image(systemName: "iphone").font(theme.font(size: 10)) }
-                    if consent.method == "WEB" { Image(systemName: "laptopcomputer").font(theme.font(size: 10)) }
-                    Text(consent.method).font(theme.font(size: 11, weight: .semibold))
-                }
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(label)
+                .font(theme.font(size: 12))
                 .foregroundColor(theme.textSecondary)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .overlay(RoundedRectangle(cornerRadius: 4).stroke(theme.border, lineWidth: 1))
-            }
-            meta(PCStrings.action) {
-                let disabled = consent.status == .declined
-                Button(PCStrings.modifyButton) { modifyTarget = consent }
-                    .font(theme.font(size: 13, weight: .semibold))
-                    .foregroundColor(disabled ? Color(hex: "#9ca3af") : theme.primary)
-                    .disabled(disabled)
-            }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Text(value)
+                .font(theme.font(size: 13, weight: .medium))
+                .foregroundColor(theme.text)
+                .multilineTextAlignment(.trailing)
         }
     }
 
-    private func meta<Content: View>(_ label: String, @ViewBuilder _ content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(label).font(theme.font(size: 12)).foregroundColor(theme.textSecondary)
-            content()
+    private func purposeDetails(_ consent: UserConsent) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            metaRow(PCStrings.givenDate, PrivacyCenterDateFormatters.formatGivenDate(consent.givenDate))
+            metaRow(PCStrings.validTill, ConsentManagerViewModel.validTillLabel(consent))
+            if !consent.method.isEmpty {
+                metaRow(PCStrings.method, consent.method)
+            }
+            PCButton(
+                PCStrings.modifyConsent,
+                variant: .outline,
+                size: .compact,
+                fullWidth: false,
+                isDisabled: consent.status == .declined
+            ) { modifyTarget = consent }
+            .padding(.top, 4)
         }
     }
 }

@@ -44,7 +44,7 @@
 "retry" = "Retry";
 "retrying" = "Retrying...";
 "confirmationSentTo" = "पुष्टि भेजी गई ऐ";
-"processRequest" = "असीं तुम्हारी अरज नूं कानून अनुसार पूरा करांगे";
+"processRequest" = "अस कानून दे मताबक तुंदी अरज पर कारवाई करगे";
 "yourDataIsSafeWithUs" = "तुम्हारा डाटा साडे कोल सुरखित ऐ। असीं तय कीती प्रक्रिया दा पालन करदे हां";
 "enterYourEmail" = "अपना ईमेल पता भरो";
 "letsConfirm" = "आओ ए पुष्टि करिये कि ए तुसीं ही हो";
@@ -392,4 +392,13 @@
 "selectGrievanceType" = "अपना शिकायत प्रकार चुनो";
 "requestSubmittedTitle" = "अनुरोध सफलतापूर्वक जमा कीता गेआ";
 "requestSubmittedSubtitle" = "तुंदा अनुरोध जमा करने आस्तै धन्यवाद";
-"requestSubmittedNotice" = "अस कनून दे मताबक 30 दिनें दे अंदर तुंदे अनुरोध दी प्रक्रिया करगे";
+"requestSubmittedNotice" = "अस कानून दे मताबक तुंदी अरज पर कारवाई करगे";
+"allCaughtUp" = "तुसें सब किश दिक्खी लेआ ऐ";
+"filtersApplied" = "फिल्टर लाए गेदे न";
+"noMatchingRequests" = "कोई मेल खंदा अनुरोध नेईं";
+"refresh" = "रिफ्रेश करो";
+"noMessagesYetSubtitle" = "हेठ गल्लबात शुरू करो";
+"noNotificationsHint" = "जिसलै कुसै चीजा पर तुंदा ध्यान लोड़चदा होग, अस तुसेंगी दस्सगे।";
+"noCasesYet" = "अजें तक कोई अनुरोध नेईं";
+"submitFirstRequest" = "अपना पैहला गोपनीयता अनुरोध जमा करो";
+"noResultsForSearch" = "कोई होर खोज जां फिल्टर अजमाओ";

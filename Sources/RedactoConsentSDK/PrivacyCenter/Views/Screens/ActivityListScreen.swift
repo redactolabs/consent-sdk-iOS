@@ -12,12 +12,10 @@ public struct ActivityListScreen: View {
 
     public var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                PCPageHeader(title: PCStrings.activities, description: PCStrings.activitiesSubtitle)
-                content
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 12)
+            content
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
         }
         .background(theme.background)
         .task { await vm.loadInitial() }
@@ -42,7 +40,7 @@ public struct ActivityListScreen: View {
                                 .font(theme.font(size: 12, weight: .bold))
                                 .foregroundColor(theme.text)
                                 .textCase(.uppercase)
-                            Text(PrivacyCenterDateFormatters.timeAgo(group.newest))
+                            Text(PrivacyCenterDateFormatters.activityTimeAgo(group.newest))
                                 .font(theme.font(size: 12))
                                 .foregroundColor(theme.textTertiary)
                         }
@@ -100,7 +98,7 @@ private struct TimelineRow: View {
                     .font(theme.font(size: 13, weight: .medium))
                     .foregroundColor(theme.textSecondary)
                     .lineLimit(1)
-                Text(PrivacyCenterDateFormatters.timeAgo(activity.timestamp))
+                Text(PrivacyCenterDateFormatters.activityTimeAgo(activity.timestamp))
                     .font(theme.font(size: 11))
                     .foregroundColor(theme.textTertiary)
                     .lineLimit(1)

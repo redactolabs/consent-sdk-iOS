@@ -77,6 +77,16 @@ public struct ActiveConfig: Codable {
     /// The "accept selected" slot — submits exactly what the user ticked.
     public let confirmButtonText: String
     public let declineButtonText: String
+    /// The opt-in confirmation dialog's copy, as the console set it. Absent on
+    /// a notice published before the console offered it, and served empty when
+    /// the admin left it blank; either way the dialog keeps its own translated
+    /// copy.
+    public var confirmAcceptAllTitle: String?
+    public var confirmAcceptAllDetail: String?
+    public var confirmAcceptSelectedTitle: String?
+    public var confirmAcceptSelectedDetail: String?
+    public var confirmDeclineTitle: String?
+    public var confirmDeclineDetail: String?
     public let logoUrl: String
     public let privacyPolicyUrl: String
     public let privacyCenterUrl: String
@@ -115,6 +125,12 @@ public struct ActiveConfig: Codable {
         case acceptAllButtonText = "accept_all_button_text"
         case confirmButtonText = "confirm_button_text"
         case declineButtonText = "decline_button_text"
+        case confirmAcceptAllTitle = "confirm_accept_all_title"
+        case confirmAcceptAllDetail = "confirm_accept_all_detail"
+        case confirmAcceptSelectedTitle = "confirm_accept_selected_title"
+        case confirmAcceptSelectedDetail = "confirm_accept_selected_detail"
+        case confirmDeclineTitle = "confirm_decline_title"
+        case confirmDeclineDetail = "confirm_decline_detail"
         case logoUrl = "logo_url"
         case privacyPolicyUrl = "privacy_policy_url"
         case privacyCenterUrl = "privacy_center_url"

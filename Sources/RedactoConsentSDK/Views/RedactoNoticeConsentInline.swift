@@ -81,14 +81,14 @@ public struct RedactoNoticeConsentInline: View {
         // no accept button, so it gates the automatic submission; the cancelling
         // answer comes first, as on the web.
         .alert(
-            confirmCopy.confirmTitle(.acceptSelected),
+            confirmOverride.title ?? confirmCopy.confirmTitle(.acceptSelected),
             isPresented: Binding(get: { viewModel.awaitingConfirm }, set: { _ in }),
             actions: {
                 Button(confirmCopy.no, role: .cancel) { viewModel.refuseSubmission() }
                 Button(confirmCopy.yes) { viewModel.confirmSubmission() }
             },
             message: {
-                Text(confirmCopy.confirmDetail(.acceptSelected))
+                Text(confirmOverride.detail ?? confirmCopy.confirmDetail(.acceptSelected))
             }
         )
         .onAppear {
@@ -106,8 +106,17 @@ public struct RedactoNoticeConsentInline: View {
         horizontalSizeClass == .compact
     }
 
-    /// English, as React's inline notice draws its confirm dialog.
-    private var confirmCopy: NoticeChromeCopy { .english }
+    private var confirmCopy: NoticeChromeCopy {
+        .forLanguage(viewModel.selectedLanguage)
+    }
+
+    private var confirmOverride: ConfirmDialogCopyOverride {
+        ConfirmDialogCopyOverride.resolve(
+            viewModel.activeConfig,
+            language: viewModel.selectedLanguage,
+            action: .acceptSelected
+        )
+    }
 
     private func headingColor(_ appearance: ResolvedNoticeAppearance) -> Color {
         appearance.color(.heading) ?? Color(hex: "#101828")

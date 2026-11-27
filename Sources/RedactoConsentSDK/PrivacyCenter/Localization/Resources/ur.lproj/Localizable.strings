@@ -44,7 +44,7 @@
 "retry" = "Retry";
 "retrying" = "Retrying...";
 "confirmationSentTo" = "تصدیق بھیج دی گئی ہے";
-"processRequest" = "ہم آپ کی درخواست کو قانون کے مطابق مکمل کریں گے";
+"processRequest" = "ہم قانون کے مطابق آپ کی درخواست پر کارروائی کریں گے";
 "yourDataIsSafeWithUs" = "آپ کا ڈیٹا ہمارے پاس محفوظ ہے۔ ہم ایک محفوظ عمل پر عمل کرتے ہیں";
 "enterYourEmail" = "اپنا ای میل درج کریں";
 "letsConfirm" = "آئیے تصدیق کریں کہ یہ واقعی آپ ہی ہیں";
@@ -392,4 +392,13 @@
 "selectGrievanceType" = "اپنی شکایت کی قسم منتخب کریں";
 "requestSubmittedTitle" = "درخواست کامیابی سے جمع ہو گئی";
 "requestSubmittedSubtitle" = "اپنی درخواست جمع کرانے کا شکریہ";
-"requestSubmittedNotice" = "ہم قانون کے مطابق 30 دنوں کے اندر آپ کی درخواست پر کارروائی کریں گے";
+"requestSubmittedNotice" = "ہم قانون کے مطابق آپ کی درخواست پر کارروائی کریں گے";
+"allCaughtUp" = "آپ نے سب کچھ دیکھ لیا ہے";
+"filtersApplied" = "فلٹرز لاگو کیے گئے";
+"noMatchingRequests" = "کوئی مماثل مطالبہ نہیں";
+"refresh" = "ریفریش کریں";
+"noMessagesYetSubtitle" = "نیچے گفتگو شروع کریں";
+"noNotificationsHint" = "جب کسی چیز پر آپ کی توجہ درکار ہوگی تو ہم آپ کو بتائیں گے۔";
+"noCasesYet" = "ابھی تک کوئی مطالبہ نہیں";
+"submitFirstRequest" = "اپنا پہلا رازداری کا مطالبہ جمع کریں";
+"noResultsForSearch" = "کوئی مختلف تلاش یا فلٹر آزمائیں";

@@ -44,7 +44,7 @@
 "retry" = "Retry";
 "retrying" = "Retrying...";
 "confirmationSentTo" = "सुनिश्चितीकरण भेजा गया है";
-"processRequest" = "हम आपके अनुरोध को कानूनों के अनुसार सुनिश्चित करेंगे";
+"processRequest" = "हम कानूनों के अनुसार आपके अनुरोध पर कार्रवाई करेंगे";
 "yourDataIsSafeWithUs" = "आपके डेटा हमारे पास सुरक्षित हैं। हम सुनिश्चित प्रक्रिया करते हैं";
 "enterYourEmail" = "अपना ईमेल दर्ज करें";
 "letsConfirm" = "आइए पुष्टि करें कि यह आप ही हैं";
@@ -393,4 +393,13 @@
 "selectGrievanceType" = "अपना शिकायत प्रकार चुनें";
 "requestSubmittedTitle" = "अनुरोध सफलतापूर्वक जमा किया गया";
 "requestSubmittedSubtitle" = "अपना अनुरोध जमा करने के लिए धन्यवाद";
-"requestSubmittedNotice" = "हम आपके अनुरोध को कानून के अनुसार 30 दिनों के भीतर संसाधित करेंगे";
+"requestSubmittedNotice" = "हम कानूनों के अनुसार आपके अनुरोध पर कार्रवाई करेंगे";
+"allCaughtUp" = "आप पूरी तरह अपडेट हैं";
+"filtersApplied" = "फ़िल्टर लागू किए गए";
+"noMatchingRequests" = "कोई मेल खाता अनुरोध नहीं";
+"refresh" = "रीफ़्रेश करें";
+"noMessagesYetSubtitle" = "नीचे बातचीत शुरू करें";
+"noNotificationsHint" = "जब किसी चीज़ पर आपका ध्यान चाहिए होगा, हम आपको बताएँगे।";
+"noCasesYet" = "अभी तक कोई अनुरोध नहीं";
+"submitFirstRequest" = "अपना पहला गोपनीयता अनुरोध सबमिट करें";
+"noResultsForSearch" = "कोई दूसरी खोज या फ़िल्टर आज़माएँ";

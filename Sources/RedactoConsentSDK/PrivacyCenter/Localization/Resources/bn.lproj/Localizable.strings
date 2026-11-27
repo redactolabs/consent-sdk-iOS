@@ -392,4 +392,13 @@
 "selectGrievanceType" = "আপনার অভিযোগের ধরন নির্বাচন করুন";
 "requestSubmittedTitle" = "অনুরোধ সফলভাবে জমা দেওয়া হয়েছে";
 "requestSubmittedSubtitle" = "আপনার অনুরোধ জমা দেওয়ার জন্য ধন্যবাদ";
-"requestSubmittedNotice" = "আমরা আইন অনুসারে 30 দিনের মধ্যে আপনার অনুরোধ প্রক্রিয়া করব";
+"requestSubmittedNotice" = "আমরা আইন অনুসারে আপনার অনুরোধ প্রক্রিয়া করব";
+"allCaughtUp" = "আপনি সব দেখে ফেলেছেন";
+"filtersApplied" = "ফিল্টার প্রয়োগ করা হয়েছে";
+"noMatchingRequests" = "কোনো মিলে যাওয়া অনুরোধ নেই";
+"refresh" = "রিফ্রেশ করুন";
+"noMessagesYetSubtitle" = "নিচে কথোপকথন শুরু করুন";
+"noNotificationsHint" = "কোনো কিছুতে আপনার মনোযোগ প্রয়োজন হলে আমরা আপনাকে জানাব।";
+"noCasesYet" = "এখনো কোনো অনুরোধ নেই";
+"submitFirstRequest" = "আপনার প্রথম গোপনীয়তা অনুরোধ জমা দিন";
+"noResultsForSearch" = "অন্য কোনো অনুসন্ধান বা ফিল্টার চেষ্টা করুন";

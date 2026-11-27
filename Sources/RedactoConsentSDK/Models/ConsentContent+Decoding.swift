@@ -97,6 +97,12 @@ extension ActiveConfig {
         acceptAllButtonText = c.optional(String.self, forKey: .acceptAllButtonText)?.nonEmpty
         confirmButtonText = c.lenient(String.self, forKey: .confirmButtonText)
         declineButtonText = c.lenient(String.self, forKey: .declineButtonText)
+        confirmAcceptAllTitle = c.optional(String.self, forKey: .confirmAcceptAllTitle)?.nonEmpty
+        confirmAcceptAllDetail = c.optional(String.self, forKey: .confirmAcceptAllDetail)?.nonEmpty
+        confirmAcceptSelectedTitle = c.optional(String.self, forKey: .confirmAcceptSelectedTitle)?.nonEmpty
+        confirmAcceptSelectedDetail = c.optional(String.self, forKey: .confirmAcceptSelectedDetail)?.nonEmpty
+        confirmDeclineTitle = c.optional(String.self, forKey: .confirmDeclineTitle)?.nonEmpty
+        confirmDeclineDetail = c.optional(String.self, forKey: .confirmDeclineDetail)?.nonEmpty
         logoUrl = c.lenient(String.self, forKey: .logoUrl)
         privacyPolicyUrl = c.lenient(String.self, forKey: .privacyPolicyUrl)
         privacyCenterUrl = c.lenient(String.self, forKey: .privacyCenterUrl)

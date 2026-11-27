@@ -392,4 +392,13 @@
 "selectGrievanceType" = "તમારો ફરિયાદ પ્રકાર પસંદ કરો";
 "requestSubmittedTitle" = "વિનંતી સફળતાપૂર્વક સબમિટ કરવામાં આવી";
 "requestSubmittedSubtitle" = "તમારી વિનંતી સબમિટ કરવા બદલ આભાર";
-"requestSubmittedNotice" = "અમે કાયદા અનુસાર 30 દિવસોની અંદર તમારી વિનંતી પર પ્રક્રિયા કરીશું";
+"requestSubmittedNotice" = "અમે તમારી વિનંતીને કાયદેસર પ્રક્રિયા કરીશું";
+"allCaughtUp" = "તમે બધું જોઈ લીધું છે";
+"filtersApplied" = "ફિલ્ટર લાગુ કર્યા છે";
+"noMatchingRequests" = "કોઈ મેળ ખાતી વિનંતી નથી";
+"refresh" = "રિફ્રેશ કરો";
+"noMessagesYetSubtitle" = "નીચે વાતચીત શરૂ કરો";
+"noNotificationsHint" = "જ્યારે કોઈ બાબતમાં તમારા ધ્યાનની જરૂર હશે ત્યારે અમે તમને જણાવીશું.";
+"noCasesYet" = "હજુ સુધી કોઈ વિનંતી નથી";
+"submitFirstRequest" = "તમારી પ્રથમ ગોપનીયતા વિનંતી સબમિટ કરો";
+"noResultsForSearch" = "કોઈ અલગ શોધ અથવા ફિલ્ટર અજમાવો";

@@ -392,4 +392,13 @@
 "selectGrievanceType" = "پنهنجو شڪايت قسم چونڊيو";
 "requestSubmittedTitle" = "درخواست ڪاميابي سان جمع ڪئي وئي";
 "requestSubmittedSubtitle" = "پنهنجي درخواست جمع ڪرڻ لاءِ مهرباني";
-"requestSubmittedNotice" = "اسان قانون موجب 30 ڏينهن اندر توهانجي درخواست تي عمل ڪنداسين";
+"requestSubmittedNotice" = "اسين توهانجي عرضي کي قانوني طريقي سان حل ڪنداسين";
+"allCaughtUp" = "توهان سڀ ڪجهه ڏسي ورتو آهي";
+"filtersApplied" = "فلٽر لاڳو ڪيا ويا";
+"noMatchingRequests" = "ڪا ملندڙ درخواست ناهي";
+"refresh" = "ريفريش ڪريو";
+"noMessagesYetSubtitle" = "هيٺ ڳالهه ٻولهه شروع ڪريو";
+"noNotificationsHint" = "جڏهن ڪنهن شيءِ کي توهان جي ڌيان جي ضرورت هوندي، اسين توهان کي ٻڌائينداسين.";
+"noCasesYet" = "اڃا تائين ڪا درخواست ناهي";
+"submitFirstRequest" = "پنهنجي پهرين رازداري درخواست جمع ڪرايو";
+"noResultsForSearch" = "ڪا ٻي ڳولا يا فلٽر آزمايو";

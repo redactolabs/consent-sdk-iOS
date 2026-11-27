@@ -6,6 +6,7 @@ import SwiftUI
 private struct ConfirmDialogModifier: ViewModifier {
     let action: ConfirmAction?
     let copy: NoticeChromeCopy
+    let copyOverride: ConfirmDialogCopyOverride
     let onConfirm: (ConfirmAction) -> Void
     let onCancel: () -> Void
 
@@ -34,12 +35,12 @@ private struct ConfirmDialogModifier: ViewModifier {
                 .contentShape(Rectangle())
                 .onTapGesture {}
             VStack(alignment: .leading, spacing: 0) {
-                Text(copy.confirmTitle(action))
+                Text(copyOverride.title ?? copy.confirmTitle(action))
                     .noticeFont(size: 16, weight: glass == nil ? .semibold : .bold)
                     .foregroundColor(glass == nil ? Color(hex: "#101828") : theme.heading)
                     .padding(.bottom, 8)
                     .accessibilityAddTraits(.isHeader)
-                Text(copy.confirmDetail(action))
+                Text(copyOverride.detail ?? copy.confirmDetail(action))
                     .noticeFont(size: 14)
                     .foregroundColor(glass == nil ? Color(hex: "#475467") : theme.text)
                     .fixedSize(horizontal: false, vertical: true)
@@ -83,9 +84,16 @@ extension View {
     func noticeConfirmDialog(
         action: ConfirmAction?,
         copy: NoticeChromeCopy = .english,
+        copyOverride: ConfirmDialogCopyOverride = .none,
         onConfirm: @escaping (ConfirmAction) -> Void,
         onCancel: @escaping () -> Void
     ) -> some View {
-        modifier(ConfirmDialogModifier(action: action, copy: copy, onConfirm: onConfirm, onCancel: onCancel))
+        modifier(ConfirmDialogModifier(
+            action: action,
+            copy: copy,
+            copyOverride: copyOverride,
+            onConfirm: onConfirm,
+            onCancel: onCancel
+        ))
     }
 }

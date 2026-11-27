@@ -8,41 +8,47 @@ public struct ModifyConsentModal: View {
 
     @StateObject private var vm: ModifyConsentViewModel
     let consentManagerVm: ConsentManagerViewModel
+    let onClose: (() -> Void)?
 
-    public init(consent: UserConsent, nominatorContact: String?, consentManagerVm: ConsentManagerViewModel) {
+    public init(consent: UserConsent, nominatorContact: String?, consentManagerVm: ConsentManagerViewModel, onClose: (() -> Void)? = nil) {
         self._vm = StateObject(wrappedValue: ModifyConsentViewModel(
             consent: consent,
             nominatorContact: nominatorContact,
             organisationWarning: consentManagerVm.organisationWithdrawWarning
         ))
         self.consentManagerVm = consentManagerVm
+        self.onClose = onClose
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            PCNavbar(title: PCStrings.modifyConsent, onClose: { dismiss() })
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    if vm.action == nil {
-                        Text(PCStrings.noActionsAvailable)
-                            .font(theme.font(size: 14, weight: .medium))
-                            .foregroundColor(theme.textTertiary)
-                            .frame(maxWidth: .infinity)
-                            .padding(16)
-                    } else {
-                        Text(vm.descriptionText)
-                            .font(theme.font(size: 14, weight: .medium))
-                            .foregroundColor(theme.textSecondary)
-                        purposePanel
-                        warning
-                        actions
-                    }
+        PCModal(title: PCStrings.modifyConsent, onClose: close) {
+            VStack(alignment: .leading, spacing: 16) {
+                if vm.action == nil {
+                    Text(PCStrings.noActionsAvailable)
+                        .font(theme.font(size: 14, weight: .medium))
+                        .foregroundColor(theme.textTertiary)
+                        .frame(maxWidth: .infinity)
+                        .padding(16)
+                } else {
+                    Text(vm.descriptionText)
+                        .font(theme.font(size: 14, weight: .medium))
+                        .foregroundColor(theme.textSecondary)
+                    purposePanel
+                    warning
                 }
-                .padding(16)
             }
-            .background(theme.background)
+        } footer: {
+            actions
         }
-        .background(theme.background)
+        .onDisappear { vm.isDismissed = true }
+    }
+
+    private func close() {
+        if let onClose {
+            onClose()
+        } else {
+            dismiss()
+        }
     }
 
     private var purposePanel: some View {
@@ -127,10 +133,11 @@ public struct ModifyConsentModal: View {
 
     @ViewBuilder
     private var actions: some View {
-        HStack(spacing: 10) {
-            Spacer()
-            PCButton(PCStrings.cancel, variant: .outline, fullWidth: false) { dismiss() }
-            if let reason = vm.revokeBlockedReason {
+        HStack(spacing: 8) {
+            PCButton(PCStrings.cancel, variant: .outline, fullWidth: false) { close() }
+            if vm.action == nil {
+                EmptyView()
+            } else if let reason = vm.revokeBlockedReason {
                 confirmButton
                     .accessibilityLabel(vm.buttonLabel)
                     .accessibilityHint(reason)
@@ -149,6 +156,7 @@ public struct ModifyConsentModal: View {
             isDisabled: vm.isConfirmDisabled
         ) {
             guard let action = vm.action else { return }
+            let vm = vm
             Task {
                 vm.isProcessing = true
                 await consentManagerVm.performAction(
@@ -158,7 +166,7 @@ public struct ModifyConsentModal: View {
                     dataElementUuids: vm.dataElementUuidsForAction
                 )
                 vm.isProcessing = false
-                dismiss()
+                if !vm.isDismissed { close() }
             }
         }
     }

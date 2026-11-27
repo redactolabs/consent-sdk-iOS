@@ -44,7 +44,7 @@
 "retry" = "Retry";
 "retrying" = "Retrying...";
 "confirmationSentTo" = "पुष्टीकरण येथे पाठवले गेले";
-"processRequest" = "आम्ही कायद्यांनुसार तुमची विनंती प्रक्रिया करू";
+"processRequest" = "आमी कायद्या प्रमाणें तुमच्या विनंतीचेर प्रक्रिया करतले";
 "yourDataIsSafeWithUs" = "तुमची माहिती आमच्याकडे सुरक्षित आहे. आम्ही सुरक्षित प्रक्रिया सुनिश्चित करतो";
 "enterYourEmail" = "तुमचा ईमेल प्रविष्ट करा";
 "letsConfirm" = "चला, तुमची ओळख पुष्टी करूया";
@@ -392,4 +392,13 @@
 "selectGrievanceType" = "तुमचो तक्रार प्रकार निवडात";
 "requestSubmittedTitle" = "विनंती यशस्वीपणान सादर केली";
 "requestSubmittedSubtitle" = "तुमची विनंती सादर केल्ल्या खातीर देव बरें करूं";
-"requestSubmittedNotice" = "आमी कायद्याप्रमाण 30 दिसांभितर तुमची विनंती प्रक्रिया करतले";
+"requestSubmittedNotice" = "आमी कायद्या प्रमाणें तुमच्या विनंतीचेर प्रक्रिया करतले";
+"allCaughtUp" = "तुमी सगळें पळयलां";
+"filtersApplied" = "फिल्टर लागू केल्यात";
+"noMatchingRequests" = "जुळपी विनंती ना";
+"refresh" = "रिफ्रेश करात";
+"noMessagesYetSubtitle" = "सकयल संवाद सुरू करात";
+"noNotificationsHint" = "कितेंय तुमच्या लक्षाची गरज आसल्यार आमी तुमकां कळयतले.";
+"noCasesYet" = "अजून कसलीच विनंती ना";
+"submitFirstRequest" = "तुमची पयली खाजगीपणाची विनंती सादर करात";
+"noResultsForSearch" = "दुसरो सोद वा फिल्टर वापरून पळयात";

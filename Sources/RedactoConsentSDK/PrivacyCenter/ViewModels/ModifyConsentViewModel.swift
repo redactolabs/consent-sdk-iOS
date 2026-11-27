@@ -13,6 +13,7 @@ public final class ModifyConsentViewModel: ObservableObject {
     @Published public var step: Step = .overview
     @Published public var selectedDataElementUuids: Set<String> = []
     @Published public var isProcessing: Bool = false
+    var isDismissed = false
     @Published public var errorMessage: String?
     @Published public var isAccordionOpen: Bool
 

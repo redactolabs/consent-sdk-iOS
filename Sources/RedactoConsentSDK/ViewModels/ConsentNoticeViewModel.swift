@@ -574,6 +574,14 @@ public class ConsentNoticeViewModel: ObservableObject {
         .forLanguage(selectedLanguage)
     }
 
+    /// The console's copy for the dialog on screen, when it set any.
+    var confirmDialogCopyOverride: ConfirmDialogCopyOverride {
+        guard let action = pendingConfirmAction else { return .none }
+        return ConfirmDialogCopyOverride.resolve(
+            activeConfig, language: selectedLanguage, action: action
+        )
+    }
+
     /// Called when selectedLanguage changes to re-fetch TTS audio.
     /// The read settles the notice on its default language, which lands here
     /// after the read already fetched that language's audio: only a different
